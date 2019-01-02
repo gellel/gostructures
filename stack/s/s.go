@@ -1,8 +1,8 @@
 package s
 
 type Stack interface {
-	IsEmpty() bool
 	InStack() bool
+	IsEmpty() bool
 	Peek() interface{}
 	Pop() interface{}
 	Push() interface{}
