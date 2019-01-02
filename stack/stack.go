@@ -12,18 +12,23 @@ type Stack struct {
 
 // New instantiates a new Queue pointer.
 // Size argument controls size of Queue.
-func New(size int) *Stack {
+func New() *Stack {
 	return &Stack{stack: make([]interface{}, 0)}
 }
 
 // InStack checks that the provided int is in the Stack.stack range.
 func (stack *Stack) InStack(i int) bool {
-	return stack.IsEmpty() && i <= stack.SizeOf()
+	return stack.IsPopulated() && i < stack.SizeOf()
 }
 
-// IsEmpty checks that the stack contains entries.
+// IsEmpty checks that Stack.stack does not contain entries.
 func (stack *Stack) IsEmpty() bool {
 	return stack.SizeOf() == 0
+}
+
+// IsPopulated checks that Stack.stack contains entries.
+func (stack *Stack) IsPopulated() bool {
+	return stack.SizeOf() > 0
 }
 
 // Peek shows the item in  Stack.stack at the provided position. Does not pop the item.
@@ -39,7 +44,8 @@ func (stack *Stack) Peek(i int) interface{} {
 // Returns nil and -1 if empty.
 func (stack *Stack) Pop() (interface{}, int) {
 	if !stack.IsEmpty() {
-		return stack.stack[:stack.SizeOf()-1], stack.SizeOf()
+		element := stack.next()
+		return element, stack.drop()
 	}
 	return nil, -1
 }
@@ -54,4 +60,14 @@ func (stack *Stack) Push(property interface{}) int {
 // SizeOf shows the size of the current Stack.stack.
 func (stack *Stack) SizeOf() int {
 	return len(stack.stack)
+}
+
+func (stack *Stack) drop() int {
+	stack.stack = stack.stack[:stack.SizeOf()-1]
+
+	return stack.SizeOf()
+}
+
+func (stack *Stack) next() interface{} {
+	return stack.stack[stack.SizeOf()-1]
 }

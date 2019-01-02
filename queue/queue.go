@@ -30,7 +30,7 @@ func (queue *Queue) Dequeue() (interface{}, int) {
 	if queue.SizeOf() > 0 {
 		return queue.queue[:1], queue.SizeOf()
 	}
-	return nil, 0
+	return nil, -1
 }
 
 // InQueue checks whether index position falls outside of range.
