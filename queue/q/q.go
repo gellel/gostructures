@@ -1,8 +1,9 @@
 package q
 
-type Q interface {
-	Enqueue(i interface{}) (Q, int)
-	Dequeue(i interface{}) (Q, int)
+// Queue interface.
+type Queue interface {
+	Enqueue(i interface{}) (interface{}, int)
+	Dequeue(i interface{}) (interface{}, int)
 	InQueue(i int) bool
 	Peek(i int) interface{}
 	SizeOf() int

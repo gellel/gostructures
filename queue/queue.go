@@ -6,7 +6,7 @@ import (
 
 // Queue of interfaces.
 type Queue struct {
-	q.Q
+	q.Queue
 	queue []interface{}
 }
 
