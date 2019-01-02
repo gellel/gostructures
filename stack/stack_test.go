@@ -22,4 +22,6 @@ func Test(t *testing.T) {
 	fmt.Println("peek", s.Peek(0))
 
 	fmt.Println(s.Pop())
+
+	fmt.Println(s.IsEmpty())
 }

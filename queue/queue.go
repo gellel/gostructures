@@ -50,3 +50,8 @@ func (queue *Queue) Peek(i int) interface{} {
 func (queue *Queue) SizeOf() int {
 	return len(queue.queue)
 }
+
+// IsEmpty checks that Queue.queue does not contain entries.
+func (queue *Queue) IsEmpty() bool {
+	return queue.SizeOf() == 0
+}
