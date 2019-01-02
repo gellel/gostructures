@@ -16,9 +16,21 @@ func New(size int) *Queue {
 	return &Queue{queue: make([]interface{}, 0)}
 }
 
-// SizeOf returns the length of the current Queue.queue.
-func (queue *Queue) SizeOf() int {
-	return len(queue.queue)
+// Enqueue appends a new item to Queue.queue.
+func (queue *Queue) Enqueue(property interface{}) int {
+	queue.queue = append(queue.queue, property)
+
+	return queue.SizeOf()
+}
+
+// Dequeue takes the first item from Queue.queue.
+// On success, returns assigned property and remaining size.
+// Returns nil if empty.
+func (queue *Queue) Dequeue() (interface{}, int) {
+	if queue.SizeOf() > 0 {
+		return queue.queue[:1], queue.SizeOf()
+	}
+	return nil, 0
 }
 
 // InQueue checks whether index position falls outside of range.
@@ -26,9 +38,15 @@ func (queue *Queue) InQueue(i int) bool {
 	return queue.SizeOf() >= i
 }
 
-// Enqueue appends a new item to the Queue.queue.
-func (queue *Queue) Enqueue(property interface{}) (int, interface{}) {
-	a := append(queue.queue, property)
+// Peek shows the current item ad the Queue.queue index.
+func (queue *Queue) Peek(i int) interface{} {
+	if queue.InQueue(i) {
+		return queue.queue[i]
+	}
+	return nil
+}
 
-	return queue.SizeOf(), a
+// SizeOf returns the length of the current Queue.queue.
+func (queue *Queue) SizeOf() int {
+	return len(queue.queue)
 }

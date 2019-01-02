@@ -11,11 +11,7 @@ func Test(t *testing.T) {
 
 	q := queue.New(10)
 
-	fmt.Println(q)
-
-	fmt.Println(q.SizeOf(), q.InQueue(10))
-
 	fmt.Println(q.Enqueue(1))
 
-	fmt.Println(q.SizeOf(), q.InQueue(11))
+	fmt.Println(q.Dequeue())
 }
