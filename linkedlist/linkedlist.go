@@ -15,14 +15,33 @@ func New() *LinkedList {
 	return &LinkedList{}
 }
 
+// Add enqueues a new LinkedList.Node.
+// Value on add is placed at the tail of the LinkedList.
 func (linkedList *LinkedList) Add(property interface{}) *LinkedList {
 
 	n := node.New(property)
 
 	if linkedList.isEmpty() {
-		return linkedList.addFirst(n)
+		return linkedList.addHead(n)
 	}
-	return linkedList.add(n)
+	return linkedList.addTail(n)
+}
+
+// Prepend enqueues a new LinkedList.Node ahead of the LinkedList.Head.
+// LinkedList.Head becomes the the Node.Next of the new LinkedList.Node.
+func (linkedList *LinkedList) Prepend(property interface{}) *LinkedList {
+
+	n := node.New(property)
+
+	if linkedList.isEmpty() {
+		return linkedList.addHead(n)
+	}
+
+	n.Next = linkedList.Head
+
+	linkedList.Head = n
+
+	return linkedList
 }
 
 func (linkedList *LinkedList) Walk() {
@@ -37,7 +56,7 @@ func (linkedList *LinkedList) Walk() {
 	}
 }
 
-func (linkedList *LinkedList) addFirst(n *node.Node) *LinkedList {
+func (linkedList *LinkedList) addHead(n *node.Node) *LinkedList {
 
 	linkedList.Head = n
 
@@ -46,7 +65,7 @@ func (linkedList *LinkedList) addFirst(n *node.Node) *LinkedList {
 	return linkedList
 }
 
-func (linkedList *LinkedList) add(n *node.Node) *LinkedList {
+func (linkedList *LinkedList) addTail(n *node.Node) *LinkedList {
 
 	linkedList.Tail.Next = n
 
