@@ -18,4 +18,10 @@ func Test(t *testing.T) {
 	l.Walk()
 
 	fmt.Println(l.Search("b"))
+
+	fmt.Println(l.Delete("b"))
+
+	l.Walk()
+
+	fmt.Println(l.Search("b"))
 }

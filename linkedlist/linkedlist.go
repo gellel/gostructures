@@ -27,6 +27,52 @@ func (linkedList *LinkedList) Add(property interface{}) *LinkedList {
 	return linkedList.addTail(n)
 }
 
+// Delete removes a LinkedList.Node but reattaches the orphaned LinkedList.Node.
+func (linkedList *LinkedList) Delete(value interface{}) bool {
+
+	if linkedList.Head == nil {
+		return false
+	}
+
+	n := linkedList.Head
+
+	if n.Value == value {
+
+		// reset LinkedList.Head and LinkedList.Tail
+		if linkedList.Head == linkedList.Tail {
+
+			linkedList.Head = nil
+
+			linkedList.Tail = linkedList.Head
+
+		} else {
+			// set LinkedList.Head to LinkedList.Head.Next
+			linkedList.Head = n.Next
+		}
+
+		return true
+	}
+
+	// move through O(n) trying to find target.
+	for n.Next != nil && n.Next.Value != value {
+		n = n.Next
+	}
+
+	if n.Next != nil {
+
+		if n.Next == linkedList.Tail {
+
+			linkedList.Tail = n
+		}
+
+		n.Next = n.Next.Next
+
+		return true
+	}
+
+	return false
+}
+
 // Prepend enqueues a new LinkedList.Node ahead of the LinkedList.Head.
 // LinkedList.Head becomes the the Node.Next of the new LinkedList.Node.
 func (linkedList *LinkedList) Prepend(property interface{}) *LinkedList {
