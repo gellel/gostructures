@@ -44,6 +44,21 @@ func (linkedList *LinkedList) Prepend(property interface{}) *LinkedList {
 	return linkedList
 }
 
+func (linkedList *LinkedList) Search(value interface{}) bool {
+
+	n := linkedList.Head
+
+	for n != nil && n.Value != nil {
+
+		if n.Value == value {
+			return true
+		}
+
+		n = n.Next
+	}
+	return false
+}
+
 func (linkedList *LinkedList) Walk() {
 
 	n := linkedList.Head

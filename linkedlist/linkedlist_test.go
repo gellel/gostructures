@@ -17,4 +17,5 @@ func Test(t *testing.T) {
 
 	l.Walk()
 
+	fmt.Println(l.Search("b"))
 }
