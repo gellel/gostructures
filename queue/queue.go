@@ -11,8 +11,7 @@ type Queue struct {
 }
 
 // New instantiates a new Queue pointer.
-// Size argument controls size of Queue.
-func New(size int) *Queue {
+func New() *Queue {
 	return &Queue{queue: make([]interface{}, 0)}
 }
 

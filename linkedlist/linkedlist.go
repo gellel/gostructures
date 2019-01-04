@@ -3,14 +3,18 @@ package linkedlist
 import (
 	"fmt"
 
+	"github.com/gellel/gostructures/linkedlist/l"
 	"github.com/gellel/gostructures/linkedlist/node"
 )
 
+// LinkedList of interfaces.
 type LinkedList struct {
+	l.LinkedList
 	Head *node.Node
 	Tail *node.Node
 }
 
+// New instantiates a new LinkedList pointer.
 func New() *LinkedList {
 	return &LinkedList{}
 }
@@ -20,57 +24,59 @@ func New() *LinkedList {
 func (linkedList *LinkedList) Add(property interface{}) *LinkedList {
 
 	n := node.New(property)
-
+	// check LinkedList.Head && LinkedList.Tail is empty.
 	if linkedList.isEmpty() {
 		return linkedList.addHead(n)
 	}
+	// add to tail
 	return linkedList.addTail(n)
 }
 
-// Delete removes a LinkedList.Node but reattaches the orphaned LinkedList.Node.
-func (linkedList *LinkedList) Delete(value interface{}) bool {
+// Delete removes one or many LinkedList.Nodes.
+func (linkedList *LinkedList) Delete(value interface{}) *node.Node {
+
+	// set temp variable for storing LinkedList.Node that is
+	// going to be deleted.
+	d := &node.Node{}
 
 	if linkedList.Head == nil {
-		return false
+		return nil
 	}
 
+	// update LinkedList.Head until a LinkedList.Node.Value is
+	// found that does not contain the target value.
+	for linkedList.Head != nil && linkedList.Head.Value == value {
+
+		d = linkedList.Head
+
+		linkedList.Head = linkedList.Head.Next
+	}
+
+	// store current LinkedList.Head
+	// to check against next set of targets.
 	n := linkedList.Head
 
-	if n.Value == value {
-
-		// reset LinkedList.Head and LinkedList.Tail
-		if linkedList.Head == linkedList.Tail {
-
-			linkedList.Head = nil
-
-			linkedList.Tail = linkedList.Head
-
-		} else {
-			// set LinkedList.Head to LinkedList.Head.Next
-			linkedList.Head = n.Next
+	if !(n == nil) {
+		// look ahead and iterate over LinkedList.Node(s)
+		for !(n.Next == nil) {
+			if n.Next.Value == value {
+				d = n.Next
+				// set LinkedList.Node to its LinkedList.Node.Next
+				// results in n(a).Next -> n(b).Value(target) -> n(c)
+				// becoming n(a).Next -> n(c)
+				n.Next = n.Next.Next
+			} else {
+				// update n to prevent infininte loop.
+				n = n.Next
+			}
 		}
-
-		return true
 	}
 
-	// move through O(n) trying to find target.
-	for n.Next != nil && n.Next.Value != value {
-		n = n.Next
+	if linkedList.Tail.Value == value {
+		linkedList.Tail = n
 	}
 
-	if n.Next != nil {
-
-		if n.Next == linkedList.Tail {
-
-			linkedList.Tail = n
-		}
-
-		n.Next = n.Next.Next
-
-		return true
-	}
-
-	return false
+	return d
 }
 
 // Prepend enqueues a new LinkedList.Node ahead of the LinkedList.Head.
