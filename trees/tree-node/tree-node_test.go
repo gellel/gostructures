@@ -13,4 +13,6 @@ func Test(t *testing.T) {
 
 	log.Println(n.SetLeft(treenode.New(2)))
 
+	log.Println(n)
+
 }
