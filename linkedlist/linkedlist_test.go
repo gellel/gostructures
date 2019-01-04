@@ -26,4 +26,10 @@ func Test(t *testing.T) {
 	l.Walk()
 
 	fmt.Println(l.Search("b"))
+
+	l.Add("b").Add("c").Add("d")
+
+	l.Reverse()
+
+	l.Walk()
 }

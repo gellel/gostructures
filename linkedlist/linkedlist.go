@@ -32,12 +32,29 @@ func (linkedList *LinkedList) Add(property interface{}) *LinkedList {
 	return linkedList.addTail(n)
 }
 
+// Append adds new LinkedList.Node to the LinkedList.Tail.
+func (linkedList *LinkedList) Append(property interface{}) *LinkedList {
+
+	n := node.New(property)
+
+	// handle empty LinkedList.Head exception.
+	if linkedList.isEmpty() {
+		return linkedList.addHead(n)
+	}
+
+	linkedList.Tail.Next = n
+
+	linkedList.Tail = n
+
+	return linkedList
+}
+
 // Delete removes one or many LinkedList.Nodes.
 func (linkedList *LinkedList) Delete(value interface{}) *node.Node {
 
 	// set temp variable for storing LinkedList.Node that is
 	// going to be deleted.
-	d := &node.Node{}
+	var d *node.Node
 
 	if linkedList.Head == nil {
 		return nil
@@ -94,6 +111,37 @@ func (linkedList *LinkedList) Prepend(property interface{}) *LinkedList {
 	n.Next = linkedList.Head
 
 	linkedList.Head = n
+
+	return linkedList
+}
+
+// Reverse reorders the stored LinkedList.Nodes.
+func (linkedList *LinkedList) Reverse() *LinkedList {
+
+	current := linkedList.Head
+
+	var previous *node.Node
+
+	var next *node.Node
+
+	for !(current == nil) {
+		// store current LinkedList.Node's next LinkedList.Node.
+		// this enables the loop to continue for remaining LinkedList.Nodes.
+		next = current.Next
+		// set the currented LinkedList.Node to reference the previous LinkedList.Node
+		// before: previous -> current -> next
+		// after: current -> previous -> ?
+		current.Next = previous
+		// store previous (current) LinkedList.Node.
+		previous = current
+		// shift LinkedList.Node to next node.
+		current = next
+	}
+
+	// set LinkedList.Tail to first LinkedList.Node (Head)
+	linkedList.Tail = linkedList.Head
+
+	linkedList.Head = previous
 
 	return linkedList
 }
