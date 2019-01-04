@@ -1,7 +1,7 @@
 package l
 
 import (
-	"github.com/gellel/gostructures/linkedlist/node"
+	"github.com/gellel/gostructures/linked-list/node"
 )
 
 // LinkedList decleration.

@@ -1,6 +1,6 @@
 package q
 
-// Queue interface.
+// Queue decleration.
 type Queue interface {
 	Enqueue(i interface{}) (interface{}, int)
 	Dequeue(i interface{}) (interface{}, int)
