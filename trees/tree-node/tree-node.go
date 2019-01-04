@@ -1,3 +1,5 @@
+// Package treenode contains a base
+// struct and constructor for Tree Nodes.
 package treenode
 
 // Node structure for Search Tree.
@@ -163,4 +165,46 @@ func (node *Node) SetValue(value interface{}) *Node {
 	node.Value = value
 	// returned accessed Node.
 	return node
+}
+
+// ToSlice returns a Slice of Nodes.
+// Returns Slice from accessed Node.
+func (node *Node) ToSlice() []*Node {
+	// set base slice of Nodes.
+	slice := make([]*Node, 0)
+	// collect Node.Left slice.
+	// convention is left -> right.
+	if node.HasLeft() {
+		slice = node.Left.ToSlice()
+	}
+
+	slice = append(slice, node)
+	// collect Node.Right slice.
+	if node.HasRight() {
+		// concatenate slices.
+		slice = append(slice, node.Right.ToSlice()...)
+	}
+
+	return slice
+}
+
+// ToSliceOfValues returns Slice of stored Node.Values.
+// Returns Slice from accessed Node.
+func (node *Node) ToSliceOfValues() []interface{} {
+	// set base slice of interfaces.
+	slice := make([]interface{}, 0)
+	// collect Node.Left slice values.
+	// convention is left -> right.
+	if node.HasLeft() {
+		slice = node.Left.ToSliceOfValues()
+	}
+
+	slice = append(slice, node.Value)
+	// collect Node.Right slice values.
+	if node.HasRight() {
+		// concatenate slices.
+		slice = append(slice, node.Right.ToSliceOfValues()...)
+	}
+
+	return slice
 }

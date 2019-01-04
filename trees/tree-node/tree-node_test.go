@@ -13,6 +13,8 @@ func Test(t *testing.T) {
 
 	log.Println(n.SetLeft(treenode.New(2)))
 
-	log.Println(n)
+	log.Println(n.ToSlice())
+
+	log.Println(n.ToSliceOfValues())
 
 }
