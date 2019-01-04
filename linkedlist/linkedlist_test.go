@@ -19,6 +19,8 @@ func Test(t *testing.T) {
 
 	fmt.Println(l.Search("b"))
 
+	fmt.Println(l.SizeOf())
+
 	fmt.Println(l.Delete("b"))
 
 	l.Walk()

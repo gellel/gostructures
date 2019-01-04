@@ -72,6 +72,8 @@ func (linkedList *LinkedList) Delete(value interface{}) *node.Node {
 		}
 	}
 
+	// check if LinkedList.Tail is target and delete.
+	// n should be the previous LinkedList.Node.
 	if linkedList.Tail.Value == value {
 		linkedList.Tail = n
 	}
@@ -96,6 +98,8 @@ func (linkedList *LinkedList) Prepend(property interface{}) *LinkedList {
 	return linkedList
 }
 
+// Search checks that a provided value is within
+// the LinkedList.
 func (linkedList *LinkedList) Search(value interface{}) bool {
 
 	n := linkedList.Head
@@ -111,6 +115,22 @@ func (linkedList *LinkedList) Search(value interface{}) bool {
 	return false
 }
 
+// SizeOf returns an integer representing number
+// of connected LinkedList.Nodes.
+func (linkedList *LinkedList) SizeOf() int {
+	s := 0
+
+	n := linkedList.Head
+
+	for !(n == nil) {
+		s = s + 1
+
+		n = n.Next
+	}
+	return s
+}
+
+// Walk moves through N items and logs its contents.
 func (linkedList *LinkedList) Walk() {
 
 	n := linkedList.Head
