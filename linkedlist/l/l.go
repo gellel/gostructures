@@ -6,11 +6,12 @@ import (
 
 // LinkedList decleration.
 type LinkedList interface {
-	Add(property interface{}) *node.Node
+	Add(property interface{}) *LinkedList
+	Append(property interface{}) *LinkedList
 	Delete() *node.Node
-	Prepend(property interface{}) *node.Node
-	Reverse()
-	Search() bool
+	Prepend(property interface{}) *LinkedList
+	Reverse() *LinkedList
+	Search(value interface{}) bool
 	SizeOf() int
 	Walk()
 }
