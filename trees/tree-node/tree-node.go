@@ -1,5 +1,6 @@
 package treenode
 
+// Node structure for Search Tree.
 type Node struct {
 	Parent *Node
 	Left   *Node
@@ -7,6 +8,7 @@ type Node struct {
 	Value  interface{}
 }
 
+// New instantiates Node.
 func New(value interface{}) *Node {
 	return &Node{
 		Parent: nil,
@@ -24,10 +26,12 @@ func (node *Node) SetLeft(n *Node) *Node {
 		// provided Node's parent.
 		node.Left.Parent = nil
 	}
-
 	// set Node.Left to provided Node.
+	node.Left = n
 	// update Node.Left.Parent to Node.
-	return node.Set(node.Left, n).Set(node.Left.Parent, node)
+	node.Left.Parent = node
+	// return accessed Node.
+	return node
 }
 
 // SetRight reassigns as Node to the reference Node.
@@ -39,17 +43,15 @@ func (node *Node) SetRight(n *Node) *Node {
 		// provided Node's parent.
 		node.Right.Parent = nil
 	}
-
 	// set Node.Right to provided Node.
+	node.Right = n
 	// update Node.Right.Parent to Node.
-	return node.Set(node.Right, n).Set(node.Right.Parent, node)
+	node.Right.Parent = node
+	// returned accessed Node.
+	return node
 }
 
-func (node *Node) Set(side *Node, n *Node) *Node {
-	side = n
-	return side
-}
-
+// SetValue changes the assigned value to Node.Value.
 func (node *Node) SetValue(value interface{}) *Node {
 	node.Value = value
 	return node

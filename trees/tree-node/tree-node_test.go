@@ -11,5 +11,6 @@ func Test(t *testing.T) {
 
 	n := treenode.New(1)
 
-	log.Println(n)
+	log.Println(n.SetLeft(treenode.New(2)))
+
 }
