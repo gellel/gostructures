@@ -61,7 +61,7 @@ func (node *Node) HasRight() bool {
 }
 
 // HasValue checks if provided value is Node.Value.
-func (node *Node) HasValue(value int) bool {
+func (node *Node) HasValue(value interface{}) bool {
 	return node.Value == value
 }
 

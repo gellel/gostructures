@@ -11,11 +11,13 @@ func Test(t *testing.T) {
 
 	b := binarynode.New(7)
 
-	b.Insert(6)
+	fmt.Println(b)
+
+	/*b.Insert(6)
 
 	b.Insert(5)
 
 	fmt.Println(b.Left, b.Left.Left)
 
-	fmt.Println(b.Minimum())
+	fmt.Println(b.Minimum())*/
 }
