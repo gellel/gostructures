@@ -9,5 +9,10 @@ import (
 
 func Test(t *testing.T) {
 
-	log.Println(binarynode.New("a"))
+	b := binarynode.New(7)
+
+	log.Println(b)
+
+	log.Println(b.Insert(2).Insert(10).Insert(4).Insert(3).Insert(8).Insert(5))
+
 }
