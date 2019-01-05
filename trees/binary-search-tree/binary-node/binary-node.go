@@ -1,13 +1,15 @@
 package binarynode
 
 import (
+	"fmt"
+
 	treenode "github.com/gellel/gostructures/trees/tree-node"
 )
 
 // BinaryNode extends treenode.Node.
 // Expresses a Binary Search Tree Node.
 type BinaryNode struct {
-	*treenode.Node
+	treenode.Node
 	Parent *BinaryNode
 	Left   *BinaryNode
 	Right  *BinaryNode
@@ -25,95 +27,129 @@ func New(value int) *BinaryNode {
 
 // Contains evaluates whether the BinaryNode
 // with the target value exists in the connected BinaryNodes.
-func (binaryNode *BinaryNode) Contains(value int) bool {
-	return binaryNode.Get(value) != nil
+func (node *BinaryNode) Contains(value int) bool {
+	return node.Get(value) != nil
+}
+
+func (node *BinaryNode) Inherits() {
+	fmt.Println(node.Node)
 }
 
 // Insert creates and assigns a Child BinaryNode based
 // on the weight of the BinaryNode.Value.
 // Core method of the Binary Search Tree.
-func (binaryNode *BinaryNode) Insert(value int) *BinaryNode {
+func (node *BinaryNode) Insert(value int) *BinaryNode {
 
 	// check that the new node should be left
 	// balanced.
-	if value < binaryNode.Value {
+	if value < node.Value {
 		// if we already have a BinaryNode.Left
 		// move through the Left Search Tree.
-		if binaryNode.HasLeft() {
-			return binaryNode.Left.Insert(value)
+		if node.HasLeft() {
+			return node.Left.Insert(value)
 		}
-		return binaryNode.SetBinaryLeft(value)
+		return node.SetBinaryLeft(value)
 	}
 	// otherwise check that the new node
 	// should be balanced right.
-	if value > binaryNode.Value {
-		// if we already have a BinaryNode.Left
+	if value > node.Value {
+		// if we already have a BinaryNode.Right
 		// move through the Right Search Tree.
-		if binaryNode.HasRight() {
-			return binaryNode.Right.Insert(value)
+		if node.HasRight() {
+			return node.Right.Insert(value)
 		}
-		return binaryNode.SetBinaryRight(value)
+		return node.SetBinaryRight(value)
 	}
-	return binaryNode
+	return node
 }
 
 // Get attempts to find the BinaryNode
 // with the target value.
-func (binaryNode *BinaryNode) Get(value int) *BinaryNode {
-	if binaryNode.Value == value {
-		return binaryNode
+func (node *BinaryNode) Get(value int) *BinaryNode {
+	if node.Value == value {
+		return node
 	}
 	// check through BinaryNode.Left.
-	if value < binaryNode.Value && binaryNode.HasLeft() {
-		return binaryNode.Left.Get(value)
+	if value < node.Value && node.HasLeft() {
+		return node.Left.Get(value)
 	}
 	// check through BinaryNode.Right.
-	if value > binaryNode.Value && binaryNode.HasRight() {
-		return binaryNode.Right.Get(value)
+	if value > node.Value && node.HasRight() {
+		return node.Right.Get(value)
 	}
 	return nil
 }
 
 // Maximum finds the deepest BinaryNode.Right.
-func (binaryNode *BinaryNode) Maximum() *BinaryNode {
-	if binaryNode.HasEmptyRight() {
-		return binaryNode
+func (node *BinaryNode) Maximum() *BinaryNode {
+	if node.HasEmptyRight() {
+		return node
 	}
-	return binaryNode.Right.Maximum()
+	return node.Right.Maximum()
 }
 
 // Minimum finds the deepest BinaryNode.Left.
-func (binaryNode *BinaryNode) Minimum() *BinaryNode {
-	if binaryNode.HasEmptyLeft() {
-		return binaryNode
+func (node *BinaryNode) Minimum() *BinaryNode {
+	if node.HasEmptyLeft() {
+		return node
 	}
-	return binaryNode.Left.Minimum()
+	return node.Left.Minimum()
 }
 
-func (binaryNode *BinaryNode) Remove() {}
+// Remove BinaryNode based on its value.
+func (node *BinaryNode) Remove(value int) bool {
+
+	// attempt to find target.
+	n := node.Get(value)
+	// cannot find required BinaryNode.
+	if n == nil {
+		return false
+	}
+
+	if n.HasEmptyLeft() && n.HasEmptyRight() && n.HasParent() {
+		n.Parent.RemoveChild(n.Value)
+
+	} else if n.HasLeft() && n.HasRight() {
+		minimum := n.Right.Minimum()
+		if minimum.Value != n.Value {
+			node.Remove(minimum.Value)
+			return true
+		}
+
+	} else if n.HasLeft() {
+		n.Parent.Left = n.Left
+		return true
+
+	} else if n.HasRight() {
+		n.Parent.Right = n.Right
+		return true
+	}
+
+	return false
+}
 
 // SetBinaryLeft creates BinaryNode and satisfies assignment
 // to inherited Struct (treenode.Node) and sets parent dependencies.
-func (binaryNode *BinaryNode) SetBinaryLeft(value int) *BinaryNode {
+func (node *BinaryNode) SetBinaryLeft(value int) *BinaryNode {
 
 	n := New(value)
 	// use inherited method of treenode.Node.
 	// requires passing back implemented member.
 	// to tree.Node.SetLeft.
-	binaryNode.SetLeft(n.Node)
+	node.SetLeft(&n.Node)
 	// return the BinaryNode.
 	return n
 }
 
 // SetBinaryRight creates BinaryNode and satisfies assignment
 // to inherited Struct (treenode.Node) and sets parent dependencies.
-func (binaryNode *BinaryNode) SetBinaryRight(value int) *BinaryNode {
+func (node *BinaryNode) SetBinaryRight(value int) *BinaryNode {
 
 	n := New(value)
 	// use inherited method of treenode.Node.
 	// requires passing back implemented member.
 	// to tree.Node.SetRight.
-	binaryNode.SetRight(n.Node)
+	node.SetRight(&n.Node)
 	// return the BinaryNode.
 	return n
 }

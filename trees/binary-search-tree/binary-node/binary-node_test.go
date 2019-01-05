@@ -1,6 +1,7 @@
 package binarynode_test
 
 import (
+	"fmt"
 	"log"
 	"testing"
 
@@ -11,8 +12,9 @@ func Test(t *testing.T) {
 
 	b := binarynode.New(7)
 
+	fmt.Println(b.Insert(2).Insert(10).Insert(3))
+
+	fmt.Println(b.Left, b.Right)
+
 	log.Println(b)
-
-	log.Println(b.Insert(2).Insert(10).Insert(4).Insert(3).Insert(8).Insert(5))
-
 }

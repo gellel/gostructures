@@ -13,6 +13,10 @@ func Test(t *testing.T) {
 
 	log.Println(n.SetLeft(treenode.New(2)))
 
+	log.Println(n.HasEmptyLeft())
+
+	log.Println(n.HasLeft())
+
 	log.Println(n.ToSlice())
 
 	log.Println(n.ToSliceOfValues())
