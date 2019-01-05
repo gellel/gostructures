@@ -7,16 +7,32 @@ type Node struct {
 	Parent *Node
 	Left   *Node
 	Right  *Node
-	Value  interface{}
+	Value  int
 }
 
 // New instantiates Node.
-func New(value interface{}) *Node {
+func New(value int) *Node {
 	return &Node{
 		Parent: nil,
 		Left:   nil,
 		Right:  nil,
 		Value:  value}
+}
+
+// DeepestLeft finds Left-Most Node.
+func (node *Node) DeepestLeft() *Node {
+	if node.HasLeft() {
+		node.Left.DeepestLeft()
+	}
+	return node
+}
+
+// DeepestRight finds Right-Most Node.
+func (node *Node) DeepestRight() *Node {
+	if node.HasRight() {
+		node.Right.DeepestRight()
+	}
+	return node
 }
 
 // HasEmptyLeft checks if Node.Left is nil.
@@ -45,19 +61,19 @@ func (node *Node) HasRight() bool {
 }
 
 // HasValue checks if provided value is Node.Value.
-func (node *Node) HasValue(value interface{}) bool {
+func (node *Node) HasValue(value int) bool {
 	return node.Value == value
 }
 
 // HasLeftValue checks if provided value
 // is stored in Node.Left.Value.
-func (node *Node) HasLeftValue(value interface{}) bool {
+func (node *Node) HasLeftValue(value int) bool {
 	return node.HasLeft() && node.Left.HasValue(value)
 }
 
 // HasRightValue checks if provided value
 // is stored in Node.Right.Value.
-func (node *Node) HasRightValue(value interface{}) bool {
+func (node *Node) HasRightValue(value int) bool {
 	return node.HasRight() && node.Right.HasValue(value)
 }
 
@@ -100,7 +116,7 @@ func (node *Node) HeightRight() int {
 
 // RemoveChild removes Node based on contained value.
 // Removes Node.Left before Node.Right.
-func (node *Node) RemoveChild(value interface{}) bool {
+func (node *Node) RemoveChild(value int) bool {
 	if node.HasLeftValue(value) {
 		node.RemoveLeft()
 		return true
@@ -161,7 +177,7 @@ func (node *Node) SetRight(n *Node) *Node {
 }
 
 // SetValue changes the assigned value to Node.Value.
-func (node *Node) SetValue(value interface{}) *Node {
+func (node *Node) SetValue(value int) *Node {
 	node.Value = value
 	// returned accessed Node.
 	return node
