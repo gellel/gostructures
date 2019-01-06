@@ -5,10 +5,12 @@ import (
 	binarynode "github.com/gellel/gostructures/trees/binary-search-tree/binary-node"
 )
 
+// Adelson-Velsky and Landis Search Tree Abstract Data Structure.
 type AVLTree struct {
 	*binarysearchtree.BinarySearchTree
 }
 
+// New instantiates *AVLTree.
 func New(value float64) *AVLTree {
 	return &AVLTree{
 		binarysearchtree.New(value)}
