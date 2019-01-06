@@ -56,6 +56,11 @@ func (node *Node) GetLargest() *Node {
 	return node
 }
 
+// GetLargest gets *Node.Value from *Node.GetLargest.
+func (node *Node) GetLargestValue() float64 {
+	return node.GetLargest().Value
+}
+
 // GetSmallest moves through *Node.Left
 // until *Node.Left has no assigned *Node.Left.
 func (node *Node) GetSmallest() *Node {
@@ -63,6 +68,11 @@ func (node *Node) GetSmallest() *Node {
 		return node.Left.GetSmallest()
 	}
 	return node
+}
+
+// GetSmallest gets *Node.Value from *Node.GetSmallest.
+func (node *Node) GetSmallestValue() float64 {
+	return node.GetSmallest().Value
 }
 
 // HasEmptyLeft checks *Node.Left for nil.
@@ -123,6 +133,26 @@ func (node *Node) HeightRight() float64 {
 	return (node.Right.Height() + 1.0)
 }
 
+// Insert performs core Binary Search Tree
+// assignment operation. Smaller values
+// are stored on *Node.Left. Larger values
+// are stored on *Node.Right.
+func (node *Node) Insert(value float64) *Node {
+	if value < node.Value {
+		if node.HasLeft() {
+			return node.Left.Insert(value)
+		}
+		return node.SetLeft(value)
+	}
+	if value > node.Value {
+		if node.HasRight() {
+			return node.Right.Insert(value)
+		}
+		return node.SetRight(value)
+	}
+	return node
+}
+
 // RemoveLeft unassigns *Node.Left.
 func (node *Node) RemoveLeft() *Node {
 	node.Left = nil
@@ -180,11 +210,11 @@ func (node *Node) ToSlice() []*Node {
 func (node *Node) ToSliceFloat64() []float64 {
 	float64s := make([]float64, 0)
 	if node.HasLeft() {
-		float64s = append(float64s, node.ToSliceFloat64()...)
+		float64s = append(float64s, node.Left.ToSliceFloat64()...)
 	}
 	float64s = append(float64s, node.Value)
 	if node.HasRight() {
-		float64s = append(float64s, node.ToSliceFloat64()...)
+		float64s = append(float64s, node.Right.ToSliceFloat64()...)
 	}
 	return float64s
 }
