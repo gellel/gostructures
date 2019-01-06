@@ -1,6 +1,8 @@
 package binarynode
 
-import "math"
+import (
+	"math"
+)
 
 // A Node contained within a Search Tree.
 type Node struct {
@@ -56,7 +58,7 @@ func (node *Node) GetLargest() *Node {
 	return node
 }
 
-// GetLargest gets *Node.Value from *Node.GetLargest.
+// GetLargestValue gets *Node.Value from *Node.GetLargest.
 func (node *Node) GetLargestValue() float64 {
 	return node.GetLargest().Value
 }
@@ -70,7 +72,7 @@ func (node *Node) GetSmallest() *Node {
 	return node
 }
 
-// GetSmallest gets *Node.Value from *Node.GetSmallest.
+// GetSmallestValue gets *Node.Value from *Node.GetSmallest.
 func (node *Node) GetSmallestValue() float64 {
 	return node.GetSmallest().Value
 }
@@ -151,6 +153,34 @@ func (node *Node) Insert(value float64) *Node {
 		return node.SetRight(value)
 	}
 	return node
+}
+
+// Remove removes a *Node connection.
+func (node *Node) Remove(value float64) bool {
+	if node.HasValue(value) {
+		if node.HasParent() {
+			return node.Parent.RemoveByValue(value)
+		}
+		return node.RemoveByValue(value)
+	} else if value < node.Value && node.HasLeft() {
+		return node.Left.Remove(value)
+	} else if value > node.Value && node.HasRight() {
+		return node.Right.Remove(value)
+	}
+	return false
+}
+
+// RemoveByValue removes a *Node connection by *Node.Value.
+func (node *Node) RemoveByValue(value float64) bool {
+	if node.HasLeft() && node.Left.HasValue(value) {
+		node.RemoveLeft()
+		return true
+	}
+	if node.HasRight() && node.Right.HasValue(value) {
+		node.RemoveRight()
+		return true
+	}
+	return false
 }
 
 // RemoveLeft unassigns *Node.Left.

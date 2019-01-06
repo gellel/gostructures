@@ -71,6 +71,11 @@ func (binarySearchTree *BinarySearchTree) Insert(value float64) *binarynode.Node
 	return binarySearchTree.Root.Insert(value)
 }
 
+// Remove removes *binarynode.Node from *BinarySearchTree.Root.
+func (binarySearchTree *BinarySearchTree) Remove(value float64) bool {
+	return binarySearchTree.Root.Remove(value)
+}
+
 // ToSlice constructs a Slice containing all *binarynode.Node's
 // contained within *BinarySearchTree.Root.
 func (binarySearchTree *BinarySearchTree) ToSlice() []*binarynode.Node {
