@@ -22,4 +22,8 @@ func Test(t *testing.T) {
 	log.Println(bst.Remove(5.0))
 
 	log.Println(bst.ToSliceFloat64())
+
+	log.Println(bst.Remove(10.0))
+
+	log.Println(bst.ToSliceFloat64())
 }
