@@ -1,17 +1,19 @@
-// Package treenode contains a base
-// struct and constructor for Tree Nodes.
 package treenode
 
-// Node structure for Search Tree.
+import (
+	"math"
+)
+
+// A Node contained within a Search Tree.
 type Node struct {
-	Parent *Node
-	Left   *Node
-	Right  *Node
-	Value  int
+	Parent *Node   // *Node hosting *Node.
+	Left   *Node   // *Node hosted by *Node.
+	Right  *Node   // *Node hosted by *Node.
+	Value  float64 // Sum of *Node.
 }
 
-// New instantiates Node.
-func New(value int) *Node {
+// New instantiates *Node.
+func New(value float64) *Node {
 	return &Node{
 		Parent: nil,
 		Left:   nil,
@@ -19,208 +21,263 @@ func New(value int) *Node {
 		Value:  value}
 }
 
-// DeepestLeft finds Left-Most Node.
-func (node *Node) DeepestLeft() *Node {
+// Contains evaluates whether a *Node with
+// corresponding *Node.Value.
+func (node *Node) Contains(value float64) bool {
+	return node.Find(value) != nil
+}
+
+// Distribution collects the sum of *Node's children
+// and computes the weighting of *Node.Left
+// and *Node.Right. Negative value is
+// right weighted. Positive value is left weighted.
+func (node *Node) Distribution() float64 {
+	return (node.HeightLeft() - node.HeightRight())
+}
+
+// Find searches *Node children for
+// *Node.Value.
+func (node *Node) Find(value float64) *Node {
+	if node.HasValue(value) {
+		return node
+	}
 	if node.HasLeft() {
-		node.Left.DeepestLeft()
+		return node.Left.Find(value)
 	}
-	return node
-}
-
-// DeepestRight finds Right-Most Node.
-func (node *Node) DeepestRight() *Node {
 	if node.HasRight() {
-		node.Right.DeepestRight()
+		return node.Right.Find(value)
+	}
+	return nil
+}
+
+// GetLargest moves through *Node.Right
+// until *Node.Right has no assigned *Node.Right.
+func (node *Node) GetLargest() *Node {
+	if node.HasRight() {
+		return node.Right.GetLargest()
 	}
 	return node
 }
 
-// HasEmptyLeft checks if Node.Left is nil.
+// GetLargestValue gets *Node.Value from *Node.GetLargest.
+func (node *Node) GetLargestValue() float64 {
+	return node.GetLargest().Value
+}
+
+// GetSmallest moves through *Node.Left
+// until *Node.Left has no assigned *Node.Left.
+func (node *Node) GetSmallest() *Node {
+	if node.HasLeft() {
+		return node.Left.GetSmallest()
+	}
+	return node
+}
+
+// GetSmallestValue gets *Node.Value from *Node.GetSmallest.
+func (node *Node) GetSmallestValue() float64 {
+	return node.GetSmallest().Value
+}
+
+// HasEmptyLeft checks *Node.Left for nil.
 func (node *Node) HasEmptyLeft() bool {
 	return node.Left == nil
 }
 
-// HasEmptyRight checks if Node.Left is nil.
+// HasEmptyParent checks *Node.Parent for nil.
+func (node *Node) HasEmptyParent() bool {
+	return node.Parent == nil
+}
+
+// HasEmptyRight checks *Node.Right for nil.
 func (node *Node) HasEmptyRight() bool {
 	return node.Right == nil
 }
 
-// HasLeft checks if Node has Node.Left.
+// HasLeft checks *Node.Left is *Node.
 func (node *Node) HasLeft() bool {
-	return node.Left != nil
+	return !node.HasEmptyLeft()
 }
 
-// HasParent checks if Node has Node.Parent.
+// HasParent checks *Node.Parent is *Node.
 func (node *Node) HasParent() bool {
-	return node.Parent != nil
+	return !node.HasEmptyParent()
 }
 
-// HasRight checks if Node has Node.Right.
+// HasRight checks *Node.Right is *Node.
 func (node *Node) HasRight() bool {
-	return node.Right != nil
+	return !node.HasEmptyRight()
 }
 
-// HasValue checks if provided value is Node.Value.
-func (node *Node) HasValue(value interface{}) bool {
+// HasValue evaluates whether passed
+// float64 value is *Node.Value.
+func (node *Node) HasValue(value float64) bool {
 	return node.Value == value
 }
 
-// HasLeftValue checks if provided value
-// is stored in Node.Left.Value.
-func (node *Node) HasLeftValue(value int) bool {
-	return node.HasLeft() && node.Left.HasValue(value)
+// Height computes sum of *Node children
+// selecting the max of *Node.Left and *Node.Right.
+func (node *Node) Height() float64 {
+	return math.Max(node.HeightLeft(), node.HeightRight())
 }
 
-// HasRightValue checks if provided value
-// is stored in Node.Right.Value.
-func (node *Node) HasRightValue(value int) bool {
-	return node.HasRight() && node.Right.HasValue(value)
-}
-
-// Height returns max of connected Nodes.
-func (node *Node) Height() int {
-	// get sum of Node.Left connected Nodes.
-	l := node.HeightLeft()
-	// get sum of Node.Right connected Nodes.
-	r := node.HeightRight()
-	// find largest.
-	if l > r {
-		return l
-	}
-	return r
-}
-
-// HeightLeft returns sum of connected
-// Nodes in Node.Left.
-func (node *Node) HeightLeft() int {
+// HeightLeft computes height of *Node.Left.
+func (node *Node) HeightLeft() float64 {
 	if node.HasEmptyLeft() {
-		// if there is no Node.Left
-		// height is therefore zero.
-		return 0
+		return 0.0
 	}
-	// height is sum of Node.Left plus current Node.
-	return node.Left.Height() + 1
+	return (node.Left.Height() + 1.0)
 }
 
-// HeightRight returns sum of connected
-// Nodes in Node.Right.
-func (node *Node) HeightRight() int {
+// HeightRight computes height of *Node.Right.
+func (node *Node) HeightRight() float64 {
 	if node.HasEmptyRight() {
-		// if there is no Node.Right
-		// height is therefore zero.
-		return 0
+		return 0.0
 	}
-	// height is sum of Node.Right plus current Node.
-	return node.Right.Height() + 1
+	return (node.Right.Height() + 1.0)
 }
 
-// RemoveChild removes Node based on contained value.
-// Removes Node.Left before Node.Right.
-func (node *Node) RemoveChild(value int) bool {
-	if node.HasLeftValue(value) {
+// Insert performs core Binary Search Tree
+// assignment operation. Smaller values
+// are stored on *Node.Left. Larger values
+// are stored on *Node.Right.
+func (node *Node) Insert(value float64) *Node {
+	if value < node.Value {
+		if node.HasLeft() {
+			return node.Left.Insert(value)
+		}
+		return node.SetLeft(value)
+	}
+	if value > node.Value {
+		if node.HasRight() {
+			return node.Right.Insert(value)
+		}
+		return node.SetRight(value)
+	}
+	return node
+}
+
+// OverweightLeft determines if *Node
+// contains more left children.
+func (node *Node) OverweightLeft() bool {
+	return node.Distribution() > 1
+}
+
+// OverweightRight determines if *Node
+// contains more right children.
+func (node *Node) OverweightRight() bool {
+	return node.Distribution() < -1
+}
+
+// Remove removes a *Node connection.
+func (node *Node) Remove(value float64) bool {
+	if node.HasValue(value) {
+		if node.HasParent() {
+			return node.Parent.RemoveByValue(value)
+		}
+		return node.RemoveByValue(value)
+	} else if value < node.Value && node.HasLeft() {
+		return node.Left.Remove(value)
+	} else if value > node.Value && node.HasRight() {
+		return node.Right.Remove(value)
+	}
+	return false
+}
+
+// RemoveByValue removes a *Node connection by *Node.Value.
+func (node *Node) RemoveByValue(value float64) bool {
+	if node.HasLeft() && node.Left.HasValue(value) {
 		node.RemoveLeft()
 		return true
 	}
-	if node.HasRightValue(value) {
+	if node.HasRight() && node.Right.HasValue(value) {
 		node.RemoveRight()
 		return true
 	}
 	return false
 }
 
-// RemoveLeft removes Node.Left.
+// RemoveLeft unassigns *Node.Left.
 func (node *Node) RemoveLeft() *Node {
 	node.Left = nil
-	// return accessed Node.
 	return node
 }
 
-// RemoveRight unsets Node.Right.
+// RemoveRight unassigns *Node.Right.
 func (node *Node) RemoveRight() *Node {
 	node.Right = nil
-	// return accessed Node.
 	return node
 }
 
-// SetLeft reassigns as Node to the reference Node.
-// Current Node.Left is collected by garbage collector if orphaned.
-func (node *Node) SetLeft(n *Node) *Node {
-	if node.HasLeft() {
-		// remove Node.Left.Parent as
-		// the current Node is to become the
-		// provided Node's parent.
-		node.Left.Parent = nil
-	}
-	// set Node.Left to provided Node.
-	node.Left = n
-	// update Node.Left.Parent to Node.
+// Same compares whether the provided *Node
+// is the same reference.
+func (node *Node) Same(n *Node) bool {
+	return node == n
+}
+
+// SetLeft assigns *Node.Left a new *Node.
+func (node *Node) SetLeft(value float64) *Node {
+	node.Left = New(value)
 	node.Left.Parent = node
-	// return accessed Node.
 	return node
 }
 
-// SetRight reassigns as Node to the reference Node.
-// Current Node.Right is collected by garbage collector if orphaned.
-func (node *Node) SetRight(n *Node) *Node {
-	if node.HasRight() {
-		// remove Node.Right.Parent as
-		// the current Node is to become the
-		// provided Node's parent.
-		node.Right.Parent = nil
-	}
-	// set Node.Right to provided Node.
-	node.Right = n
-	// update Node.Right.Parent to Node.
+// SetLeftNode graphs an existing *Node
+// to the accessed *Node.
+func (node *Node) SetLeftNode(n *Node) *Node {
+	node.Left = n
+	return node
+}
+
+// SetRight assigns *Node.Right a new *Node.
+func (node *Node) SetRight(value float64) *Node {
+	node.Right = New(value)
 	node.Right.Parent = node
-	// returned accessed Node.
 	return node
 }
 
-// SetValue changes the assigned value to Node.Value.
-func (node *Node) SetValue(value int) *Node {
+// SetRightNode graphs an existing *Node
+// to the accessed *Node.
+func (node *Node) SetRightNode(n *Node) *Node {
+	node.Right = n
+	return node
+}
+
+// SetValue mutates *Node.Value and reassigns *Node.
+func (node *Node) SetValue(value float64) *Node {
+	if node.HasValue(value) {
+		return node
+	}
 	node.Value = value
-	// returned accessed Node.
+	if node.HasParent() {
+		node.Parent = node.Parent.GetLargest()
+	}
 	return node
 }
 
-// ToSlice returns a Slice of Nodes.
-// Returns Slice from accessed Node.
+// ToSlice arranges *Node children into
+// and ordered Slice of *Node.
 func (node *Node) ToSlice() []*Node {
-	// set base slice of Nodes.
-	slice := make([]*Node, 0)
-	// collect Node.Left slice.
-	// convention is left -> right.
+	nodes := make([]*Node, 0)
 	if node.HasLeft() {
-		slice = node.Left.ToSlice()
+		nodes = append(nodes, node.Left.ToSlice()...)
 	}
-
-	slice = append(slice, node)
-	// collect Node.Right slice.
+	nodes = append(nodes, node)
 	if node.HasRight() {
-		// concatenate slices.
-		slice = append(slice, node.Right.ToSlice()...)
+		nodes = append(nodes, node.Right.ToSlice()...)
 	}
-
-	return slice
+	return nodes
 }
 
-// ToSliceOfValues returns Slice of stored Node.Values.
-// Returns Slice from accessed Node.
-func (node *Node) ToSliceOfValues() []interface{} {
-	// set base slice of interfaces.
-	slice := make([]interface{}, 0)
-	// collect Node.Left slice values.
-	// convention is left -> right.
+// ToSliceFloat64 arranges *Node children into
+// and ordered Slice of *Node.Value.
+func (node *Node) ToSliceFloat64() []float64 {
+	float64s := make([]float64, 0)
 	if node.HasLeft() {
-		slice = node.Left.ToSliceOfValues()
+		float64s = append(float64s, node.Left.ToSliceFloat64()...)
 	}
-
-	slice = append(slice, node.Value)
-	// collect Node.Right slice values.
+	float64s = append(float64s, node.Value)
 	if node.HasRight() {
-		// concatenate slices.
-		slice = append(slice, node.Right.ToSliceOfValues()...)
+		float64s = append(float64s, node.Right.ToSliceFloat64()...)
 	}
-
-	return slice
+	return float64s
 }

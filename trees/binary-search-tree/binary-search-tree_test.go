@@ -13,9 +13,11 @@ func Test(t *testing.T) {
 
 	log.Println(bst)
 
-	bst.Add(8.0).Add(10.0).Add(5.0).Add(12.0).Add(-1.0)
+	bst.Add(8.0).Add(10.0).Add(5.0).Add(12.0).Add(-1.0).Add(9.0).Add(20.0)
 
 	log.Println(bst.ToSliceFloat64())
+
+	log.Println(bst.Distribution())
 
 	log.Println(bst.Root.Left.Value, bst.Root.Value, bst.Root.Right.Value)
 
@@ -26,4 +28,6 @@ func Test(t *testing.T) {
 	log.Println(bst.Remove(10.0))
 
 	log.Println(bst.ToSliceFloat64())
+
+	log.Println(bst.Distribution())
 }

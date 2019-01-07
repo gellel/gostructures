@@ -1,7 +1,7 @@
 package treenode_test
 
 import (
-	"log"
+	"fmt"
 	"testing"
 
 	treenode "github.com/gellel/gostructures/trees/tree-node"
@@ -9,16 +9,7 @@ import (
 
 func Test(t *testing.T) {
 
-	n := treenode.New(1)
+	b := treenode.New(7.0)
 
-	log.Println(n.SetLeft(treenode.New(2)))
-
-	log.Println(n.HasEmptyLeft())
-
-	log.Println(n.HasLeft())
-
-	log.Println(n.ToSlice())
-
-	log.Println(n.ToSliceOfValues())
-
+	fmt.Println(b)
 }
