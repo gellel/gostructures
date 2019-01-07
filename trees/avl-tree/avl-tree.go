@@ -17,8 +17,23 @@ func New(value float64) *AVLTree {
 		binarysearchtree.New(value)}
 }
 
-func (avlTree *AVLTree) RotateLeft(root *treenode.Node) {
+// RotateLeft performs a Right weighted balance
+// for AVLTree. Extracts middle *treenode.Node
+// from connected -2 balance. Sets middle
+// as root and shifts original root to middle's left.
+func (avlTree *AVLTree) RotateLeft(node *treenode.Node) {
 
+	// de-reference and store current node (*treenode.Node).
+	root := *node
+	// destroy root *treenode.Node.Right
+	// to prevent recursion overflow.
+	root.Right = nil
+	// update memory pointer for
+	// node argument and assign
+	// *treenode.Node.Right new value.
+	*node = *node.Right
+	// set memory address for copied *treenode.Node.
+	node.Left = &root
 }
 
 func (avlTree *AVLTree) RotateLeftRight(root *treenode.Node) {

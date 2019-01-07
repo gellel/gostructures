@@ -10,4 +10,4 @@ Worst-case time performance.
 
 | Access   | Search    | Insert    | Delete    |
 | :---     | :---      | :---      | :---      |
-| Θ(n)     | Θ(n)      | Θ(n)      | Θ(n)      |
+| Ω(n)     | Ω(n)      | Ω(n)      | Ω(n)      |

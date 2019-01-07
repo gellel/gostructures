@@ -159,13 +159,13 @@ func (node *Node) Insert(value float64) *Node {
 // OverweightLeft determines if *Node
 // contains more left children.
 func (node *Node) OverweightLeft() bool {
-	return node.Distribution() > 1
+	return node.Distribution() > 0
 }
 
 // OverweightRight determines if *Node
 // contains more right children.
 func (node *Node) OverweightRight() bool {
-	return node.Distribution() < -1
+	return node.Distribution() < 0
 }
 
 // Remove removes a *Node connection.
