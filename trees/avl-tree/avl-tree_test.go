@@ -13,19 +13,42 @@ func Test(t *testing.T) {
 
 	b := avltree.New(3.0)
 
-	a.Add(2.0).Add(3.0)
+	c := avltree.New(3.0)
 
-	b.Add(2.0).Add(1.0)
+	a.Add(2.0).Add(3.0) //  left-rotate
 
-	log.Println("a:", a.Root.Distribution())
+	b.Add(2.0).Add(1.0) // right-rotate
 
-	log.Println("b:", b.Root.Distribution())
+	c.Add(1.0).Add(2.0)
 
-	log.Println("a:", a.ToSliceFloat64())
+	log.Println("ll:", a.Root.Distribution())
+
+	log.Println("rr:", b.Root.Distribution())
+
+	log.Println("lr:", c.Root.Distribution())
+
+	log.Println("ll:", a.ToSliceFloat64())
+
+	log.Println("rr:", b.ToSliceFloat64())
+
+	log.Println("lr:", c.ToSliceFloat64())
 
 	a.RotateLeft(a.Root)
 
-	//log.Println(a.Distribution())
+	b.RotateRight(b.Root)
 
-	//log.Println(a.ToSliceFloat64())
+	c.RotateLeftRight(c.Root)
+
+	log.Println("ll:", a.Distribution())
+
+	log.Println("ll:", a.ToSliceFloat64())
+
+	log.Println("rr:", b.Distribution())
+
+	log.Println("rr:", b.ToSliceFloat64())
+
+	log.Println("lr:", c.Distribution())
+
+	log.Println("lr:", c.ToSliceFloat64())
+
 }
