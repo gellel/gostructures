@@ -18,11 +18,11 @@ func New(value float64) *AVLTree {
 }
 
 func (avlTree *AVLTree) Balance(node *treenode.Node) {
-
+	
 	if node.Distribution() > 1 {
 		if node.Left.Distribution() > 0 {
-			avlTree.RotateLeft(node.Left)
-		} else if node.Left.Distribution() < {
+			avlTree.RotateLeft(node)
+		} else if node.Left.Distribution() < 0 {
 			avlTree.RotateLeftRight(node)
 		}
 	} else if node.Distribution() < -1 {
@@ -31,6 +31,36 @@ func (avlTree *AVLTree) Balance(node *treenode.Node) {
 		} else if node.Right.Balance() > 0 {
 			avlTree.RotateRightLeft(node)
 		}
+	}
+}
+
+
+// Insert performs core Binary Search Tree insert operation,
+// but attempts to balance *AVLTree using AVL method.
+func (avltree *AVLTree) Insert(value float64) *AVLTree {
+
+	node := avlTree.BinarySearchTree.Insert(value).Parent
+
+	if node.HasLeft() && node.Left.HasValue(value) {
+		node = node.Left
+	} else if node.HasRight() && node.Right.HasValue(value) {
+		node = node.Right
+	}
+
+	for node {
+
+		avltree.Balance(node)
+
+		node = node.Parent
+	}
+	return avlTree
+}
+
+// Remove removes a *treenode.Node based on value.
+// Rebalances AVLTree if successful. 
+func (avltree *AVLTree) Remove(value float64) *AVLTree {
+	if avlTree.BinarySearchTree.Remove(value) && avlTree.Root != nil {
+		avltree.Balance(avltree.Root)
 	}
 }
 
