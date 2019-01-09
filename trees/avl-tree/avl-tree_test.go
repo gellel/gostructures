@@ -1,7 +1,9 @@
 package avltree_test
 
 import (
+	"fmt"
 	"log"
+	"math/rand"
 	"testing"
 
 	avltree "github.com/gellel/gostructures/trees/avl-tree"
@@ -16,6 +18,8 @@ func Test(t *testing.T) {
 	c := avltree.New(3.0)
 
 	d := avltree.New(1.0)
+
+	e := avltree.New(5.0)
 
 	a.Add(2.0).Add(3.0) // left-rotate
 
@@ -64,4 +68,27 @@ func Test(t *testing.T) {
 	log.Println("rl:", d.Distribution())
 
 	log.Println("rl:", d.ToSliceFloat64())
+
+	min := 1.0
+	max := 10.0
+
+	nums := make([]float64, 15)
+
+	for i := 0; i < 15; i++ {
+
+		r := min + rand.Float64()*(max-min)
+
+		fmt.Println(r)
+
+		nums[i] = r
+
+		e.Insert(r)
+	}
+
+	for i := range nums {
+		fmt.Println("looking for:", nums[i], e.Find(nums[i]) != nil)
+	}
+
+	log.Println("auto:", e.ToSliceFloat64())
+
 }

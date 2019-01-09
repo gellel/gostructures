@@ -1,6 +1,9 @@
 package avltree
 
 import (
+	"fmt"
+	"log"
+
 	binarysearchtree "github.com/gellel/gostructures/trees/binary-search-tree"
 	treenode "github.com/gellel/gostructures/trees/tree-node"
 )
@@ -20,17 +23,19 @@ func New(value float64) *AVLTree {
 // Balance performs core AVL Tree operation.
 func (avlTree *AVLTree) Balance(node *treenode.Node) {
 
+	//fmt.Println(node.Value, node.Distribution(), node.HasLeft(), node.HasRight(), node.HasParent())
+
 	if node.Distribution() > 1 {
-		if node.Left.Distribution() > 0 {
+		if node.Right.Distribution() > 1 {
+			avlTree.RotateLeftRight(node.Left)
+		} else {
 			avlTree.RotateLeft(node)
-		} else if node.Left.Distribution() < 0 {
-			avlTree.RotateLeftRight(node)
 		}
 	} else if node.Distribution() < -1 {
-		if node.Right.Distribution() < 0 {
-			avlTree.RotateRight(node)
-		} else if node.Right.Distribution() > 0 {
+		if node.Left.Distribution() < -1 {
 			avlTree.RotateRightLeft(node)
+		} else {
+			avlTree.RotateRight(node)
 		}
 	}
 }
@@ -39,7 +44,7 @@ func (avlTree *AVLTree) Balance(node *treenode.Node) {
 // but attempts to balance *AVLTree using AVL method.
 func (avlTree *AVLTree) Insert(value float64) *AVLTree {
 
-	node := avlTree.BinarySearchTree.Insert(value).Parent
+	node := avlTree.BinarySearchTree.Insert(value)
 
 	if node.HasLeft() && node.Left.HasValue(value) {
 		node = node.Left
@@ -47,10 +52,19 @@ func (avlTree *AVLTree) Insert(value float64) *AVLTree {
 		node = node.Right
 	}
 
-	for node != nil {
+	c := 0
+	for node.HasParent() {
+
+		fmt.Println(node.Left, node.Value, node.Right)
 
 		avlTree.Balance(node)
 
+		fmt.Println(node.Left, node.Value, node.Right)
+		c++
+
+		if c > 10 {
+			log.Panicf("")
+		}
 		node = node.Parent
 	}
 	return avlTree
@@ -70,16 +84,15 @@ func (avlTree *AVLTree) Remove(value float64) *AVLTree {
 // as new *treenode.Node. Sets original *treenode.Node as
 // new *treenode.Node.Left.
 func (avlTree *AVLTree) RotateLeft(node *treenode.Node) {
-	// de-reference and store current node (*treenode.Node).
+
+	right := node.Right
+
+	node.Right = nil
+
 	root := *node
-	// destroy root *treenode.Node.Right
-	// to prevent recursion overflow.
-	root.Right = nil
-	// update memory pointer for
-	// node argument and assign
-	// *treenode.Node.Right as new value.
-	*node = *node.Right
-	// set memory address for copied *treenode.Node.
+
+	*node = *right
+
 	node.Left = &root
 
 	// from: [root  1]-->[root.right  2]-->[root.right.right  3]
@@ -116,16 +129,15 @@ func (avlTree *AVLTree) RotateLeftRight(node *treenode.Node) {
 // as new *treenode.Node. Sets original *treenode.Node as
 // new *treenode.Node.Right.
 func (avlTree *AVLTree) RotateRight(node *treenode.Node) {
-	// de-reference and store current node (*treenode.Node).
+
+	left := node.Left
+
+	node.Left = nil
+
 	root := *node
-	// destroy root *treenode.Node.Left
-	// to prevent recursion overflow.
-	root.Left = nil
-	// update memory pointer for
-	// node argument and assign
-	// *treenode.Node.Left as new value.
-	*node = *node.Left
-	// set memory address for copied *treenode.Node.
+
+	*node = *left
+
 	node.Right = &root
 
 	// from: [root  3]-->[root.left  2]-->[root.left.left  1]

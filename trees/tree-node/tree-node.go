@@ -41,10 +41,10 @@ func (node *Node) Find(value float64) *Node {
 	if node.HasValue(value) {
 		return node
 	}
-	if node.HasLeft() {
+	if value < node.Value && node.HasLeft() {
 		return node.Left.Find(value)
 	}
-	if node.HasRight() {
+	if value > node.Value && node.HasRight() {
 		return node.Right.Find(value)
 	}
 	return nil
