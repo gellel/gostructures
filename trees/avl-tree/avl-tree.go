@@ -17,8 +17,25 @@ func New(value float64) *AVLTree {
 		binarysearchtree.New(value)}
 }
 
+func (avlTree *AVLTree) Balance(node *treenode.Node) {
+
+	if node.Distribution() > 1 {
+		if node.Left.Distribution() > 0 {
+			avlTree.RotateLeft(node.Left)
+		} else if node.Left.Distribution() < {
+			avlTree.RotateLeftRight(node)
+		}
+	} else if node.Distribution() < -1 {
+		if node.Right.Balance() < 0 {
+			avltree.RotateRight(node)
+		} else if node.Right.Balance() > 0 {
+			avlTree.RotateRightLeft(node)
+		}
+	}
+}
+
 // RotateLeft performs a *treenode.Node
-// child node re-alignment. Sets *treenode.Node.Left.
+// child node re-alignment. Sets *treenode.Node.Right.
 // as new *treenode.Node. Sets original *treenode.Node as
 // new *treenode.Node.Left.
 func (avlTree *AVLTree) RotateLeft(node *treenode.Node) {
