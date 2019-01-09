@@ -19,7 +19,7 @@ func New(value float64) *AVLTree {
 
 // Balance performs core AVL Tree operation.
 func (avlTree *AVLTree) Balance(node *treenode.Node) {
-	
+
 	if node.Distribution() > 1 {
 		if node.Left.Distribution() > 0 {
 			avlTree.RotateLeft(node)
@@ -27,18 +27,17 @@ func (avlTree *AVLTree) Balance(node *treenode.Node) {
 			avlTree.RotateLeftRight(node)
 		}
 	} else if node.Distribution() < -1 {
-		if node.Right.Balance() < 0 {
-			avltree.RotateRight(node)
-		} else if node.Right.Balance() > 0 {
+		if node.Right.Distribution() < 0 {
+			avlTree.RotateRight(node)
+		} else if node.Right.Distribution() > 0 {
 			avlTree.RotateRightLeft(node)
 		}
 	}
 }
 
-
 // Insert performs core Binary Search Tree insert operation,
 // but attempts to balance *AVLTree using AVL method.
-func (avltree *AVLTree) Insert(value float64) *AVLTree {
+func (avlTree *AVLTree) Insert(value float64) *AVLTree {
 
 	node := avlTree.BinarySearchTree.Insert(value).Parent
 
@@ -48,9 +47,9 @@ func (avltree *AVLTree) Insert(value float64) *AVLTree {
 		node = node.Right
 	}
 
-	for node {
+	for node != nil {
 
-		avltree.Balance(node)
+		avlTree.Balance(node)
 
 		node = node.Parent
 	}
@@ -58,11 +57,12 @@ func (avltree *AVLTree) Insert(value float64) *AVLTree {
 }
 
 // Remove removes a *treenode.Node based on value.
-// Rebalances AVLTree if successful. 
-func (avltree *AVLTree) Remove(value float64) *AVLTree {
+// Rebalances AVLTree if successful.
+func (avlTree *AVLTree) Remove(value float64) *AVLTree {
 	if avlTree.BinarySearchTree.Remove(value) && avlTree.Root != nil {
-		avltree.Balance(avltree.Root)
+		avlTree.Balance(avlTree.Root)
 	}
+	return avlTree
 }
 
 // RotateLeft performs a *treenode.Node
@@ -111,7 +111,7 @@ func (avlTree *AVLTree) RotateLeftRight(node *treenode.Node) {
 	avlTree.RotateRight(node)
 }
 
-// RotateLeft performs a *treenode.Node
+// RotateRight performs a *treenode.Node
 // child node re-alignment. Sets *treenode.Node.Left.
 // as new *treenode.Node. Sets original *treenode.Node as
 // new *treenode.Node.Right.
@@ -139,7 +139,7 @@ func (avlTree *AVLTree) RotateRight(node *treenode.Node) {
 // the root node is rebalanced using RotateLeft.
 func (avlTree *AVLTree) RotateRightLeft(node *treenode.Node) {
 	// de-reference and store current root.Right.
-	right := *node.Right 
+	right := *node.Right
 	// de-reference and store current root.Right.Left.
 	rightLeft := *right.Left
 	// destroy root.Right.Left to prevent
