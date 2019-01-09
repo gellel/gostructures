@@ -17,6 +17,7 @@ func New(value float64) *AVLTree {
 		binarysearchtree.New(value)}
 }
 
+// Balance performs core AVL Tree operation.
 func (avlTree *AVLTree) Balance(node *treenode.Node) {
 	
 	if node.Distribution() > 1 {
