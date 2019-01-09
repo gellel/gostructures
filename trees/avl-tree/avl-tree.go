@@ -17,10 +17,10 @@ func New(value float64) *AVLTree {
 		binarysearchtree.New(value)}
 }
 
-// RotateLeft performs a Right weighted balance
-// for AVLTree. Extracts middle *treenode.Node
-// from *treenode.Node -2 distribution. Sets middle
-// as root and shifts original root to middle's left.
+// RotateLeft performs a *treenode.Node
+// child node re-alignment. Sets *treenode.Node.Left.
+// as new *treenode.Node. Sets original *treenode.Node as
+// new *treenode.Node.Left.
 func (avlTree *AVLTree) RotateLeft(node *treenode.Node) {
 	// de-reference and store current node (*treenode.Node).
 	root := *node
@@ -33,38 +33,40 @@ func (avlTree *AVLTree) RotateLeft(node *treenode.Node) {
 	*node = *node.Right
 	// set memory address for copied *treenode.Node.
 	node.Left = &root
+
+	// from: [root  1]-->[root.right  2]-->[root.right.right  3]
+	// to:   [root.left  1]<--[root  2]-->[root.right   3]
 }
 
 // RotateLeftRight performs a *treenode.Node
-// reassignment, setting *treenode.Node.Left as
-// the second left-child of root. Shifts
-// *treenode.Node.Left.Right as first left-child of
-// accessed root node .
+// child node re-alignment. Sets *treenode.Node.Left.Right as
+// the child node of *treenode.Node.Left.
+// After all *treenode.Node children are left-aligned
+// the root node is rebalanced using RotateLeft.
 func (avlTree *AVLTree) RotateLeftRight(node *treenode.Node) {
-	// de-reference and store current node's first-child.
+	// de-reference and store current root.Left.
 	left := *node.Left
-	// de-reference and store first-child's right node.
+	// de-reference and store current root.Left.Right.
 	leftRight := *left.Right
-	// destroy *treenode.Node.Left's reference
-	// to it's right-child (*treenode.Node.Left.Right)
-	// to prevent recursion overflow.
+	// destroy root.Left.Right to prevent
+	// recursion overflow due to circular reference.
 	left.Right = nil
-	// set root node's first left-child
-	// to the stored node that existed at
-	// *treenode.Node.Left.Right.
+	// shift root.Left.Right to become root.Left.
 	node.Left = &leftRight
-	// shift origin root node's first left-child
-	// to become new *treenode.Node.Left's first
-	// left-child.
+	// shift root.Left.Right to become root.Left.Left.
 	leftRight.Left = &left
+
+	// from: [root  3]-->[root.left  1]-->[root.left.right  2]
+	// to:   [root  3]-->[root.left  2]-->[root.left.left   1]
+
 	// rebalance the overweight root node.
 	avlTree.RotateRight(node)
 }
 
-// RotateRight performs a Left weighted balance
-// for AVLTree. Extracts middle *treenode.Node
-// from *treenode.Node 2 distribution. Sets middle
-// as root and shifts original root to middle's right.
+// RotateLeft performs a *treenode.Node
+// child node re-alignment. Sets *treenode.Node.Left.
+// as new *treenode.Node. Sets original *treenode.Node as
+// new *treenode.Node.Right.
 func (avlTree *AVLTree) RotateRight(node *treenode.Node) {
 	// de-reference and store current node (*treenode.Node).
 	root := *node
@@ -78,8 +80,31 @@ func (avlTree *AVLTree) RotateRight(node *treenode.Node) {
 	// set memory address for copied *treenode.Node.
 	node.Right = &root
 
+	// from: [root  3]-->[root.left  2]-->[root.left.left  1]
+	// to:   [root.left  1]<--[root  2]-->[root.right   3]
 }
 
-func (avlTree *AVLTree) RotateRightLeft(root *treenode.Node) {
+// RotateRightLeft performs a *treenode.Node
+// child node re-alignment. Sets *treenode.Node.Right.Left as
+// the child node of *treenode.Node.Right.
+// After all *treenode.Node children are right-aligned
+// the root node is rebalanced using RotateLeft.
+func (avlTree *AVLTree) RotateRightLeft(node *treenode.Node) {
+	// de-reference and store current root.Right.
+	right := *node.Right 
+	// de-reference and store current root.Right.Left.
+	rightLeft := *right.Left
+	// destroy root.Right.Left to prevent
+	// recursion overflow due to circular reference.
+	right.Left = nil
+	// shift root.Right.Left to become root.Right.
+	node.Right = &rightLeft
+	// shift root.Right.Left to become root.Right.Right.
+	rightLeft.Right = &right
 
+	// from: [root  1]-->[root.right  3]-->[root.right.left   2]
+	// to:   [root  1]-->[root.right  2]-->[root.right.right  3]
+
+	// rebalance right-weighted root node.
+	avlTree.RotateLeft(node)
 }
