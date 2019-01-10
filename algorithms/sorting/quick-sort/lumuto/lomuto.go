@@ -1,27 +1,36 @@
+// Package lomuto provides Quicksort 
+// using the Lomuto partitioning scheme.
+// This scheme chooses a pivot that is the
+// last element in a Slice or Array. 
 package lomuto
 
 
 // Quicksort algorithm using Lomuto partition scheme.
+func Quicksort(a []int) []int {
+    return quicksort(a, 0, len(a)-1)
+}
+
+// Quicksort algorithm using Lomuto partition scheme.
 // Uses floor: 0 and ceiling: n-1 to divide
 // and organise the unsorted Slice or Array.
-func Quicksort(a []int, floor int, ceiling int) []int {
+func quicksort(a []int, floor int, ceiling int) []int {
     // checks whether the recursive floor position
     // has been shifted n times to match the ceiling.
     // a sorted Slice or Array would have a floor equal to
     // ceiling, or simply N.
 	if floor < ceiling {
         // perform core Quicksort algorithm.
-		partition := Partition(a, floor, ceiling)
+		partition := partition(a, floor, ceiling)
         // organise unsorted Slice or Array
         // that is on the left side of the
         // generated pivot. 
         // shifts ceiling lower.
-        Quicksort(a, floor, (partition - 1))
+        quicksort(a, floor, (partition - 1))
         // organise unsorted Slice or Array
         // that is on the right side of the
         // generated pivot. 
         // shifts floor higher.
-		Quicksort(a, (partition + 1), ceiling)
+		quicksort(a, (partition + 1), ceiling)
     }
     // Slice or Array is organised.
 	return a
@@ -29,7 +38,7 @@ func Quicksort(a []int, floor int, ceiling int) []int {
 
 // Partition using Lomuto partition scheme.
 // Uses ceiling sum as the partition pivot.
-func Partition(a []int, floor int, ceiling int) int {
+func partition(a []int, floor int, ceiling int) int {
     // define pivot to operate as condition
     // for assigning items that are misplaced.
     // uses sum of pivot to be ordering field.
@@ -59,19 +68,20 @@ func Partition(a []int, floor int, ceiling int) int {
             // update next swap position.
             i = i + 1
             // perform the swap.
-            Swap(a, i, j)
+            swap(a, i, j)
         }
     }
     // swap the element value found
     // that exceeds the current ceiling.    
-    Swap(a, i + 1, ceiling)
+    swap(a, i + 1, ceiling)
     // previous position of highest
     // found element in Slice or Array becomes
     // new recursive pivot. 
     return i + 1
 }
 
-func Swap(a []int, i int, j int) {
-
+// Swap reassigns elements within
+// a Slice or Array.
+func swap(a []int, i int, j int) {
     a[i], a[j] = a[j], a[i]
 }
