@@ -32,11 +32,10 @@ func partition(a []int, floor int, ceiling int) int {
 				break
 			}
 		}
-		if i < j {
-			swap(a, i, j)
-		} else {
+		if i >= j {
 			break
 		}
+		swap(a, i, j)
 	}
 	return j
 }
