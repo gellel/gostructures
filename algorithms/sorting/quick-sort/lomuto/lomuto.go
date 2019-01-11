@@ -1,6 +1,6 @@
 // Package lomuto provides Quicksort 
 // using the Lomuto partitioning scheme.
-// This scheme chooses a pivot that is the
+// This implementation chooses a pivot that is the
 // last element in a Slice or Array. 
 package lomuto
 
@@ -20,17 +20,17 @@ func quicksort(a []int, floor int, ceiling int) []int {
     // ceiling, or simply N.
 	if floor < ceiling {
         // perform core Quicksort algorithm.
-		partition := partition(a, floor, ceiling)
+		p := partition(a, floor, ceiling)
         // organise unsorted Slice or Array
         // that is on the left side of the
         // generated pivot. 
         // shifts ceiling lower.
-        quicksort(a, floor, (partition - 1))
+        quicksort(a, floor, (p - 1))
         // organise unsorted Slice or Array
         // that is on the right side of the
         // generated pivot. 
         // shifts floor higher.
-		quicksort(a, (partition + 1), ceiling)
+		quicksort(a, (p + 1), ceiling)
     }
     // Slice or Array is organised.
 	return a
@@ -51,7 +51,7 @@ func partition(a []int, floor int, ceiling int) int {
     // required for shifting a reliable
     // index J indexes right. usage
     // of floor - 1 creates a convention 
-    // where updating I before swapping
+    // where incrimenting i before swapping
     // is required. 
     i := (floor - 1)
 
