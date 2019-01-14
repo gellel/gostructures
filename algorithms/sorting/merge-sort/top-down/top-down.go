@@ -29,19 +29,47 @@ func clone(a []int) []int {
 // the original Slice or Array (A) is mutated across
 // function calls.
 func merge(a []int, b []int, floor int, partition int, ceiling int) []int {
-    //
+    // set base index for shifting
+    // lower bounds comparision.
     i := floor
-    //
+    // set base index for shifting
+    // upper bounds.
     j := partition
     
+    // iterate across sequence using shifted floor 
+    // and ceiling from recursive sorted calls.
+    // floor being either floor from
+    // subdivision left (i.e, 0 -> n/2) or
+    // partition for subdivision right (n/2 -> n)
     for k := floor; k < ceiling; k++ {
-        // confirm i has not exceeded the provided
-        // upper bounds 
+        // confirm whether lower bounds
+        // has available positions to check in the
+        // subset sequence. additionally confirm
+        // that upper bounds has available positions.
+        // j is required to check whether it matches
+        // or exceeds the ceiling as upper bounds of subset
+        // must be the highest ordered sum of the current
+        // subset sequence. i.e [j=1, ceiling=2, then, j=2, ceiling=2]
+        // then compare whether the duplicate sequence
+        // at the current indexes contains an element
+        // requiring re-positioning.
         if (i < partition) && ((j >= ceiling) || (b[i] <= b[j])) {
+            // set the original sequence to contain
+            // the upper bounds value contained in
+            // the duplicate sequence. this
+            // should substitute at the matching
+            // value of a[k]. 
+            // i.e a[1, 1], b[2, 1] becomes a[1, a[k]->2<-b[i]].
             a[k] = b[i]
+            // increment lower bounds reference.
             i = i + 1
         } else {
+            // set the original sequence to contain
+            // the lower bounds value from the
+            // duplicate sequence. generates a sorted
+            // array. i.e a[2, 1] becomes a[1, 1].
             a[k] = b[j]
+            // increment upper bounds reference.
             j = j + 1
         }
     }
