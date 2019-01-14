@@ -76,12 +76,26 @@ func merge(a []int, b []int, floor int, partition int, ceiling int) []int {
     return a
 }
 
-// Sort subsets
+// Sort subsets floor and ceiling into
+// n/2 sets of original sequence size.
+// Repeats operations for logN iterations until
+// the sum of logN can no longer be evenly halved.
 func sort(a []int, b []int, floor int, ceiling int) []int {
+    // confirm whether current range of
+    // subset can be further divided.
+    // general implementation does not negate
+    // condition.
     if !((ceiling - floor) < 2) {
-
+        // set partition index for left
+        // and right sides of current subset.
         partition := ((floor + ceiling) / 2)
-
+        // recurively generate new partitions
+        // and subsets for left and right
+        // sequence ranges. in the recursion call case,
+        // B takes the position of A as the
+        // "original" sequence as merge updates
+        // A from sorted values from B. if passed in
+        // in the A B case, sorting does not work.
         sort(b, a, floor, partition)
         sort(b, a, partition, ceiling)
         merge(a, b, floor, partition, ceiling)
