@@ -22,4 +22,8 @@ func Test(t *testing.T) {
 	fmt.Println(list.SizeOf())
 
 	fmt.Println(list.Contains("b"))
+
+	fmt.Println(list.Prepend(1))
+
+	fmt.Println(list.Head)
 }
