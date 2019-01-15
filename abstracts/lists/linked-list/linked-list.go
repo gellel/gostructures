@@ -14,17 +14,14 @@ func New() *LinkedList {
     return &LinkedList{}
 }
 
-// AddHead sets the initial *LinkedList.Head.
+// AddHead sets *LinkedList.Head.
 func (linkedList *LinkedList) AddHead(node *node.Node) *LinkedList {
-    // set *LinkedList.Head to provided
-    // *LinkedList.Node. removes all current
-    // connections if called manually.
+    // set *LinkedList.Head to provided *LinkedList.Node. 
     linkedList.Head = node
-    // assume that the method was manually
-    // invoked and update the *LinkedList.Tail
-    // to become the current *LinkedList.Head.
+    // assumes *LinkedList.Tail is empty. assign *LinkedList.Head
+    // to be the current *LinkedList.Head.
     linkedList.Tail = linkedList.Head
-
+    // return the accessed LinkedList pointer.
     return linkedList
 }
 
@@ -33,41 +30,43 @@ func (linkedList *LinkedList) AddHead(node *node.Node) *LinkedList {
 // When the *LinkedList is empty, this new *LinkedList.Node
 // becomes both the *LinkedList.Head and *LinkedList.Tail.
 func (linkedList *LinkedList) Append(property interface{}) *LinkedList {
+    // perform first insertion when
+    // there is no connections.
     if linkedList.IsEmpty() {
+        // return the accessed LinkedList pointer.
         return linkedList.AddHead(node.New(property))
     }
+    // return the accessed LinkedList pointer.
     return linkedList.AppendTail(node.New(property))
 }
 
-// AppendTail updates *LinkedList.Tail.Next to
-// contain an adjacent reference to the provided *LinkedList.Node.
+// AppendTail updates *LinkedList.Tail.Next to contain an adjacent 
+// reference to the provided *LinkedList.Node.
 // The provided *LinkedList.Node then becomes *LinkedList.Tail.
 func (linkedList *LinkedList) AppendTail(node *node.Node) *LinkedList {
     // update the current *LinkedList.Tail to
-    // contain a adjacent reference to the provided 
-    // *LinkedList.Node.
+    // contain a adjacent reference to the provided *LinkedList.Node.
     linkedList.Tail.Next = node
     // set the current *LinkedList.Tail
     // to become the provided *LinkedList.Node.
     linkedList.Tail = node
-
+    // return the accessed LinkedList pointer.
     return linkedList
 }
 
 // Contain searches across O(n) entries attempting
-// to find a *LinkedList.Node that contains a
-// corresponding value.
+// to find a *LinkedList.Node that holds a corresponding value.
 func (linkedList *LinkedList) Contains(property interface{}) bool {
     return linkedList.Find(property) != nil
 }
 
-// Delete removes a connection between from one
-// *LinkedList.Node to an adjacent *LinkedList.Node.
-// Operation may require O(n) iterations before the
-// target *LinkedList.Node is found. Best case is
-// Omega(1) if value is contained in either *LinkedList.Head
-// or *LinkedList.Tail.
+// Delete removes a connection between from one LinkedList.Node 
+// to an adjacent *LinkedList.Node. Operation requires 
+// O(n) iterations to remove provided property.
 func (linkedList *LinkedList) Delete(property interface{}) *LinkedList {
+    if linkedList.HasEmptyHead() {
+        return linkedList
+    }
     return linkedList
 }
 
@@ -78,27 +77,28 @@ func (linkedList *LinkedList) Delete(property interface{}) *LinkedList {
 // Omega(1) if value is contained in either *LinkedList.Head
 // or *LinkedList.Tail.
 func (linkedList *LinkedList) Find(property interface{}) *node.Node {
-    // attempt to perform Omega(1) runtime
-    // by checking whether *LinkedList.Head
-    // or *LinkedList.Tail contains the required value.
+    // attempt to perform Omega(1) runtime by checking 
+    // whether *LinkedList.Head contains the required value.
     if linkedList.HasHead() && linked.Head.Value == property {
         return linkedList.Head
-    } else if linkedList.HasTail() && linked.Tail.Value == property {
+    }
+    // attempt to perform Omega(1) runtime by checking 
+    // whether *LinkedList.Tail contains the required value.
+    if linkedList.HasTail() && linked.Tail.Value == property {
         return linkedList.Tail
     }
-    // otherwise collect first *LinkedList.Node
+    // otherwise perform O(n).
+    // start by collecting *LinkedList.Head.
     node := LinkedList.Head
     // iterate while current *LinkedList.Node
     // contains an adjacent *LinkedList.Node.
     for node.Next && node.Next != linkedList.Tail {
-        // check whether current adjacent
-        // *LinkedList.Node.Value is the
-        // provided value.
+        // check whether current adjacent *LinkedList.Node.Value 
+        // is the provided value.
         if node.Next.Value == property {
             return node.Next
         }
-        // update current node and
-        // continue moving through the
+        // update current node and continue moving through the
         // connected sequence of LinkedList.Node.
         node = node.Next
     }
@@ -153,28 +153,50 @@ func (linkedList *LinkedList) IsPopulated() bool {
 // The previous *LinkedList.Head then becomes the 
 // provided LinkedList.Node.Next reference.
 func (linkedList *LinkedList) Prepend(property interface{}) *LinkedList {
+    // perform first insertion when
+    // there is no connections.
     if linkedList.IsEmpty() {
+        // return accessed LinkedList pointer.
         return linkedList.AddHead(node.New(property))
     }
+    // return the accessed LinkedList pointer.
     return linkedList.PrependHead(node.New(property))
 }
 
 // PrependHead performs the LinkedList insertion operation.
 // Method focuses on updating the *LinkedList.Head
 // to reference the provided *LinkedList.Node.
-// Manual invocation requires operator to manage
-// *LinkedList.Tail state.
+// Manual invocation requires operator to manage *LinkedList.Tail state.
 func (linkedList *LinkedList) PrependHead(node *node.Node) *LinkedList {
     // set *LinkedList.Node to contain an
-    // adjacent reference to current
-    // *LinkedList.Head.
+    // adjacent reference to current *LinkedList.Head.
     node.Next = linkedList.Head
     // set provided *LinkedList.Node
     // as the new *LinkedList.Head.
     linkedList.Head = node
-    
+    // return the accessed LinkedList pointer.
     return linkedList
 }
 
+// SizeOf computes the current size
+// of the accessed *LinkedList. Size
+// is computed from 0.
+func (linkedList *LinkedList) SizeOf() int {
+    // end early if there are
+    // no adjacent LinkedList.Nodes.
+    if linkedList.IsEmpty() {
+        return 0
+    }
+    n := 0
+    node := linkedList.Head
+    // iterate across adjacent *LinkedList.Nodes
+    // until the cursor has reached the *LinkedList.Tail.
+    for node.Next {
+        n = n + 1
+        node = node.Next
+    }
+    // return the computed size.
+    return n
+}
 
 var _ definition.LinkedList = (*LinkedList)(nil)
