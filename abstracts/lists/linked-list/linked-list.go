@@ -64,10 +64,41 @@ func (linkedList *LinkedList) Contains(property interface{}) bool {
 // to an adjacent *LinkedList.Node. Operation requires 
 // O(n) iterations to remove provided property.
 func (linkedList *LinkedList) Delete(property interface{}) *LinkedList {
-    if linkedList.HasEmptyHead() {
-        return linkedList
-    }
-    return linkedList
+
+    // exit early if there is empty.
+	if linkedList.HasEmptyHead() {
+		return linkedList
+	}
+    // update *LinkedList.Head until assigned *LinkedList.Node.Value
+    // does not contain the target value.
+	for linkedList.HasHead() && linkedList.Head.Value == value {
+		node = linkedList.Head
+		linkedList.Head = linkedList.Head.Next
+	}
+	// store current *LinkedList.Head to check against next set of *LinkedList.Nodes.
+	node := linkedList.Head
+	if node != nil {
+		// look ahead and iterate over adjacent *LinkedList.Nodes
+		for node.Next != nil {
+			if node.Next.Value == value {
+				// set LinkedList.Node to its LinkedList.Node.Next
+				// results in n(a).Next -> n(b).Value(target) -> n(c)
+				// becoming n(a).Next -> n(c)
+				n.Next = n.Next.Next
+			} else {
+				// update n to prevent infininte loop.
+				n = n.Next
+			}
+		}
+	}
+
+	// check if LinkedList.Tail is target and delete.
+	// n should be the previous LinkedList.Node.
+	if linkedList.Tail.Value == value {
+		linkedList.Tail = n
+	}
+
+	return d
 }
 
 // Find searches for an adjacent *LinkedList.Node that
