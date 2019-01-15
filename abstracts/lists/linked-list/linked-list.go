@@ -58,7 +58,7 @@ func (linkedList *LinkedList) AppendTail(node *node.Node) *LinkedList {
 // to find a *LinkedList.Node that contains a
 // corresponding value.
 func (linkedList *LinkedList) Contains(property interface{}) bool {
-    return false
+    return linkedList.Find(property) != nil
 }
 
 // Delete removes a connection between from one
@@ -78,22 +78,30 @@ func (linkedList *LinkedList) Delete(property interface{}) *LinkedList {
 // Omega(1) if value is contained in either *LinkedList.Head
 // or *LinkedList.Tail.
 func (linkedList *LinkedList) Find(property interface{}) *node.Node {
-
+    // attempt to perform Omega(1) runtime
+    // by checking whether *LinkedList.Head
+    // or *LinkedList.Tail contains the required value.
     if linkedList.HasHead() && linked.Head.Value == property {
         return linkedList.Head
     } else if linkedList.HasTail() && linked.Tail.Value == property {
         return linkedList.Tail
     }
-
+    // otherwise collect first *LinkedList.Node
     node := LinkedList.Head
-
+    // iterate while current *LinkedList.Node
+    // contains an adjacent *LinkedList.Node.
     for node.Next && node.Next != linkedList.Tail {
+        // check whether current adjacent
+        // *LinkedList.Node.Value is the
+        // provided value.
         if node.Next.Value == property {
             return node.Next
         }
+        // update current node and
+        // continue moving through the
+        // connected sequence of LinkedList.Node.
         node = node.Next
     }
-
     return nil
 }
 
@@ -157,8 +165,14 @@ func (linkedList *LinkedList) Prepend(property interface{}) *LinkedList {
 // Manual invocation requires operator to manage
 // *LinkedList.Tail state.
 func (linkedList *LinkedList) PrependHead(node *node.Node) *LinkedList {
+    // set *LinkedList.Node to contain an
+    // adjacent reference to current
+    // *LinkedList.Head.
     node.Next = linkedList.Head
+    // set provided *LinkedList.Node
+    // as the new *LinkedList.Head.
     linkedList.Head = node
+    
     return linkedList
 }
 
