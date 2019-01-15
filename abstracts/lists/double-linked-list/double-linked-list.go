@@ -4,14 +4,34 @@
 // exports a Double Linked-List pointer instantiation function.
 package double
 
-// DoubleLinkedList defines the Double Linked-List data structure.
+import node "github.com/gellel/gostructures/abstracts/lists/double-linked-list/double-list-node"
+
+// LinkedList defines the Double Linked-List data structure.
 // Double Linked-List holds a sequence of Double Linked-List nodes.
 // Each connection can be traversed from one node to another provided
 // that they have a non Nil previous or next. Double Linked-List can
 // contain any mixture of data.
-type DoubleLinkedList struct {
+type LinkedList struct {
+	Head *node.Node // First Double Linked-List node.
+	Tail *node.Node // Last Double Linked-List node.
 }
 
-func (doubleLinkedList *DoubleLinkedList) Add() *DoubleLinkedList {
-	return doubleLinkedList
+func (double *LinkedList) Append() *LinkedList {
+	return double
+}
+
+func (double *LinkedList) InsertAfter(node *node.Node, property interface{}) *LinkedList {
+
+}
+
+func (double *LinkedList) InsertBefore(node *node.Node, property interface{}) *LinkedList {
+
+}
+
+func (double *LinkedList) Find() *node.Node {
+
+}
+
+func (double *LinkedList) Prepend() *LinkedList {
+	return double
 }

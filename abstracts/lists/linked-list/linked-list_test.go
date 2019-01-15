@@ -1,15 +1,15 @@
-package linkedlist_test
+package single_test
 
 import (
 	"fmt"
 	"testing"
 
-	linkedlist "github.com/gellel/gostructures/abstracts/lists/linked-list"
+	single "github.com/gellel/gostructures/abstracts/lists/linked-list"
 )
 
 func Test(t *testing.T) {
 
-	list := linkedlist.New()
+	list := single.New()
 
 	fmt.Println(list)
 

@@ -1,13 +1,11 @@
-package linkedlist
+package single
 
 import (
-	definition "github.com/gellel/gostructures/abstracts/lists/linked-list/list-interface"
 	node "github.com/gellel/gostructures/abstracts/lists/linked-list/list-node"
 )
 
 // LinkedList structure.
 type LinkedList struct {
-	definition.LinkedList
 	Head *node.Node
 	Tail *node.Node
 }
