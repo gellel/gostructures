@@ -1,8 +1,12 @@
 package linkedlist
 
+import (
+    "github.com/gellel/gostructures/abstracts/lists/linked-list/list-node"
+)
+
 type LinkedList struct {
-    Head *Node
-    Tail *Node
+    Head *node.Node
+    Tail *node.Node
 }
 
 // New instantiates a new LinkedList pointer.
@@ -10,12 +14,44 @@ func New() *LinkedList {
     return &LinkedList{}
 }
 
+// AddHead sets the initial *LinkedList.Head.
+func (linkedList *LinkedList) AddHead(node *node.Node) *LinkedList {
+    // set *LinkedList.Head to provided
+    // *LinkedList.Node. removes all current
+    // connections if called manually.
+    linkedList.Head = node
+    // assume that the method was manually
+    // invoked and update the *LinkedList.Tail
+    // to become the current *LinkedList.Head.
+    linkedList.Tail = linkedList.Head
+
+    return linkedList
+}
+
 // Append inserts a new *LinkedList.Node at
-// the beginning (Head) of the LinkedList.
+// the end (Tail) of the LinkedList.
 // When the *LinkedList is empty, this new *LinkedList.Node
-// becomes both the *LinkedList.Tail and *LinkedList.Head.
+// becomes both the *LinkedList.Head and *LinkedList.Tail.
 func (linkedList *LinkedList) Append(property interface{}) *LinkedList {
-    return linkedlist
+    if linkedList.IsEmpty() {
+        return linkedList.AddHead(node.New(property))
+    }
+    return linkedList.AppendTail(node.New(property))
+}
+
+// AppendTail updates *LinkedList.Tail.Next to
+// contain an adjacent reference to the provided *LinkedList.Node.
+// The provided *LinkedList.Node then becomes *LinkedList.Tail.
+func (linkedList *LinkedList) AppendTail(node *node.Node) *LinkedList {
+    // update the current *LinkedList.Tail to
+    // contain a adjacent reference to the provided 
+    // *LinkedList.Node.
+    linkedList.Tail.Next = node
+    // set the current *LinkedList.Tail
+    // to become the provided *LinkedList.Node.
+    linkedList.Tail = node
+
+    return linkedList
 }
 
 // Contain searches across O(n) entries attempting
@@ -31,17 +67,7 @@ func (linkedList *LinkedList) Contains(property interface{}) bool {
 // target *LinkedList.Node is found. Best case is
 // Omega(1) if value is contained in either *LinkedList.Head
 // or *LinkedList.Tail.
-func (linkedlist *LinkedList) Delete(property interface{}) *LinkedList {
-    return linkedList
-}
-
-// Prepend inserts a new *LinkedList.Node at the
-// beginning of the *LinkedList.
-// When populated, current *LinkedList.Head becomes 
-// the new *LinkedList.Tail and LinkedList.Head 
-// becomes the new LinkedList.Node
-// with a Next reference to LinkedList.Head.
-func (linkedlist *LinkedList) Prepend(property interface{}) *LinkedList {
+func (linkedList *LinkedList) Delete(property interface{}) *LinkedList {
     return linkedList
 }
 
@@ -52,12 +78,28 @@ func (linkedlist *LinkedList) Prepend(property interface{}) *LinkedList {
 // Omega(1) if value is contained in either *LinkedList.Head
 // or *LinkedList.Tail.
 func (linkedList *LinkedList) Find(property interface{}) *node.Node {
+
+    if linkedList.HasHead() && linked.Head.Value == property {
+        return linkedList.Head
+    } else if linkedList.HasTail() && linked.Tail.Value == property {
+        return linkedList.Tail
+    }
+
+    node := LinkedList.Head
+
+    for node.Next && node.Next != linkedList.Tail {
+        if node.Next.Value == property {
+            return node.Next
+        }
+        node = node.Next
+    }
+
     return nil
 }
 
 // HasEmptyHead checks whether *LinkedList.Head
 // contains a Nil reference.
-func (linkedlist *LinkedList) HasEmptyHead() bool {
+func (linkedList *LinkedList) HasEmptyHead() bool {
     return linkedList.Head == nil
 }
 
@@ -65,7 +107,7 @@ func (linkedlist *LinkedList) HasEmptyHead() bool {
 // and returns true should a non-Nil reference be
 // assigned to the *LinkedList.Head property.
 func (linkedList *LinkedList) HasHead() bool {
-    return !linkedlist.HasEmptyHead()
+    return !linkedList.HasEmptyHead()
 }
 
 // HasEmptyTail checks whether *LinkedList.Tail
@@ -94,7 +136,31 @@ func (linkedList *LinkedList) IsEmpty() bool {
 // A *LinkedList of at least one *LinkedList.Node
 // will yield true.
 func (linkedList *LinkedList) IsPopulated() bool {
-    return !linkedlist.IsEmpty()
+    return !linkedList.IsEmpty()
 }
+
+// Prepend inserts a new *LinkedList.Node at the
+// beginning of the *LinkedList. When populated, current
+// *LinkedList.Head is updated to become new *LinkedList.Node. 
+// The previous *LinkedList.Head then becomes the 
+// provided LinkedList.Node.Next reference.
+func (linkedList *LinkedList) Prepend(property interface{}) *LinkedList {
+    if linkedList.IsEmpty() {
+        return linkedList.AddHead(node.New(property))
+    }
+    return linkedList.PrependHead(node.New(property))
+}
+
+// PrependHead performs the LinkedList insertion operation.
+// Method focuses on updating the *LinkedList.Head
+// to reference the provided *LinkedList.Node.
+// Manual invocation requires operator to manage
+// *LinkedList.Tail state.
+func (linkedList *LinkedList) PrependHead(node *node.Node) *LinkedList {
+    node.Next = linkedList.Head
+    linkedList.Head = node
+    return linkedList
+}
+
 
 var _ definition.LinkedList = (*LinkedList)(nil)
