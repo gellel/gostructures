@@ -1,8 +1,89 @@
 package single
 
-import (
-	node "github.com/gellel/gostructures/abstracts/lists/linked-list/list-node"
-)
+type LINKEDLIST interface {
+    Append(value interface{}) *LinkedList
+    HasHead() bool 
+    HasTail() bool
+    InsertAfter(s *node.Single, value interface{}) *LinkedList
+    InsertBefore(s *node.Single, value interface{}) *LinkedList
+    IsEmpty() bool
+    IsPopulated() bool
+    Prepend(value interface{}) *LinkedList
+    Remove(value interface{}) bool
+    Set(s *node.Single) *LinkedList
+    SetHead(s *node.Single) *LinkedList
+    SetTail(s *node.Single) *LinkedList
+    Size() int
+}
+
+type LinkedList struct {
+    Head *node.Single
+    Tail *node.Single
+}
+
+func (single *LinkedList) Append(value interface{}) *LinkedList {
+    if single.IsEmpty() {
+        return single.Set(node.New(value))
+    }
+    return single.SetTail(single.Tail.AddNext(value, true))
+}
+
+func (single *LinkedList) HasHead() bool {
+    return single.Head != nil
+}
+
+func (single *LinkedList) HasTail() bool {
+    return single.Tail != nil
+}
+
+func (single *LinkedList) InsertAfter(s *node.Single, value interface{}) *LinkedList {
+    if single.IsEmpty() {
+        single.SetHead(s.AddNext(value, false)).SetTail(s.Next)
+    } else if s.HasNext() {
+        s.AssignNext(node.New(value).AssignNext(s.Next, false), false)
+    } else {
+        single.Append(value)
+    }
+    return single
+}
+
+func (single *LinkedList) IsEmpty() bool {
+    return single.Head == nil && single.Tail == nil
+}
+
+func (single *LinkedList) IsPopulated() bool {
+    return single.Head != nil && single.Tail != nil
+}
+
+func (single *LinkedList) Prepend(value interface{}) *LinkedList {
+    if single.IsEmpty() {
+        return single.Set(node.New(value))
+    }
+    return single.SetHead(node.New(value).AssignNext(single.Head, false))
+}
+
+func (single *LinkedList) Remove(value interface{}) bool {
+    return false
+}
+
+func (single *LinkedList) Set(s *node.Single) *LinkedList {
+    single.Head = s
+    single.Tail = single.Head
+    return single
+}
+
+func (single *LinkedList) SetHead(s *node.Single) *LinkedList {
+    single.Head = s
+    return single
+}
+
+func (single *LinkedList) SetTail(s *node.Single) *LinkedList {
+    single.Tail = s
+    return single
+}
+
+
+/*
 
 // LinkedList structure.
 type LinkedList struct {
@@ -233,3 +314,5 @@ func (linkedList *LinkedList) SizeOf() int {
 }
 
 //var _ definition.LinkedList = (*LinkedList)(nil)
+
+*/

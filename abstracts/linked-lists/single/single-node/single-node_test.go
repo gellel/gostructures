@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	node "github.com/gellel/gostructures/abstracts/lists/linked-list/list-node"
+	node "github.com/gellel/gostructures/abstracts/linked-lists/single/single-node"
 )
 
 func Test(t *testing.T) {

@@ -4,7 +4,7 @@
 // exports a Double Linked-List pointer instantiation function.
 package double
 
-import node "github.com/gellel/gostructures/abstracts/lists/double-linked-list/double-list-node"
+import node "github.com/gellel/gostructures/abstracts/linked-lists/double/double-node"
 
 // LinkedList defines the Double Linked-List data structure.
 // Double Linked-List holds a sequence of Double Linked-List nodes.
