@@ -23,14 +23,14 @@ type double interface {
 	RemoveNext() *Double
 }
 
-// Double declares the struct for a Linked-List-Node for a singly Linked-List.
+// Double declares the struct for a Linked-List-Node for a doubly Linked-List.
 type Double struct {
 	Previous *Double     // Connection to a previous Linked-List-Node.
 	Next     *Double     // Connection to an adjacent Linked-List-Node.
 	Value    interface{} // Property assigned to the Linked-List-Node.
 }
 
-// New instantiates a new singly Linked-List-Node.
+// New instantiates a new doubly Linked-List-Node.
 func New(property interface{}) *Double {
 	return &Double{Value: property}
 }
