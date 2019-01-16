@@ -30,7 +30,11 @@ type linkedList interface {
 	Walk()
 }
 
-// LinkedList declares the struct for a singly Linked-List.
+// LinkedList declares the struct for a Single Linked-List.
+// Single Linked-List holds a sequence of Single Linked-List-Nodes.
+// Each connection can be traversed from one node to another provided
+// that they have an adjacent Single Linked-List-Node.
+// Single Linked-List can contain any mixture of data.
 type LinkedList struct {
 	Head *node.Single
 	Tail *node.Single
