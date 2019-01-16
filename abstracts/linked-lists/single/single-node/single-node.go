@@ -5,8 +5,8 @@
 // pointer instantiation method (New).
 package node
 
-// SINGLE declares the interface for a singly Linked-List-Node.
-type SINGLE interface {
+// Single declares the interface for a singly Linked-List-Node.
+type single interface {
 	AddNext(value interface{}, next bool) *Single
 	AssignNext(s *Single, next bool) *Single
 	AssignValue(value interface{}) *Single
@@ -85,4 +85,4 @@ func (single *Single) RemoveNext() *Single {
 	return single
 }
 
-var _ SINGLE = (*Single)(nil)
+var _ single = (*Single)(nil)
