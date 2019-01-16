@@ -1,87 +1,154 @@
 package single
 
-type LINKEDLIST interface {
-    Append(value interface{}) *LinkedList
-    HasHead() bool 
-    HasTail() bool
-    InsertAfter(s *node.Single, value interface{}) *LinkedList
-    InsertBefore(s *node.Single, value interface{}) *LinkedList
-    IsEmpty() bool
-    IsPopulated() bool
-    Prepend(value interface{}) *LinkedList
-    Remove(value interface{}) bool
-    Set(s *node.Single) *LinkedList
-    SetHead(s *node.Single) *LinkedList
-    SetTail(s *node.Single) *LinkedList
-    Size() int
+import (
+	"fmt"
+
+	node "github.com/gellel/gostructures/abstracts/linked-lists/single/single-node"
+)
+
+type linkedList interface {
+	Append(value interface{}) *LinkedList
+	Find(value interface{}) *node.Single
+	FindAll(value interface{}) []*node.Single
+	HasHead() bool
+	HasTail() bool
+	InsertAfter(s *node.Single, value interface{}) *LinkedList
+	InsertBefore(s *node.Single, value interface{}) *LinkedList
+	IsEmpty() bool
+	IsPopulated() bool
+	Prepend(value interface{}) *LinkedList
+	Remove(value interface{}) bool
+	Set(s *node.Single) *LinkedList
+	SetHead(s *node.Single) *LinkedList
+	SetTail(s *node.Single) *LinkedList
+	Size() int
+	Walk()
 }
 
 type LinkedList struct {
-    Head *node.Single
-    Tail *node.Single
+	Head *node.Single
+	Tail *node.Single
+}
+
+func New() *LinkedList {
+	return &LinkedList{}
 }
 
 func (single *LinkedList) Append(value interface{}) *LinkedList {
-    if single.IsEmpty() {
-        return single.Set(node.New(value))
-    }
-    return single.SetTail(single.Tail.AddNext(value, true))
+	if single.IsEmpty() {
+		return single.Set(node.New(value))
+	}
+	return single.SetTail(single.Tail.AddNext(value, true))
+}
+
+func (single *LinkedList) Find(value interface{}) *node.Single {
+	n := single.Head
+	for n != nil {
+		if n.HasValue(value) {
+			return n
+		}
+		n = n.Next
+	}
+	return nil
+}
+
+func (single *LinkedList) FindAll(value interface{}) []*node.Single {
+	s := make([]*node.Single, 0)
+	n := single.Head
+	for n != nil {
+		if n.HasValue(value) {
+			s = append(s, n)
+		}
+		n = n.Next
+	}
+	return s
 }
 
 func (single *LinkedList) HasHead() bool {
-    return single.Head != nil
+	return single.Head != nil
 }
 
 func (single *LinkedList) HasTail() bool {
-    return single.Tail != nil
+	return single.Tail != nil
 }
 
 func (single *LinkedList) InsertAfter(s *node.Single, value interface{}) *LinkedList {
-    if single.IsEmpty() {
-        single.SetHead(s.AddNext(value, false)).SetTail(s.Next)
-    } else if s.HasNext() {
-        s.AssignNext(node.New(value).AssignNext(s.Next, false), false)
-    } else {
-        single.Append(value)
-    }
-    return single
+	if single.IsEmpty() {
+		single.SetHead(s.AddNext(value, false)).SetTail(s.Next)
+	} else if s.HasNext() {
+		s.AssignNext(node.New(value).AssignNext(s.Next, false), false)
+	} else {
+		single.Append(value)
+	}
+	return single
+}
+
+func (single *LinkedList) InsertBefore(s *node.Single, value interface{}) *LinkedList {
+	if single.IsEmpty() {
+		single.SetHead(s.AddNext(value, false)).SetTail(s.Next)
+	} else if s.HasNext() {
+		n := node.New(s.Value).AssignNext(s.Next, false)
+		s.AssignValue(value).AssignNext(n, false)
+	} else {
+		single.Prepend(value)
+	}
+	return single
 }
 
 func (single *LinkedList) IsEmpty() bool {
-    return single.Head == nil && single.Tail == nil
+	return single.Head == nil && single.Tail == nil
 }
 
 func (single *LinkedList) IsPopulated() bool {
-    return single.Head != nil && single.Tail != nil
+	return single.Head != nil && single.Tail != nil
 }
 
 func (single *LinkedList) Prepend(value interface{}) *LinkedList {
-    if single.IsEmpty() {
-        return single.Set(node.New(value))
-    }
-    return single.SetHead(node.New(value).AssignNext(single.Head, false))
+	if single.IsEmpty() {
+		return single.Set(node.New(value))
+	}
+	return single.SetHead(node.New(value).AssignNext(single.Head, false))
 }
 
 func (single *LinkedList) Remove(value interface{}) bool {
-    return false
+	return false
 }
 
 func (single *LinkedList) Set(s *node.Single) *LinkedList {
-    single.Head = s
-    single.Tail = single.Head
-    return single
+	single.Head = s
+	single.Tail = single.Head
+	return single
 }
 
 func (single *LinkedList) SetHead(s *node.Single) *LinkedList {
-    single.Head = s
-    return single
+	single.Head = s
+	return single
 }
 
 func (single *LinkedList) SetTail(s *node.Single) *LinkedList {
-    single.Tail = s
-    return single
+	single.Tail = s
+	return single
 }
 
+func (single *LinkedList) Size() int {
+	n := single.Head
+	s := 0
+	for n != nil {
+		n = n.Next
+		s = s + 1
+	}
+	return s
+}
+
+func (single *LinkedList) Walk() {
+	n := single.Head
+	for n != nil {
+		fmt.Println(n)
+		n = n.Next
+	}
+}
+
+var _ linkedList = (*LinkedList)(nil)
 
 /*
 

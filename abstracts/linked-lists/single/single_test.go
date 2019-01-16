@@ -4,12 +4,14 @@ import (
 	"fmt"
 	"testing"
 
-	single "github.com/gellel/gostructures/abstracts/lists/linked-list"
+	single "github.com/gellel/gostructures/abstracts/linked-lists/single"
 )
 
 func Test(t *testing.T) {
 
 	list := single.New()
+
+	fmt.Println(list.Find("1"))
 
 	fmt.Println(list)
 
@@ -17,13 +19,11 @@ func Test(t *testing.T) {
 
 	fmt.Println(list.Find("b"))
 
-	fmt.Println(list.Delete("b"))
+	fmt.Println(list.Size())
 
-	fmt.Println(list.SizeOf())
+	list.InsertAfter(list.Find("b"), "b.1")
 
-	fmt.Println(list.Contains("b"))
+	fmt.Println(list.InsertBefore(list.Find("b.1"), "b.0"))
 
-	fmt.Println(list.Prepend(1))
-
-	fmt.Println(list.Head)
+	list.Walk()
 }
