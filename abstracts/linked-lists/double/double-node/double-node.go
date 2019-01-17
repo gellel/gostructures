@@ -58,7 +58,7 @@ func (double *Double) AddNext(value interface{}, next bool) *Double {
 
 // AssignPrevious sets the argument Linked-List-Node as the accessed Linked-List-Node's previous Linked-List-Node; returns the argument Linked-List-Node if previous is set to true.
 func (double *Double) AssignPrevious(p *Double, previous bool) *Double {
-	double.Next = p
+	double.Previous = p
 	if previous {
 		return double.Previous
 	}
