@@ -28,6 +28,7 @@ type Double struct {
 	Previous *Double     // Connection to a previous Linked-List-Node.
 	Next     *Double     // Connection to an adjacent Linked-List-Node.
 	Value    interface{} // Property assigned to the Linked-List-Node.
+	// maybe should have a 'list' reference so it can confirm whether it can be added?
 }
 
 // New instantiates a new doubly Linked-List-Node.
