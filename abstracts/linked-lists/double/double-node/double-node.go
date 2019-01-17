@@ -1,11 +1,11 @@
-// Package node exports a doubly Linked-List-Node. A doublly Linked-List-Node
-// is a struct contained within a doubly Linked-List. Linked-List-Node
+// Package node exports a Double-Linked-List-Node. A doublly Linked-List-Node
+// is a struct contained within a Double-Linked-List. Linked-List-Node
 // can contain a value attribute of any type as well as an optional reference to both
 // a previous and adjacent Linked-List-Node. Package also exports a Linked-List-Node
 // pointer instantiation method (New).
 package node
 
-// Double declares the interface for a doubly Linked-List-Node.
+// Double declares the interface for a Double-Linked-List-Node.
 type double interface {
 	AddPrevious(value interface{}, previous bool) *Double
 	AssignPrevious(d *Double, previous bool) *Double
@@ -23,7 +23,7 @@ type double interface {
 	RemoveNext() *Double
 }
 
-// Double declares the struct for a Linked-List-Node for a doubly Linked-List.
+// Double declares the struct for a Linked-List-Node for a Double-Linked-List.
 type Double struct {
 	Previous *Double     // Connection to a previous Linked-List-Node.
 	Next     *Double     // Connection to an adjacent Linked-List-Node.
@@ -31,7 +31,7 @@ type Double struct {
 	// maybe should have a 'list' reference so it can confirm whether it can be added?
 }
 
-// New instantiates a new doubly Linked-List-Node.
+// New instantiates a new Double-Linked-List-Node.
 func New(property interface{}) *Double {
 	return &Double{Value: property}
 }

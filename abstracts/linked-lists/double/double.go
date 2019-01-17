@@ -94,7 +94,8 @@ func (double *LinkedList) InsertAfter(d *node.Double, value interface{}) *Linked
 	if double.IsEmpty() {
 		double.SetHead(d.AddNext(value, false)).SetTail(d.Next)
 	} else if d.HasNext() {
-		d.AssignNext(node.New(value).AssignNext(d.Next, false), false)
+		// create new. assign new argument node. assign new arguments next node. set argument nodes next as new node.
+		d.AssignNext(node.New(value).AssignPrevious(d, false).AssignNext(d.Next, false), false)
 	} else {
 		double.Append(value)
 	}
@@ -106,7 +107,8 @@ func (double *LinkedList) InsertBefore(d *node.Double, value interface{}) *Linke
 	if double.IsEmpty() {
 		double.SetHead(d.AddPrevious(value, true).AssignNext(d, false))
 	} else if d.HasPrevious() {
-		d.Previous.AddNext(value, true).AssignNext(d, false) // access d.Previous node. create & assign new node. append d to new node as next.
+		// create node. assign new node argument node.previous. assign new node next as argument. set current argument previous' next as new
+		d.Previous.AssignNext(node.New(value).AssignPrevious(d.Previous, false).AssignNext(d, false), false)
 	} else {
 		double.Prepend(value)
 	}
@@ -131,6 +133,7 @@ func (double *LinkedList) Prepend(value interface{}) *LinkedList {
 	return double.SetTail(double.Tail.AddNext(value, true))
 }
 
+// Remove deletes Double-Linked-List-Node by argument value.
 func (double *LinkedList) Remove(value interface{}) bool {
 	if double.IsEmpty() {
 		return false

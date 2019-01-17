@@ -26,6 +26,8 @@ type linkedList interface {
 	Set(s *node.Single) *LinkedList
 	SetHead(s *node.Single) *LinkedList
 	SetTail(s *node.Single) *LinkedList
+	Shift() *LinkedList
+	ShiftGet() interface{}
 	Size() int
 	Walk()
 }
@@ -88,7 +90,7 @@ func (single *LinkedList) HasTail() bool {
 	return single.Tail != nil
 }
 
-// InsertAfter adds a new singly Linked-List-Node after the provided singly Linked-List-Node.
+// InsertAfter adds a new Single-Linked-List-Node after the provided Single-Linked-List-Node.
 func (single *LinkedList) InsertAfter(s *node.Single, value interface{}) *LinkedList {
 	if single.IsEmpty() {
 		single.SetHead(s.AddNext(value, false)).SetTail(s.Next)
@@ -100,7 +102,7 @@ func (single *LinkedList) InsertAfter(s *node.Single, value interface{}) *Linked
 	return single
 }
 
-// InsertBefore adds a new singly Linked-List-Node before the provided singly Linked-List-Node.
+// InsertBefore adds a new Single-Linked-List-Node before the provided Single-Linked-List-Node.
 func (single *LinkedList) InsertBefore(s *node.Single, value interface{}) *LinkedList {
 	if single.IsEmpty() {
 		single.SetHead(s.AddNext(value, false)).SetTail(s.Next)
@@ -118,12 +120,12 @@ func (single *LinkedList) IsEmpty() bool {
 	return single.Head == nil && single.Tail == nil
 }
 
-// IsPopulated checks whether the Linked-List contains both a Head and Tail singly Linked-List-Node.
+// IsPopulated checks whether the Linked-List contains both a Head and Tail Single-Linked-List-Node.
 func (single *LinkedList) IsPopulated() bool {
 	return single.Head != nil && single.Tail != nil
 }
 
-// Prepend adds a singly Linked-List-Node to beginning of the Linked-List.
+// Prepend adds a Single-Linked-List-Node to beginning of the Linked-List.
 func (single *LinkedList) Prepend(value interface{}) *LinkedList {
 	if single.IsEmpty() {
 		return single.Set(node.New(value))
@@ -131,7 +133,7 @@ func (single *LinkedList) Prepend(value interface{}) *LinkedList {
 	return single.SetHead(node.New(value).AssignNext(single.Head, false))
 }
 
-// Remove deletes a singly Linked-List-Node from the Linked-List by value.
+// Remove deletes a Single-Linked-List-Node from the Linked-List by value.
 func (single *LinkedList) Remove(value interface{}) bool {
 	if single.IsEmpty() {
 		return false
@@ -148,7 +150,7 @@ func (single *LinkedList) Remove(value interface{}) bool {
 	return false
 }
 
-// Set assigns the provided singly Linked-List-Node to both the Head and Tail of the Linked-List.
+// Set assigns the provided Single-Linked-List-Node to both the Head and Tail of the Linked-List.
 func (single *LinkedList) Set(s *node.Single) *LinkedList {
 	single.Head = s
 	single.Tail = single.Head
@@ -167,7 +169,28 @@ func (single *LinkedList) SetTail(s *node.Single) *LinkedList {
 	return single
 }
 
-// Size computes the number of singly Linked-List-Nodes in the Linked-List.
+// Shift sets the Linked-List Head to the adjacent Linked-List-Node.
+func (single *LinkedList) Shift() *LinkedList {
+	if single.HasHead() && single.Head.HasNext() {
+		return single.SetHead(single.Head.Next)
+	}
+	single.Head = nil
+	return single
+}
+
+// ShiftGet sets the Linked-List head to the adjacent Linked-List-Node and returns the previous Linked-List Head's value.
+func (single *LinkedList) ShiftGet() interface{} {
+	if single.HasHead() {
+		value := single.Head.Value
+		if single.Head.HasNext() {
+			single.SetHead(single.Head.Next)
+		}
+		return value
+	}
+	return nil
+}
+
+// Size computes the number of Single-Linked-List-Nodes in the Linked-List.
 func (single *LinkedList) Size() int {
 	n := single.Head
 	s := 0
