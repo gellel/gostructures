@@ -4,9 +4,9 @@ Sequenced linear collection of data. Each linked list node points to an optional
 
 Best time performance.
 
-| Access              | Search | Insert  | Delete  |
-| :---                | :---   | :---    | :---    |
-| Ω(1) (Head or Tail) | Ωn)    | Ω(1)    | Ω(n)    |
+| Access              | Search  | Insert  | Delete  |
+| :---                | :---    | :---    | :---    |
+| Ω(1) (Head or Tail) | Ω(n)    | Ω(1)    | Ω(n)    |
 
 Average time performance.
 
