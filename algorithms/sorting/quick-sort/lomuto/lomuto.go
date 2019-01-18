@@ -1,16 +1,16 @@
-// Package lomuto provides Quicksort 
+// Package lomuto provides QuickSort 
 // using the Lomuto partitioning scheme.
 // This implementation chooses a pivot that is the
 // last element in a Slice or Array. 
 package lomuto
 
 
-// Quicksort algorithm using Lomuto partition scheme.
-func Quicksort(a []int) []int {
+// QuickSort algorithm using Lomuto partition scheme.
+func QuickSort(a []int) []int {
     return quicksort(a, 0, len(a)-1)
 }
 
-// Quicksort algorithm using Lomuto partition scheme.
+// QuickSort algorithm using Lomuto partition scheme.
 // Uses floor: 0 and ceiling: n-1 to divide
 // and organise the unsorted Slice or Array.
 func quicksort(a []int, floor int, ceiling int) []int {

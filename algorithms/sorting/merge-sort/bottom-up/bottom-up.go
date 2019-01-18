@@ -1,4 +1,4 @@
-// Package bottomup provides Mergesort
+// Package bottomup provides MergeSort
 // using the bottom-up merge sort scheme.
 // This implementation subsets the original
 // sequence by base two per cycle. Per each division
@@ -7,8 +7,8 @@
 // or Array is sorted.
 package bottomup
 
-// Mergesort algorithm using bottom-up merge sort scheme.
-func Mergesort(a []int) []int {
+// MergeSort algorithm using bottom-up merge sort scheme.
+func MergeSort(a []int) []int {
 	return sort(a, clone(a), len(a))
 }
 

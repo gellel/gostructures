@@ -7,10 +7,10 @@ import (
 
 // BottomUp merge-sort algorithm.
 func BottomUp(a []int) []int {
-	return bottomup.Mergesort(a)
+	return bottomup.MergeSort(a)
 }
 
 // TopDown merge-sort algorithm
 func TopDown(a []int) []int {
-	return topdown.Mergesort(a)
+	return topdown.MergeSort(a)
 }

@@ -1,15 +1,15 @@
-// Package hoarse provides Quicksort 
+// Package hoarse provides QuickSort 
 // using the original Hoare partitioning scheme.
 // This implementation chooses a pivot that is the
 // last element in a Slice or Array. 
 package hoare
 
-// Quicksort algorithm using Hoare partition scheme.
-func Quicksort(a []int) []int {
+// QuickSort algorithm using Hoare partition scheme.
+func QuickSort(a []int) []int {
 	return quicksort(a, 0, len(a)-1)
 }
 
-// Quicksort algorithm using Hoare partition scheme.
+// QuickSort algorithm using Hoare partition scheme.
 // Uses floor: 0 and ceiling: n-1 to divide
 // and organise the unsorted Slice or Array.
 func quicksort(a []int, floor int, ceiling int) []int {

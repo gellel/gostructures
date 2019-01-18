@@ -1,4 +1,4 @@
-// Package topdown provides Mergesort 
+// Package topdown provides MergeSort 
 // using the top-down merge sort scheme.
 // This implementation recursively subdivides
 // N number of sequences until subset reaches 
@@ -7,8 +7,8 @@
 // the sorted sequence.
 package topdown
 
-// Mergesort algorithm using top-down merge sort scheme.
-func Mergesort(a []int) []int {
+// MergeSort algorithm using top-down merge sort scheme.
+func MergeSort(a []int) []int {
     return sort(a, clone(a), 0, len(a))
 }
 
