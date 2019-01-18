@@ -5,12 +5,12 @@ import (
 	topdown "github.com/gellel/gostructures/algorithms/sorting/merge-sort/top-down"
 )
 
-// BottomUp merge-sort algorithm.
+// BottomUp performs the MergeSort algorithm using the bottom-up scheme.
 func BottomUp(a []int) []int {
 	return bottomup.MergeSort(a)
 }
 
-// TopDown merge-sort algorithm
+// TopDown performs the MergeSort algorithm using the top-down scheme.
 func TopDown(a []int) []int {
 	return topdown.MergeSort(a)
 }
