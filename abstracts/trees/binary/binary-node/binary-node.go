@@ -31,6 +31,10 @@ type Binary struct {
 	Value float64
 }
 
+func New(value float64) *Binary {
+	return &Binary{Value: value}
+}
+
 func (binary *Binary) EmptyLeft() bool {
 	return binary.Left == nil
 }
