@@ -6,7 +6,9 @@
 // comparison.
 package node
 
-import "math"
+import (
+	"math"
+)
 
 const (
 	// LEFT declares constant string that provides a namespace to annotate that a Binary-node is assigned as a left child of its parent.
@@ -33,6 +35,9 @@ type binary interface {
 	IsEqual(value float64) bool
 	IsLess(value float64) bool
 	IsMore(value float64) bool
+	Remove(value float64) *Binary
+	ViolatesLeft(value float64) (bool, error)
+	ViolatesRight(value float64) (bool, error)
 }
 
 // Binary declares the struct for a Leaf-node within the Binary-Search-Tree.
@@ -50,22 +55,29 @@ type Binary struct {
 	Value float64 // Value is the numeric weight of the Leaf-Node. In a Binary-Search-Tree, a value lower than the accessed Leaf-Node will be assigned to the left position. Expectidly, the opposite is true for larger sums.
 }
 
+// New instantiates a new Leaf-node. A Leaf-nodes generated using the New
+// function do not require a reference to either a left or right child-node.
+// Additionally, the side reference is not required.
 func New(value float64) *Binary {
 	return &Binary{Value: value}
 }
 
+// AssignLeft assigns by pointer a left child-node to the access Leaf-Node. Method
+// expects that the provided Leaf-Node pointer contains a value that is of a lesser
+// value than that of the accessed Leaf-Node. If a violation occurs method throws
+// an invalid argument exception.
 func (binary *Binary) AssignLeft(b *Binary) *Binary {
 
-	binary.Left = b.AssignSide(LEFT)
+	binary.ViolatesLeft(b.Value)
 
-	return binary
+	return binary.UnsafelyAssignLeft(b)
 }
 
 func (binary *Binary) AssignRight(b *Binary) *Binary {
 
-	binary.Right = b.AssignSide(RIGHT)
+	binary.ViolatesRight(b.Value)
 
-	return binary
+	return binary.UnsafelyAssignRight(b)
 }
 
 func (binary *Binary) AssignSide(side string) *Binary {
@@ -118,13 +130,13 @@ func (binary *Binary) Insert(value float64) *Binary {
 		if binary.HasLeft() {
 			binary.Left.Insert(value)
 		} else {
-			binary.AssignLeft(New(value))
+			binary.UnsafelyAssignLeft(New(value))
 		}
 	} else if binary.IsMore(value) {
 		if binary.HasRight() {
 			binary.Right.Insert(value)
 		} else {
-			binary.AssignRight(New(value))
+			binary.UnsafelyAssignRight(New(value))
 		}
 	}
 	return binary
@@ -152,6 +164,20 @@ func (binary *Binary) IsRight() bool {
 
 func (binary *Binary) IsMore(value float64) bool {
 	return binary.Value > value
+}
+
+func (binary *Binary) UnsafelyAssignLeft(b *Binary) *Binary {
+
+	binary.Left = b.AssignSide(LEFT)
+
+	return binary
+}
+
+func (binary *Binary) UnsafelyAssignRight(b *Binary) *Binary {
+
+	binary.Right = b.AssignRight(RIGHT)
+
+	return binary
 }
 
 var _ binary = (*Binary)(nil)
