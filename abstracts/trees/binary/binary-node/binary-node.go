@@ -8,6 +8,7 @@ package node
 
 import (
 	"fmt"
+	"log"
 	"math"
 )
 
@@ -40,8 +41,8 @@ type binary interface {
 	Remove(value float64) *Binary
 	RemoveLeft() *Binary
 	RemoveRight() *Binary
-	ViolatesLeft(value float64) error
-	ViolatesRight(value float64) error
+	ViolatesLeft(b *Binary) error
+	ViolatesRight(b *Binary) error
 }
 
 // Binary declares the struct for a Leaf-node within the Binary-Search-Tree.
@@ -72,14 +73,22 @@ func New(value float64) *Binary {
 // an invalid argument exception.
 func (binary *Binary) AssignLeft(b *Binary) *Binary {
 
-	binary.ViolatesLeft(b.Value)
+	err := binary.ViolatesLeft(b)
+
+	if err != nil {
+		panic(err)
+	}
 
 	return binary.UnsafelyAssignLeft(b)
 }
 
 func (binary *Binary) AssignRight(b *Binary) *Binary {
 
-	binary.ViolatesRight(b.Value)
+	err := binary.ViolatesRight(b)
+
+	if err != nil {
+		log.Panicln(err)
+	}
 
 	return binary.UnsafelyAssignRight(b)
 }
@@ -226,16 +235,16 @@ func (binary *Binary) UnsafelyAssignRight(b *Binary) *Binary {
 	return binary
 }
 
-func (binary *Binary) ViolatesLeft(value float64) error {
-	if binary.Value < value {
-		return fmt.Errorf("Binary: argument value cannot be larger than assigned. Expects value > %g", binary.Value)
+func (binary *Binary) ViolatesLeft(b *Binary) error {
+	if b.Value > binary.Value {
+		return fmt.Errorf("address (*%p) cannot hold pointer (*%p). argument struct must contain value less than %f", &binary, &b, binary.Value)
 	}
 	return nil
 }
 
-func (binary *Binary) ViolatesRight(value float64) error {
-	if binary.Value > value {
-		return fmt.Errorf("Binary: argument value cannt be smaller than assigned. Expects value < %g", binary.Value)
+func (binary *Binary) ViolatesRight(b *Binary) error {
+	if b.Value < binary.Value {
+		return fmt.Errorf("address (*%p) cannot hold pointer (*%p). argument struct must contain value greater than %f", &binary, &b, binary.Value)
 	}
 	return nil
 }
