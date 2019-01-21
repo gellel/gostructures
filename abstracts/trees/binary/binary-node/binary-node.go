@@ -7,6 +7,7 @@
 package node
 
 import (
+	"fmt"
 	"math"
 )
 
@@ -24,6 +25,7 @@ type binary interface {
 	AssignSide(side string) *Binary
 	EmptyLeft() bool
 	EmptyRight() bool
+	Find(value float64) *Binary
 	HasLeft() bool
 	HasRight() bool
 	Height() int
@@ -36,8 +38,10 @@ type binary interface {
 	IsLess(value float64) bool
 	IsMore(value float64) bool
 	Remove(value float64) *Binary
-	ViolatesLeft(value float64) (bool, error)
-	ViolatesRight(value float64) (bool, error)
+	RemoveLeft() *Binary
+	RemoveRight() *Binary
+	ViolatesLeft(value float64) error
+	ViolatesRight(value float64) error
 }
 
 // Binary declares the struct for a Leaf-node within the Binary-Search-Tree.
@@ -93,6 +97,17 @@ func (binary *Binary) EmptyLeft() bool {
 
 func (binary *Binary) EmptyRight() bool {
 	return binary.Right == nil
+}
+
+func (binary *Binary) Find(value float64) *Binary {
+	if binary.IsEqual(value) {
+		return binary
+	} else if binary.IsLess(value) && binary.HasLeft() {
+		return binary.Left.Find(value)
+	} else if binary.IsMore(value) && binary.HasRight() {
+		return binary.Right.Find(value)
+	}
+	return nil
 }
 
 func (binary *Binary) HasLeft() bool {
@@ -166,6 +181,37 @@ func (binary *Binary) IsMore(value float64) bool {
 	return binary.Value > value
 }
 
+func (binary *Binary) Remove(value float64) *Binary {
+	if binary.IsLess(value) && binary.HasLeft() {
+		if binary.Left.IsEqual(value) {
+			binary.RemoveLeft()
+		} else {
+			binary.Left.Remove(value)
+		}
+	} else if binary.IsMore(value) && binary.HasRight() {
+		if binary.Right.IsEqual(value) {
+			binary.RemoveRight()
+		} else {
+			binary.Right.Remove(value)
+		}
+	}
+	return binary
+}
+
+func (binary *Binary) RemoveLeft() *Binary {
+
+	binary.Left = nil
+
+	return binary
+}
+
+func (binary *Binary) RemoveRight() *Binary {
+
+	binary.Right = nil
+
+	return binary
+}
+
 func (binary *Binary) UnsafelyAssignLeft(b *Binary) *Binary {
 
 	binary.Left = b.AssignSide(LEFT)
@@ -175,9 +221,23 @@ func (binary *Binary) UnsafelyAssignLeft(b *Binary) *Binary {
 
 func (binary *Binary) UnsafelyAssignRight(b *Binary) *Binary {
 
-	binary.Right = b.AssignRight(RIGHT)
+	binary.Right = b.AssignSide(RIGHT)
 
 	return binary
+}
+
+func (binary *Binary) ViolatesLeft(value float64) error {
+	if binary.Value < value {
+		return fmt.Errorf("Binary: argument value cannot be larger than assigned. Expects value > %g", binary.Value)
+	}
+	return nil
+}
+
+func (binary *Binary) ViolatesRight(value float64) error {
+	if binary.Value > value {
+		return fmt.Errorf("Binary: argument value cannt be smaller than assigned. Expects value < %g", binary.Value)
+	}
+	return nil
 }
 
 var _ binary = (*Binary)(nil)
