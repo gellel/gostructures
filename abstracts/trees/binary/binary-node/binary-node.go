@@ -13,13 +13,16 @@ import (
 )
 
 const (
-	// LEFT declares constant string that provides a namespace to annotate that a Binary-node is assigned as a left child of its parent.
+	// LEFT declares constant string that provides a namespace to annotate that
+	// a Binary-node is assigned as a left child of its parent.
 	LEFT string = "LEFT"
-	// RIGHT declares constant string that provides a namespace to annotate that a Binary-node is assigned as a right child of its parent.
+	// RIGHT declares constant string that provides a namespace to annotate that
+	// a Binary-node is assigned as a right child of its parent.
 	RIGHT string = "RIGHT"
 )
 
-// Binary declares the implementation for a Binary-Tree-Node within the Binary-Search-Tree.
+// Binary declares the implementation for a Binary-Tree-Node
+// within the Binary-Search-Tree.
 type binary interface {
 	AssignLeft(b *Binary) *Binary
 	AssignRight(b *Binary) *Binary
@@ -124,7 +127,7 @@ func (binary *Binary) EmptyRight() bool {
 	return binary.Right == nil
 }
 
-// Find checks whether the accessed Binary-Tree-Node or its child-nodes contains the argument value.
+// Find checks whether the accessed Binary-Tree-Node or its Child-Nodes contains the argument value.
 func (binary *Binary) Find(value float64) *Binary {
 	if binary.IsEqual(value) {
 		return binary
@@ -136,22 +139,28 @@ func (binary *Binary) Find(value float64) *Binary {
 	return nil
 }
 
+// HasLeft checks whether the accessed Binary-Tree-Node has an assigned Left-Child-Node.
 func (binary *Binary) HasLeft() bool {
 	return binary.Left != nil
 }
 
+// HasRight checks whether the accessed Binary-Tree-Node has an assigned Right-Child-Node.
 func (binary *Binary) HasRight() bool {
 	return binary.Right != nil
 }
 
+// Height computes the current depth of the accessed Binary-Tree-Node and converts the
+// floating point sum to an integer.
 func (binary *Binary) Height() int {
 	return int(binary.HeightOf())
 }
 
+// HeightOf computes the current depth of the accessed Binary-Tree-Node.
 func (binary *Binary) HeightOf() float64 {
 	return math.Max(binary.HeightLeft(), binary.HeightRight())
 }
 
+// HeightLeft computes the nested depth of the accessed Binary-Tree-Node's Left-Children.
 func (binary *Binary) HeightLeft() float64 {
 	if binary.HasLeft() {
 		return (binary.Left.HeightOf() + 1.0)
@@ -159,6 +168,7 @@ func (binary *Binary) HeightLeft() float64 {
 	return 0.0
 }
 
+// HeightRight computes the nested depth of the accessed Binary-Tree-Node's Right-Children.
 func (binary *Binary) HeightRight() float64 {
 	if binary.HasRight() {
 		return (binary.Right.HeightOf() + 1.0)
@@ -166,6 +176,11 @@ func (binary *Binary) HeightRight() float64 {
 	return 0.0
 }
 
+// Insert creates and assigns a new Binary-Tree-Node to the accessed Binary-Tree-Node.
+// When an argument value is smaller than the accessed Binary-Tree-Node value, the new instance
+// is stored on the accessed Binary-Tree-Node's left position. Alternatively, when
+// a larger value is provided, it is stored than the right position. Equal sums are
+// discarded and no new Binary-Tree-Node is created.
 func (binary *Binary) Insert(value float64) *Binary {
 	if binary.IsLess(value) {
 		if binary.HasLeft() {
@@ -183,30 +198,44 @@ func (binary *Binary) Insert(value float64) *Binary {
 	return binary
 }
 
+// IsChild checks whether the pointer address is mapped to the accessed Binary-Tree-Node's
+// left or right Child-Node positions.
 func (binary *Binary) IsChild(b *Binary) bool {
 	return binary.Left == b || binary.Right == b
 }
 
+// IsEqual checks whether the argument value is equal to the accessed
+// Binary-Tree-Node's assigned value.
 func (binary *Binary) IsEqual(value float64) bool {
 	return binary.Value == value
 }
 
+// IsLess checks whether the argument value is less than the accessed
+// Binary-Tree-Node's assigned value.
 func (binary *Binary) IsLess(value float64) bool {
 	return binary.Value < value
 }
 
-func (binary *Binary) IsLeft() bool {
-	return binary.Side == LEFT
-}
-
-func (binary *Binary) IsRight() bool {
-	return binary.Side == RIGHT
-}
-
+// IsMore checks whether the argument value is greater than the accessed
+// Binary-Tree-Node's assigned value.
 func (binary *Binary) IsMore(value float64) bool {
 	return binary.Value > value
 }
 
+// IsLeft checks whether the accessed Binary-Tree-Node is assigned to
+// another Binary-Tree-Node's left position.
+func (binary *Binary) IsLeft() bool {
+	return binary.Side == LEFT
+}
+
+// IsRight checks whether the accessed Binary-Tree-Node is assigned to
+// another Binary-Tree-Node's right position.
+func (binary *Binary) IsRight() bool {
+	return binary.Side == RIGHT
+}
+
+// Remove deletes a child-node contained within the accessed Binary-Tree-Node
+// or within the accessed Binary-Tree-Node's current child-nodes.
 func (binary *Binary) Remove(value float64) *Binary {
 	if binary.IsLess(value) && binary.HasLeft() {
 		if binary.Left.IsEqual(value) {
@@ -224,6 +253,7 @@ func (binary *Binary) Remove(value float64) *Binary {
 	return binary
 }
 
+// RemoveLeft unassigns the accessed Binary-Tree-Node's left Binary-Tree-Node.
 func (binary *Binary) RemoveLeft() *Binary {
 
 	binary.Left = nil
@@ -231,6 +261,7 @@ func (binary *Binary) RemoveLeft() *Binary {
 	return binary
 }
 
+// RemoveRight unassigns the accessed Binary-Tree-Node's right Binary-Tree-Node.
 func (binary *Binary) RemoveRight() *Binary {
 
 	binary.Right = nil
@@ -238,6 +269,9 @@ func (binary *Binary) RemoveRight() *Binary {
 	return binary
 }
 
+// UnsafelyAssignLeft sets the argument pointer to the accessed
+// Binary-Tree-Node left child position without performing
+// the Binary-Search-Tree insert operation.
 func (binary *Binary) UnsafelyAssignLeft(b *Binary) *Binary {
 
 	binary.Left = b.AssignSide(LEFT)
@@ -245,6 +279,9 @@ func (binary *Binary) UnsafelyAssignLeft(b *Binary) *Binary {
 	return binary
 }
 
+// UnsafelyAssignRight sets the argument pointer to the accessed
+// Binary-Tree-Node right child position without performing
+// the Binary-Search-Tree insert operation.
 func (binary *Binary) UnsafelyAssignRight(b *Binary) *Binary {
 
 	binary.Right = b.AssignSide(RIGHT)
@@ -252,6 +289,8 @@ func (binary *Binary) UnsafelyAssignRight(b *Binary) *Binary {
 	return binary
 }
 
+// ViolatesLeft checks that the argument Binary-Tree-Node pointer contains
+// a floating point value is greater than the accessed Binary-Tree-Node.
 func (binary *Binary) ViolatesLeft(b *Binary) error {
 	if b.Value > binary.Value {
 		return fmt.Errorf("address (*%p) cannot hold pointer (*%p). argument struct must contain value less than %f", &binary, &b, binary.Value)
@@ -259,6 +298,8 @@ func (binary *Binary) ViolatesLeft(b *Binary) error {
 	return nil
 }
 
+// ViolatesRight checks that the argument Binary-Tree-Node pointer contains
+// a floating point value is less than the accessed Binary-Tree-Node.
 func (binary *Binary) ViolatesRight(b *Binary) error {
 	if b.Value < binary.Value {
 		return fmt.Errorf("address (*%p) cannot hold pointer (*%p). argument struct must contain value greater than %f", &binary, &b, binary.Value)
@@ -266,6 +307,7 @@ func (binary *Binary) ViolatesRight(b *Binary) error {
 	return nil
 }
 
+// ViolatesSide checks that the argument value is not either "LEFT" or "RIGHT".
 func (binary *Binary) ViolatesSide(side string) error {
 
 	m := map[string]bool{LEFT: true, RIGHT: true}
