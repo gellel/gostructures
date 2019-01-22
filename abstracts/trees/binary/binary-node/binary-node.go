@@ -21,6 +21,11 @@ const (
 	RIGHT string = "RIGHT"
 )
 
+var (
+	// SIDES declares constant map that conatins supported child-node positions.
+	sides = map[string]bool{LEFT: true, RIGHT: true}
+)
+
 // Binary declares the implementation for a Binary-Tree-Node
 // within the Binary-Search-Tree.
 type binary interface {
@@ -44,8 +49,13 @@ type binary interface {
 	Remove(value float64) *Binary
 	RemoveLeft() *Binary
 	RemoveRight() *Binary
+	ToBinarySlice() []*Binary
+	ToFloatSlice() []float64
+	UnsafelyAssignLeft(b *Binary) *Binary
+	UnsafelyAssignRight(b *Binary) *Binary
 	ViolatesLeft(b *Binary) error
 	ViolatesRight(b *Binary) error
+	Walk()
 }
 
 // Binary declares the struct for a Leaf-node within the Binary-Search-Tree.
@@ -269,6 +279,36 @@ func (binary *Binary) RemoveRight() *Binary {
 	return binary
 }
 
+// ToBinarySlice creates an ordered slice of the assigned Binary-Tree-Node's child-nodes.
+func (binary *Binary) ToBinarySlice() []*Binary {
+
+	binaries := make([]*Binary, 0)
+
+	if binary.HasLeft() {
+		binaries = append(binaries, binary.Left.ToBinarySlice()...)
+	}
+	binaries = append(binaries, binary)
+	if binary.HasRight() {
+		binaries = append(binaries, binary.Right.ToBinarySlice()...)
+	}
+	return binaries
+}
+
+// ToFloatSlice creates an ordered slice of the assigned Binary-Tree-Node's child-nodes values.
+func (binary *Binary) ToFloatSlice() []float64 {
+
+	floats := make([]float64, 0)
+
+	if binary.HasLeft() {
+		floats = append(floats, binary.Left.ToFloatSlice()...)
+	}
+	floats = append(floats, binary.Value)
+	if binary.HasRight() {
+		floats = append(floats, binary.Right.ToFloatSlice()...)
+	}
+	return floats
+}
+
 // UnsafelyAssignLeft sets the argument pointer to the accessed
 // Binary-Tree-Node left child position without performing
 // the Binary-Search-Tree insert operation.
@@ -310,14 +350,23 @@ func (binary *Binary) ViolatesRight(b *Binary) error {
 // ViolatesSide checks that the argument value is not either "LEFT" or "RIGHT".
 func (binary *Binary) ViolatesSide(side string) error {
 
-	m := map[string]bool{LEFT: true, RIGHT: true}
-
-	_, ok := m["side"]
+	_, ok := sides[side]
 
 	if ok == false {
 		return fmt.Errorf("unsupported string value. argument side must be either %s or %s", LEFT, RIGHT)
 	}
 	return nil
+}
+
+// Walk accesses all assigned child-nodes to accessed Binary-Tree-Node.
+func (binary *Binary) Walk() {
+	if binary.HasLeft() {
+		binary.Left.Walk()
+	}
+	log.Println(binary.Value, binary.Side)
+	if binary.HasRight() {
+		binary.Right.Walk()
+	}
 }
 
 var _ binary = (*Binary)(nil)
