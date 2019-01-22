@@ -1,8 +1,8 @@
-// Package node exports a Leaf-Node for a Binary-Search-Tree.
-// Leaf-Node implements most of the core functionality that the
-// Binary-Search-Tree provides but at a Leaf-Node level. Package
+// Package node exports a Binary-Tree-Node for a Binary-Search-Tree.
+// Binary-Tree-Node implements most of the core functionality that the
+// Binary-Search-Tree provides but at a Binary-Tree-Node level. Package
 // also exports a function "New" that simplifies instantiating
-// Leaf-Node pointers. Leaf-node's are float64's for min-max
+// Binary-Tree-Node pointers. Leaf-node's are float64's for min-max
 // comparison.
 package node
 
@@ -19,7 +19,7 @@ const (
 	RIGHT string = "RIGHT"
 )
 
-// Binary declares the implementation for a Leaf-Node within the Binary-Search-Tree.
+// Binary declares the implementation for a Binary-Tree-Node within the Binary-Search-Tree.
 type binary interface {
 	AssignLeft(b *Binary) *Binary
 	AssignRight(b *Binary) *Binary
@@ -50,14 +50,14 @@ type binary interface {
 // numerical value. This was chosen to enable greater precision for more
 // complex (in terms of numerical complexity) Binary-Search-Tree's. In addition,
 // a Leaf-node struct contains an optional left and right Leaf-node, which acts
-// as the branches of the Binary-Search-Tree. Each Leaf-Node that is created
+// as the branches of the Binary-Search-Tree. Each Binary-Tree-Node that is created
 // using the Leaf-node's insert method will have it's literal side position
 // assigned to the new child-node as a string vale of "left" or "right".
 type Binary struct {
-	Left  *Binary // Left is the left Leaf-Node of the accessed Leaf-Node.
-	Right *Binary // Right is the right Leaf-Node of the accessed Left-Node.
-	Side  string  // Side expresses the position (relative to the parent) that the accessed Leaf-Node is assigned.
-	Value float64 // Value is the numeric weight of the Leaf-Node. In a Binary-Search-Tree, a value lower than the accessed Leaf-Node will be assigned to the left position. Expectidly, the opposite is true for larger sums.
+	Left  *Binary // Left is the left Binary-Tree-Node of the accessed Binary-Tree-Node.
+	Right *Binary // Right is the right Binary-Tree-Node of the accessed Left-Node.
+	Side  string  // Side expresses the position (relative to the parent) that the accessed Binary-Tree-Node is assigned.
+	Value float64 // Value is the numeric weight of the Binary-Tree-Node. In a Binary-Search-Tree, a value lower than the accessed Binary-Tree-Node will be assigned to the left position. Expectidly, the opposite is true for larger sums.
 }
 
 // New instantiates a new Leaf-node. A Leaf-nodes generated using the New
@@ -67,21 +67,25 @@ func New(value float64) *Binary {
 	return &Binary{Value: value}
 }
 
-// AssignLeft assigns by pointer a left child-node to the access Leaf-Node. Method
-// expects that the provided Leaf-Node pointer contains a value that is of a lesser
-// value than that of the accessed Leaf-Node. If a violation occurs method throws
+// AssignLeft assigns by pointer a left child-node to the accessed Binary-Tree-Node. Method
+// expects that the provided Binary-Tree-Node pointer contains a value that is of a lesser
+// value than that of the accessed Binary-Tree-Node. If a violation occurs method throws
 // an invalid argument exception.
 func (binary *Binary) AssignLeft(b *Binary) *Binary {
 
 	err := binary.ViolatesLeft(b)
 
 	if err != nil {
-		panic(err)
+		log.Panicln(err)
 	}
 
 	return binary.UnsafelyAssignLeft(b)
 }
 
+// AssignRight assigns by pointer a right child-node to the accessed Binary-Tree-Node. Method
+// expects that the provided Binary-Tree-Node pointer contains a value that is of a greater
+// value than that of the accessed Binary-Tree-Node. If a violation occurs method throws
+// an invalid argument exception.
 func (binary *Binary) AssignRight(b *Binary) *Binary {
 
 	err := binary.ViolatesRight(b)
@@ -93,21 +97,34 @@ func (binary *Binary) AssignRight(b *Binary) *Binary {
 	return binary.UnsafelyAssignRight(b)
 }
 
+// AssignSide assigns the accessed Binary-Tree-Node a string value that expresses
+// the position it sits within its parent Binary-Tree-Node. A Binary-Tree-Node that is
+// stored in Binary.Left must contain a string value of "LEFT". Expectidly,
+// a Binary-Tree-Node stored in Binary.Right must contain a string value of "RIGHT".
 func (binary *Binary) AssignSide(side string) *Binary {
+
+	err := binary.ViolatesSide(side)
+
+	if err != nil {
+		log.Panicln(err)
+	}
 
 	binary.Side = side
 
 	return binary
 }
 
+// EmptyLeft checks whether the accessed Binary-Tree-Node has an unassigned Left-Child-Node.
 func (binary *Binary) EmptyLeft() bool {
 	return binary.Left == nil
 }
 
+// EmptyRight checks whether the accessed Binary-Tree-Node has an unassigned Right-Child-Node.
 func (binary *Binary) EmptyRight() bool {
 	return binary.Right == nil
 }
 
+// Find checks whether the accessed Binary-Tree-Node or its child-nodes contains the argument value.
 func (binary *Binary) Find(value float64) *Binary {
 	if binary.IsEqual(value) {
 		return binary
@@ -245,6 +262,18 @@ func (binary *Binary) ViolatesLeft(b *Binary) error {
 func (binary *Binary) ViolatesRight(b *Binary) error {
 	if b.Value < binary.Value {
 		return fmt.Errorf("address (*%p) cannot hold pointer (*%p). argument struct must contain value greater than %f", &binary, &b, binary.Value)
+	}
+	return nil
+}
+
+func (binary *Binary) ViolatesSide(side string) error {
+
+	m := map[string]bool{LEFT: true, RIGHT: true}
+
+	_, ok := m["side"]
+
+	if ok == false {
+		return fmt.Errorf("unsupported string value. argument side must be either %s or %s", LEFT, RIGHT)
 	}
 	return nil
 }

@@ -8,5 +8,5 @@ import (
 )
 
 func Test(t *testing.T) {
-	fmt.Println(node.New(2.0).AssignRight(node.New(1.0)))
+	fmt.Println(node.New(2.0).Insert(1.0))
 }
