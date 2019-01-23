@@ -31,7 +31,9 @@ type binary interface {
 // subsequent floating point values. Methods provided by Binary-Search-Tree leverage
 // the methods of the assigned Binary-Tree-Node at the root position.
 type Binary struct {
-	Root *node.Binary // Root is the heighest Binary-Tree-Node stored within the Binary-Search-Tree. Each Binary-Seach-Tree must contain a root node to perform ordered operations.
+	// Root is the heighest Binary-Tree-Node stored within the Binary-Search-Tree.
+	// Each Binary-Seach-Tree must contain a root node to perform ordered operations.
+	Root *node.Binary
 }
 
 // New instantiates a new Binary-Search-Tree pointer.

@@ -223,13 +223,13 @@ func (binary *Binary) IsEqual(value float64) bool {
 // IsLess checks whether the argument value is less than the accessed
 // Binary-Tree-Node's assigned value.
 func (binary *Binary) IsLess(value float64) bool {
-	return binary.Value < value
+	return value < binary.Value
 }
 
 // IsMore checks whether the argument value is greater than the accessed
 // Binary-Tree-Node's assigned value.
 func (binary *Binary) IsMore(value float64) bool {
-	return binary.Value > value
+	return value > binary.Value
 }
 
 // IsLeft checks whether the accessed Binary-Tree-Node is assigned to
