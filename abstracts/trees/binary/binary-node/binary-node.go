@@ -26,9 +26,9 @@ var (
 	sides = map[string]bool{LEFT: true, RIGHT: true}
 )
 
-// B declares the implementation for a Binary-Tree-Node
+// Binary declares the implementation for a Binary-Tree-Node
 // within the Binary-Search-Tree.
-type B interface {
+type binary interface {
 	AssignLeft(b *Binary) *Binary
 	AssignRight(b *Binary) *Binary
 	AssignSide(side string) *Binary
@@ -369,4 +369,4 @@ func (binary *Binary) Walk() {
 	}
 }
 
-var _ B = (*Binary)(nil)
+var _ binary = (*Binary)(nil)
