@@ -45,7 +45,7 @@ type avl interface {
 	UnsafelyAssignRight(b *AVL) *AVL
 	ViolatesLeft(b *AVL) error
 	ViolatesRight(b *AVL) error
-	Walk()
+	Walk() *AVL
 }
 
 type AVL struct {
@@ -190,6 +190,11 @@ func (avl *AVL) IsRight() bool {
 	return avl.Side == RIGHT
 }
 
+func (avl *AVL) Remove(value float64) *AVL {
+
+	return avl
+}
+
 func (avl *AVL) RemoveLeft() *AVL {
 
 	avl.Left = nil
@@ -208,6 +213,22 @@ func (avl *AVL) RemoveRight() *AVL {
 
 	avl.Right = nil
 
+	return avl
+}
+
+func (avl *AVL) RotateLeft() *AVL {
+	return avl
+}
+
+func (avl *AVL) RotateLeftRight() *AVL {
+	return avl
+}
+
+func (avl *AVL) RotateRight() *AVL {
+	return avl
+}
+
+func (avl *AVL) RotateRightLeft() *AVL {
 	return avl
 }
 
@@ -287,6 +308,17 @@ func (avl *AVL) ViolatesSide(side string) error {
 		return fmt.Errorf("unsupported string value. argument side must be either %s or %s", LEFT, RIGHT)
 	}
 	return nil
+}
+
+func (avl *AVL) Walk() *AVL {
+	if avl.HasLeft() {
+		avl.Left.Walk()
+	}
+	log.Println(avl.Value, avl.Side)
+	if avl.HasRight() {
+		avl.Right.Walk()
+	}
+	return avl
 }
 
 var _ avl = (*AVL)(nil)
