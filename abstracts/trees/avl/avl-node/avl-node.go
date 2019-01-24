@@ -148,6 +148,28 @@ func (avl *AVL) IsChild(a *AVL) bool {
 	return avl.Left == a || avl.Right == a
 }
 
+func (avl *AVL) Insert(value float64) *AVL {
+	if avl.IsLess(value) {
+		if avl.HasLeft() {
+			avl.Left.Insert(value)
+		} else {
+			avl.UnsafelyAssignLeft(New(value))
+		}
+	} else if avl.IsMore(value) {
+		if avl.HasRight() {
+			avl.Right.Insert(value)
+		} else {
+			avl.UnsafelyAssignRight(New(value))
+		}
+	}
+
+	balance := avl.Balance()
+
+	fmt.Println(balance)
+
+	return avl
+}
+
 func (avl *AVL) IsEqual(value float64) bool {
 	return avl.Value == value
 }
