@@ -110,6 +110,17 @@ func (avl *AVL) Balance() int {
 	return int(avl.HeightLeft() - avl.HeightRight())
 }
 
+func (avl *AVL) Find(value float64) *AVL {
+	if avl.IsEqual(value) {
+		return avl
+	} else if avl.IsLess(value) && avl.HasLeft() {
+		return avl.Left.Find(value)
+	} else if avl.IsMore(value) && avl.HasRight() {
+		return avl.Right.Find(value)
+	}
+	return nil
+}
+
 func (avl *AVL) HasLeft() bool {
 	return avl.Left != nil
 }
@@ -149,6 +160,9 @@ func (avl *AVL) IsChild(a *AVL) bool {
 }
 
 func (avl *AVL) Insert(value float64) *AVL {
+	if avl.IsEqual(value) {
+		return avl
+	}
 	if avl.IsLess(value) {
 		if avl.HasLeft() {
 			avl.Left.Insert(value)
@@ -166,6 +180,16 @@ func (avl *AVL) Insert(value float64) *AVL {
 	balance := avl.Balance()
 
 	fmt.Println(balance)
+
+	if avl.HasLeft() && balance > 1 && avl.Left.IsLess(value) {
+		fmt.Println("right")
+	} else if avl.HasRight() && balance < -1 && avl.Right.IsMore(value) {
+		fmt.Println("left")
+	} else if avl.HasLeft() && balance > 1 && avl.Left.IsMore(value) {
+		fmt.Println("left right")
+	} else if avl.HasRight() && balance < -1 && avl.Right.IsLess(value) {
+		fmt.Println("right left")
+	}
 
 	return avl
 }
