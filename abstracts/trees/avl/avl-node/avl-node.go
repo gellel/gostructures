@@ -181,14 +181,8 @@ func (avl *AVL) Insert(value float64) *AVL {
 
 	fmt.Println(balance)
 
-	if avl.HasLeft() && balance > 1 && avl.Left.IsLess(value) {
-		fmt.Println("right")
-	} else if avl.HasRight() && balance < -1 && avl.Right.IsMore(value) {
-		fmt.Println("left")
-	} else if avl.HasLeft() && balance > 1 && avl.Left.IsMore(value) {
-		fmt.Println("left right")
-	} else if avl.HasRight() && balance < -1 && avl.Right.IsLess(value) {
-		fmt.Println("right left")
+	if (balance > 1) && value < avl.Left.Value {
+		return avl.RotateRight()
 	}
 
 	return avl
@@ -241,6 +235,19 @@ func (avl *AVL) RemoveRight() *AVL {
 }
 
 func (avl *AVL) RotateLeft() *AVL {
+
+	root := *avl
+
+	root.RemoveRight()
+
+	avl.Right.AssignParent(root.Parent)
+
+	*avl = *avl.Right
+
+	avl.Side = root.Side
+
+	avl.AssignLeft(&root)
+
 	return avl
 }
 
@@ -249,6 +256,19 @@ func (avl *AVL) RotateLeftRight() *AVL {
 }
 
 func (avl *AVL) RotateRight() *AVL {
+
+	root := *avl
+
+	root.RemoveLeft()
+
+	avl.Left.AssignParent(root.Parent)
+
+	*avl = *avl.Left
+
+	avl.Side = root.Side
+
+	avl.AssignRight(&root)
+
 	return avl
 }
 
@@ -285,7 +305,7 @@ func (avl *AVL) ToFloatSlice() []float64 {
 }
 
 func (avl *AVL) UnsafelyAssignLeft(a *AVL) *AVL {
-	avl.Left = a.UnsafelyAssignParent(avl)
+	avl.Left = a.UnsafelyAssignParent(avl).AssignSide(LEFT)
 	return avl
 }
 
@@ -295,7 +315,7 @@ func (avl *AVL) UnsafelyAssignParent(a *AVL) *AVL {
 }
 
 func (avl *AVL) UnsafelyAssignRight(a *AVL) *AVL {
-	avl.Right = a.UnsafelyAssignParent(avl)
+	avl.Right = a.UnsafelyAssignParent(avl).AssignSide(RIGHT)
 	return avl
 }
 
