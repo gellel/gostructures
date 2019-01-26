@@ -179,10 +179,14 @@ func (avl *AVL) Insert(value float64) *AVL {
 
 	balance := avl.Balance()
 
-	fmt.Println(balance)
-
 	if (balance > 1) && value < avl.Left.Value {
 		return avl.RotateRight()
+	} else if (balance < -1) && value > avl.Right.Value {
+		return avl.RotateLeft()
+	} else if (balance > 1) && value > avl.Left.Value {
+		return avl.RotateLeftRight()
+	} else if (balance < -1) && value < avl.Right.Value {
+		return avl.RotateRightLeft()
 	}
 
 	return avl
@@ -246,13 +250,20 @@ func (avl *AVL) RotateLeft() *AVL {
 
 	avl.Side = root.Side
 
+	if avl.HasLeft() {
+		root.AssignRight(avl.Left)
+	}
+
 	avl.AssignLeft(&root)
 
 	return avl
 }
 
 func (avl *AVL) RotateLeftRight() *AVL {
-	return avl
+
+	avl.Left.RotateLeft()
+
+	return avl.RotateRight()
 }
 
 func (avl *AVL) RotateRight() *AVL {
@@ -267,13 +278,20 @@ func (avl *AVL) RotateRight() *AVL {
 
 	avl.Side = root.Side
 
+	if avl.HasRight() {
+		root.AssignLeft(avl.Right)
+	}
+
 	avl.AssignRight(&root)
 
 	return avl
 }
 
 func (avl *AVL) RotateRightLeft() *AVL {
-	return avl
+
+	avl.Right.RotateRight()
+
+	return avl.RotateLeft()
 }
 
 func (avl *AVL) ToAVLSlice() []*AVL {
