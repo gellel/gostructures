@@ -355,6 +355,10 @@ func (avl *AVL) RemoveRight() *AVL {
 	return avl
 }
 
+// RotateLeft shifts the accessed AVL-Tree-Node to the right child position
+// of the accessed AVL-Tree-Node's left child. This effective makes the
+// the following operation; before rotation Z(root.Left.Left)<-Y(root.Left)<-X(root);
+// after rotation Z(root.Left)<-Y(root)->(root.Right)X.
 func (avl *AVL) RotateLeft() *AVL {
 
 	root := *avl
@@ -376,6 +380,10 @@ func (avl *AVL) RotateLeft() *AVL {
 	return avl
 }
 
+// RotateLeftRight performs a combination of AVL.LeftRotate and
+// AVL.RightRotate. The first operation requires the accessed AVL-Tree-Node
+// to rotate its left-child left. The accessed AVL-Tree-Node then
+// rotates itself right.
 func (avl *AVL) RotateLeftRight() *AVL {
 
 	avl.Left.RotateLeft()
@@ -383,6 +391,10 @@ func (avl *AVL) RotateLeftRight() *AVL {
 	return avl.RotateRight()
 }
 
+// RotateRight shifts the accessed AVL-Tree-Node to the left child position
+// of the accessed AVL-Tree-Node's right child. This effective makes the
+// the following operation; before rotation X(root)->Y(root.Right)->Z(root.Right.Right);
+// after rotation X(root.Left)<-Y(root)->(root.Right)Z.
 func (avl *AVL) RotateRight() *AVL {
 
 	root := *avl
@@ -404,6 +416,10 @@ func (avl *AVL) RotateRight() *AVL {
 	return avl
 }
 
+// RotateRightLeft performs a combination of AVL.RotateRight and
+// AVL.RotateLeft. The first operation requires the accessed AVL-Tree-Node
+// to rotate its right-child right. The accessed AVL-Tree-Node then
+// rotates itself left.
 func (avl *AVL) RotateRightLeft() *AVL {
 
 	avl.Right.RotateRight()
@@ -411,6 +427,7 @@ func (avl *AVL) RotateRightLeft() *AVL {
 	return avl.RotateLeft()
 }
 
+// ToAVLSlice creates an ordered slice of the assigned AVL-Tree-Node's child-nodes.
 func (avl *AVL) ToAVLSlice() []*AVL {
 
 	nodes := make([]*AVL, 0)
@@ -425,6 +442,7 @@ func (avl *AVL) ToAVLSlice() []*AVL {
 	return nodes
 }
 
+// ToFloatSlice creates an ordered slice of the assigned AVL-Tree-Node's child-nodes values.
 func (avl *AVL) ToFloatSlice() []float64 {
 
 	floats := make([]float64, 0)
@@ -439,26 +457,39 @@ func (avl *AVL) ToFloatSlice() []float64 {
 	return floats
 }
 
+// UnsafelyAssignLeft sets the argument pointer to the accessed
+// AVL-Tree-Node left child position without performing
+// the AVL-Search-Tree insert operation.
 func (avl *AVL) UnsafelyAssignLeft(a *AVL) *AVL {
 	avl.Left = a.UnsafelyAssignParent(avl).AssignSide(LEFT)
 	return avl
 }
 
+// UnsafelyAssignParent sets the argument pointer to the accessed
+// AVL-Tree-Node parent position without performing
+// the AVL-Search-Tree insert operation.
 func (avl *AVL) UnsafelyAssignParent(a *AVL) *AVL {
 	avl.Parent = a
 	return avl
 }
 
+// UnsafelyAssignRight sets the argument pointer to the accessed
+// AVL-Tree-Node right child position without performing
+// the AVL-Search-Tree insert operation.
 func (avl *AVL) UnsafelyAssignRight(a *AVL) *AVL {
 	avl.Right = a.UnsafelyAssignParent(avl).AssignSide(RIGHT)
 	return avl
 }
 
+// UnsafelyAssignSide sets the argument string to the accessed
+// AVL-Tree-Node sid reference without validating the argument string.
 func (avl *AVL) UnsafelyAssignSide(side string) *AVL {
 	avl.Side = side
 	return avl
 }
 
+// ViolatesLeft checks that the argument AVL-Tree-Node pointer contains
+// a floating point value is greater than the accessed AVL-Tree-Node.
 func (avl *AVL) ViolatesLeft(a *AVL) error {
 	if a.Value > avl.Value {
 		return fmt.Errorf("address (*%p) cannot hold pointer (*%p). argument struct must contain value less than %f", &avl, &a, avl.Value)
@@ -466,6 +497,11 @@ func (avl *AVL) ViolatesLeft(a *AVL) error {
 	return nil
 }
 
+// ViolatesParent checks that the argument AVL-Tree-Node pointer
+// satisfies the left and right constraints of a AVL-Search-Tree;
+// enforcing that the parent of a left node is greater than the
+// accessed AVL-Tree-Node. The alternative check is performed for
+// a right node.
 func (avl *AVL) ViolatesParent(a *AVL) error {
 	if avl.Parent == nil {
 		return fmt.Errorf("address (*%p) has no parent pointer", &avl)
@@ -477,6 +513,8 @@ func (avl *AVL) ViolatesParent(a *AVL) error {
 	return nil
 }
 
+// ViolatesRight checks that the argument AVL-Tree-Node pointer contains
+// a floating point value is less than the accessed AVL-Tree-Node.
 func (avl *AVL) ViolatesRight(a *AVL) error {
 	if a.Value < avl.Value {
 		return fmt.Errorf("address (*%p) cannot hold pointer (*%p). argument struct must contain value greater than %f", &avl, &a, avl.Value)
@@ -484,6 +522,7 @@ func (avl *AVL) ViolatesRight(a *AVL) error {
 	return nil
 }
 
+// ViolatesSide checks that the argument value is not either "LEFT" or "RIGHT".
 func (avl *AVL) ViolatesSide(side string) error {
 
 	_, ok := sides[side]
@@ -494,6 +533,7 @@ func (avl *AVL) ViolatesSide(side string) error {
 	return nil
 }
 
+// Walk accesses all assigned child-nodes to accessed AVL-Tree-Node.
 func (avl *AVL) Walk() *AVL {
 	if avl.HasLeft() {
 		avl.Left.Walk()
