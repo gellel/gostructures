@@ -12,4 +12,4 @@ Binary Search Tree is an abstract data structure that stores collections of data
 
 | Access   | Search    | Insert    | Delete    |
 | :---     | :---      | :---      | :---      |
-| Ω(n)     | Ω(n)      | Ω(n)      | Ω(n)      |
+| O(n)     | O(n)      | O(n)      | O(n)      |
