@@ -19,6 +19,7 @@ type avl interface {
 	AssignLeft(a *AVL) *AVL
 	AssignParent(a *AVL) *AVL
 	AssignRight(a *AVL) *AVL
+	AssignSide(side string) *AVL
 	Balance() int
 	HasLeft() bool
 	HasParent() bool
@@ -41,10 +42,14 @@ type avl interface {
 	RotateRightLeft() *AVL
 	ToAVLSlice() []*AVL
 	ToFloatSlice() []float64
-	UnsafelyAssignLeft(b *AVL) *AVL
-	UnsafelyAssignRight(b *AVL) *AVL
-	ViolatesLeft(b *AVL) error
-	ViolatesRight(b *AVL) error
+	UnsafelyAssignLeft(a *AVL) *AVL
+	UnsafelyAssignParent(a *AVL) *AVL
+	UnsafelyAssignRight(a *AVL) *AVL
+	UnsafelyAssignSide(side string) *AVL
+	ViolatesLeft(a *AVL) error
+	ViolatesParent(a *AVL) error
+	ViolatesRight(a *AVL) error
+	ViolatesSide(side string) error
 	Walk() *AVL
 }
 
@@ -213,7 +218,17 @@ func (avl *AVL) IsRight() bool {
 }
 
 func (avl *AVL) Remove(value float64) *AVL {
-
+	if avl.Parent == nil {
+		return avl
+	} else if avl.IsEqual(value) && avl.IsLeft() {
+		return avl.Parent.RemoveLeft()
+	} else if avl.IsEqual(value) && avl.IsRight() {
+		return avl.Parent.RemoveRight()
+	} else if avl.IsLess(value) && avl.HasLeft() {
+		return avl.Left.Remove(value)
+	} else if avl.IsMore(value) && avl.HasRight() {
+		return avl.Right.Remove(value)
+	}
 	return avl
 }
 
@@ -248,7 +263,7 @@ func (avl *AVL) RotateLeft() *AVL {
 
 	*avl = *avl.Right
 
-	avl.Side = root.Side
+	avl.UnsafelyAssignSide(root.Side)
 
 	if avl.HasLeft() {
 		root.AssignRight(avl.Left)
@@ -276,7 +291,7 @@ func (avl *AVL) RotateRight() *AVL {
 
 	*avl = *avl.Left
 
-	avl.Side = root.Side
+	avl.UnsafelyAssignSide(root.Side)
 
 	if avl.HasRight() {
 		root.AssignLeft(avl.Right)
@@ -337,6 +352,11 @@ func (avl *AVL) UnsafelyAssignRight(a *AVL) *AVL {
 	return avl
 }
 
+func (avl *AVL) UnsafelyAssignSide(side string) *AVL {
+	avl.Side = side
+	return avl
+}
+
 func (avl *AVL) ViolatesLeft(a *AVL) error {
 	if a.Value > avl.Value {
 		return fmt.Errorf("address (*%p) cannot hold pointer (*%p). argument struct must contain value less than %f", &avl, &a, avl.Value)
@@ -346,7 +366,7 @@ func (avl *AVL) ViolatesLeft(a *AVL) error {
 
 func (avl *AVL) ViolatesParent(a *AVL) error {
 	if avl.Parent == nil {
-		return fmt.Errorf("address (*%p) has no parent pointer.", &avl)
+		return fmt.Errorf("address (*%p) has no parent pointer", &avl)
 	} else if avl.Side == LEFT && avl.Parent.Value < avl.Value {
 		return fmt.Errorf("address (*%p) cannot hold pointer (*%p). argument struct value must exceed %f", &avl, &a, avl.Parent.Value)
 	} else if avl.Side == RIGHT && avl.Parent.Value > avl.Value {
