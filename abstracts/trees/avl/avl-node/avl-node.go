@@ -1,3 +1,9 @@
+// Package node exports a AVL-Tree-Node for a AVL-Search-Tree.
+// AVL-Tree-Node implements most of the core functionality that the
+// AVL-Search-Tree provides but at a AVL-Tree-Node level. Package
+// also exports a function "New" that simplifies instantiating
+// AVL-Tree-Node pointers. Leaf-Node's are float64's for min-max
+// comparison.
 package node
 
 import (
@@ -7,20 +13,31 @@ import (
 )
 
 const (
-	LEFT  string = "LEFT"
+	// LEFT declares constant string that provides a namespace to annotate that
+	// a AVL-node is assigned as a left child of its parent.
+	LEFT string = "LEFT"
+	// RIGHT declares constant string that provides a namespace to annotate that
+	// a AVL-node is assigned as a right child of its parent.
 	RIGHT string = "RIGHT"
 )
 
 var (
+	// SIDES declares constant map that conatins supported child-node positions.
 	sides = map[string]bool{LEFT: true, RIGHT: true}
 )
 
+// AVL declares the implementation for a AVL-Tree-Node
+// within the AVL-Search-Tree.
 type avl interface {
 	AssignLeft(a *AVL) *AVL
 	AssignParent(a *AVL) *AVL
 	AssignRight(a *AVL) *AVL
 	AssignSide(side string) *AVL
 	Balance() int
+	EmptyLeft() bool
+	EmptyParent() bool
+	EmptyRight() bool
+	EmptySide() bool
 	HasLeft() bool
 	HasParent() bool
 	HasRight() bool
@@ -53,18 +70,35 @@ type avl interface {
 	Walk() *AVL
 }
 
+// AVL declares the struct for a Leaf-Node within the AVL-Search-Tree.
+// Each Leaf-Node contains a floating point value for describing it's assigned
+// numerical value. This was chosen to enable greater precision for more
+// complex (in terms of numerical complexity) AVL-Search-Tree's. In addition,
+// a Leaf-Node struct contains an optional left and right Leaf-Node, which acts
+// as the branches of the AVL-Search-Tree. Each AVL-Tree-Node that is created
+// using the Leaf-Node's insert method will have it's literal side position
+// assigned to the new child-node as a string vale of "left" or "right".
+// As new Leaf-Node's are inserted into an accessed AVL-Node,
+// an AVL rotation may occur to satisfy the properties of an AVL-Tree.
 type AVL struct {
-	Left   *AVL
-	Parent *AVL
-	Right  *AVL
-	Side   string
-	Value  float64
+	Left   *AVL    // Left is the left AVL-Tree-Node of the accessed AVL-Tree-Node.
+	Parent *AVL    // Parent is the AVL-Tree-Node that holds the accessed AVL-Tree-Node in either the left or right position.
+	Right  *AVL    // Right is the right AVL-Tree-Node of the accessed Left-Node.
+	Side   string  // Side expresses the position (relative to the parent) that the accessed AVL-Tree-Node is assigned.
+	Value  float64 // Value is the numeric weight of the AVL-Tree-Node. In a AVL-Search-Tree, a value lower than the accessed AVL-Tree-Node will be assigned to the left position. Expectidly, the opposite is true for larger sums.
 }
 
+// New instantiates a new Leaf-node. A Leaf-nodes generated using the New
+// function do not require a reference to either a left or right child-node.
+// Additionally, the side or parent reference is not required.
 func New(value float64) *AVL {
 	return &AVL{Value: value}
 }
 
+// AssignLeft assigns by pointer a left child-node to the accessed AVL-Tree-Node. Method
+// expects that the provided AVL-Tree-Node pointer contains a value that is of a lesser
+// value than that of the accessed AVL-Tree-Node. If a violation occurs method throws
+// an invalid argument exception.
 func (avl *AVL) AssignLeft(a *AVL) *AVL {
 
 	err := avl.ViolatesLeft(a)
@@ -76,6 +110,10 @@ func (avl *AVL) AssignLeft(a *AVL) *AVL {
 	return avl.UnsafelyAssignLeft(a)
 }
 
+// AssignParent assigns by pointer a parent AVL-Tree-Node to the accessed AVL-Tree-Node. Method
+// expects that the provided AVL-Tree-Node pointer contains a value that is of a greater
+// value than that of the accessed AVL-Tree-Node. If a violation occurs method throws
+// an invalid argument exception.
 func (avl *AVL) AssignParent(a *AVL) *AVL {
 
 	err := avl.ViolatesParent(a)
@@ -87,6 +125,10 @@ func (avl *AVL) AssignParent(a *AVL) *AVL {
 	return avl.UnsafelyAssignParent(a)
 }
 
+// AssignRight assigns by pointer a right child-node to the accessed AVL-Tree-Node. Method
+// expects that the provided AVL-Tree-Node pointer contains a value that is of a greater
+// value than that of the accessed AVL-Tree-Node. If a violation occurs method throws
+// an invalid argument exception.
 func (avl *AVL) AssignRight(a *AVL) *AVL {
 
 	err := avl.ViolatesRight(a)
@@ -98,6 +140,10 @@ func (avl *AVL) AssignRight(a *AVL) *AVL {
 	return avl.UnsafelyAssignRight(a)
 }
 
+// AssignSide assigns the accessed AVL-Tree-Node a string value that expresses
+// the position it sits within its parent AVL-Tree-Node. A AVL-Tree-Node that is
+// stored in AVL.Left must contain a string value of "LEFT". Expectidly,
+// a AVL-Tree-Node stored in AVL.Right must contain a string value of "RIGHT".
 func (avl *AVL) AssignSide(side string) *AVL {
 
 	err := avl.ViolatesSide(side)
@@ -111,10 +157,34 @@ func (avl *AVL) AssignSide(side string) *AVL {
 	return avl
 }
 
+// Balance computes the weighting of the accessed AVL-Tree-Node. Negative integers
+// suggest that the AVL-Tree-Node holds more child-nodes on the right of the of
+// node. A positive value suggests the left contains more left children.
 func (avl *AVL) Balance() int {
 	return int(avl.HeightLeft() - avl.HeightRight())
 }
 
+// EmptyLeft checks whether the accessed AVL-Tree-Node has an unassigned Left-Child-Node.
+func (avl *AVL) EmptyLeft() bool {
+	return avl.Left == nil
+}
+
+// EmptyParent checks whether the accessed AVL-Tree-Node has an unassigned Parent-Node.
+func (avl *AVL) EmptyParent() bool {
+	return avl.Parent == nil
+}
+
+// EmptyRight checks whether the accessed AVL-Tree-Node has an unassigned Right-Child-Node.
+func (avl *AVL) EmptyRight() bool {
+	return avl.Right == nil
+}
+
+// EmptySide checks whether the accessed AVL-Tree-Node has an unassigned side reference.
+func (avl *AVL) EmptySide() bool {
+	return avl.Side == ""
+}
+
+// Find checks whether the accessed AVL-Tree-Node or its Child-Nodes contains the argument value.
 func (avl *AVL) Find(value float64) *AVL {
 	if avl.IsEqual(value) {
 		return avl
@@ -126,26 +196,33 @@ func (avl *AVL) Find(value float64) *AVL {
 	return nil
 }
 
+// HasLeft checks whether the accessed AVL-Tree-Node has an assigned Left-Child-Node.
 func (avl *AVL) HasLeft() bool {
 	return avl.Left != nil
 }
 
+// HasParent checks whether the accessed AVL-Tree-Node has an assigned Parent-Node.
 func (avl *AVL) HasParent() bool {
 	return avl.Parent != nil
 }
 
+// HasRight checks whether the accessed AVL-Tree-Node has an assigned Right-Child-Node.
 func (avl *AVL) HasRight() bool {
 	return avl.Right != nil
 }
 
+// Height computes the current depth of the accessed AVL-Tree-Node and converts the
+// floating point sum to an integer.
 func (avl *AVL) Height() int {
 	return int(avl.HeightOf())
 }
 
+// HeightOf computes the current depth of the accessed AVL-Tree-Node.
 func (avl *AVL) HeightOf() float64 {
 	return math.Max(avl.HeightLeft(), avl.HeightRight())
 }
 
+// HeightLeft computes the nested depth of the accessed AVL-Tree-Node's Left-Children.
 func (avl *AVL) HeightLeft() float64 {
 	if avl.HasLeft() {
 		return (avl.Left.HeightOf() + 1.0)
@@ -153,6 +230,7 @@ func (avl *AVL) HeightLeft() float64 {
 	return 0.0
 }
 
+// HeightRight computes the nested depth of the accessed AVL-Tree-Node's Right-Children.
 func (avl *AVL) HeightRight() float64 {
 	if avl.HasRight() {
 		return (avl.Right.HeightOf() + 1.0)
@@ -160,10 +238,14 @@ func (avl *AVL) HeightRight() float64 {
 	return 0.0
 }
 
-func (avl *AVL) IsChild(a *AVL) bool {
-	return avl.Left == a || avl.Right == a
-}
-
+// Insert creates and assigns a new AVL-Tree-Node to the accessed AVL-Tree-Node.
+// When an argument value is smaller than the accessed AVL-Tree-Node value, the new instance
+// is stored on the accessed AVL-Tree-Node's left position. Alternatively, when
+// a larger value is provided, it is stored than the right position. Equal sums are
+// discarded and no new AVL-Tree-Node is created. When an insertion is performed,
+// accessed AVL-Tree-Node checks that the it is evenly distributed. When bias left,
+// the child nodes at the left position are shuffled one over so that they are weighted right
+// evenly. The alternative case moves nodes from the right to the left.
 func (avl *AVL) Insert(value float64) *AVL {
 	if avl.IsEqual(value) {
 		return avl
@@ -193,30 +275,47 @@ func (avl *AVL) Insert(value float64) *AVL {
 	} else if (balance < -1) && value < avl.Right.Value {
 		return avl.RotateRightLeft()
 	}
-
 	return avl
 }
 
+// IsChild checks whether the pointer address is mapped to the accessed AVL-Tree-Node's
+// left or right Child-Node positions.
+func (avl *AVL) IsChild(a *AVL) bool {
+	return avl.Left == a || avl.Right == a
+}
+
+// IsEqual checks whether the argument value is equal to the accessed
+// AVL-Tree-Node's assigned value.
 func (avl *AVL) IsEqual(value float64) bool {
 	return avl.Value == value
 }
 
+// IsLess checks whether the argument value is less than the accessed
+// AVL-Tree-Node's assigned value.
 func (avl *AVL) IsLess(value float64) bool {
 	return value < avl.Value
 }
 
+// IsMore checks whether the argument value is greater than the accessed
+// AVL-Tree-Node's assigned value.
 func (avl *AVL) IsMore(value float64) bool {
 	return value > avl.Value
 }
 
+// IsLeft checks whether the accessed AVL-Tree-Node is assigned to
+// another AVL-Tree-Node's left position.
 func (avl *AVL) IsLeft() bool {
 	return avl.Side == LEFT
 }
 
+// IsRight checks whether the accessed AVL-Tree-Node is assigned to
+// another AVL-Tree-Node's right position.
 func (avl *AVL) IsRight() bool {
 	return avl.Side == RIGHT
 }
 
+// Remove deletes a child-node contained within the accessed AVL-Tree-Node
+// or within the accessed AVL-Tree-Node's current child-nodes.
 func (avl *AVL) Remove(value float64) *AVL {
 	if avl.Parent == nil {
 		return avl
@@ -232,6 +331,7 @@ func (avl *AVL) Remove(value float64) *AVL {
 	return avl
 }
 
+// RemoveLeft unassigns the accessed AVL-Tree-Node's left AVL-Tree-Node.
 func (avl *AVL) RemoveLeft() *AVL {
 
 	avl.Left = nil
@@ -239,6 +339,7 @@ func (avl *AVL) RemoveLeft() *AVL {
 	return avl
 }
 
+// RemoveParent unassigns the accessed AVL-Tree-Node's parent AVL-Tree-Node.
 func (avl *AVL) RemoveParent() *AVL {
 
 	avl.Parent = nil
@@ -246,6 +347,7 @@ func (avl *AVL) RemoveParent() *AVL {
 	return avl
 }
 
+// RemoveRight unassigns the accessed AVL-Tree-Node's right AVL-Tree-Node.
 func (avl *AVL) RemoveRight() *AVL {
 
 	avl.Right = nil
