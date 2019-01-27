@@ -25,5 +25,9 @@ func Test(t *testing.T) {
 		}
 	}
 
+	if a.Root.Side != "ROOT" {
+		t.Fatalf("expected %s at address (*%p). got %s", "ROOT", &a, a.Root.Side)
+	}
+
 	fmt.Println(a.ToFloatSlice())
 }
