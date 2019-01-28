@@ -50,14 +50,14 @@ type redBlack interface {
 	RemoveRight() *RedBlack
 	ToRedBlackSlice() []*RedBlack
 	ToFloatSlice() []float64
-	UnsafelyAssignLeft(a *RedBlack) *RedBlack
-	UnsafelyAssignParent(a *RedBlack) *RedBlack
-	UnsafelyAssignRight(a *RedBlack) *RedBlack
+	UnsafelyAssignLeft(r *RedBlack) *RedBlack
+	UnsafelyAssignParent(r *RedBlack) *RedBlack
+	UnsafelyAssignRight(r *RedBlack) *RedBlack
 	UnsafelyAssignSide(side string) *RedBlack
 	ViolatesColor(color string) error
-	ViolatesLeft(a *RedBlack) error
-	ViolatesParent(a *RedBlack) error
-	ViolatesRight(a *RedBlack) error
+	ViolatesLeft(r *RedBlack) error
+	ViolatesParent(r *RedBlack) error
+	ViolatesRight(r *RedBlack) error
 	ViolatesSide(side string) error
 	Walk() *RedBlack
 }
@@ -95,7 +95,7 @@ func (redBlack *RedBlack) AssignLeft(r *RedBlack) *RedBlack {
 
 func (redBlack *RedBlack) AssignParent(r *RedBlack) *RedBlack {
 
-	err := redBlack.ViolatesParent()
+	err := redBlack.ViolatesParent(r)
 
 	if err != nil {
 		log.Panicln(err)
@@ -302,27 +302,27 @@ func (redBlack *RedBlack) ViolatesColor(color string) error {
 	return nil
 }
 
-func (redBlack *RedBlack) ViolatesLeft(a *RedBlack) error {
-	if a.Value > redBlack.Value {
-		return fmt.Errorf("address (*%p) cannot hold pointer (*%p). argument struct must contain value less than %f", &redBlack, &a, redBlack.Value)
+func (redBlack *RedBlack) ViolatesLeft(r *RedBlack) error {
+	if r.Value > redBlack.Value {
+		return fmt.Errorf("address (*%p) cannot hold pointer (*%p). argument struct must contain value less than %f", &redBlack, &r, redBlack.Value)
 	}
 	return nil
 }
 
-func (redBlack *RedBlack) ViolatesParent(a *RedBlack) error {
+func (redBlack *RedBlack) ViolatesParent(r *RedBlack) error {
 	if redBlack.Parent == nil {
 		return fmt.Errorf("address (*%p) has no parent pointer", &redBlack)
 	} else if redBlack.Side == LEFT && redBlack.Parent.Value < redBlack.Value {
-		return fmt.Errorf("address (*%p) cannot hold pointer (*%p). argument struct value must exceed %f", &redBlack, &a, redBlack.Parent.Value)
+		return fmt.Errorf("address (*%p) cannot hold pointer (*%p). argument struct value must exceed %f", &redBlack, &r, redBlack.Parent.Value)
 	} else if redBlack.Side == RIGHT && redBlack.Parent.Value > redBlack.Value {
-		return fmt.Errorf("address (*%p) cannot hold pointer (*%p). argument struct must not exceed %f", &redBlack, &a, redBlack.Parent.Value)
+		return fmt.Errorf("address (*%p) cannot hold pointer (*%p). argument struct must not exceed %f", &redBlack, &r, redBlack.Parent.Value)
 	}
 	return nil
 }
 
-func (redBlack *RedBlack) ViolatesRight(a *RedBlack) error {
-	if a.Value < redBlack.Value {
-		return fmt.Errorf("address (*%p) cannot hold pointer (*%p). argument struct must contain value greater than %f", &redBlack, &a, redBlack.Value)
+func (redBlack *RedBlack) ViolatesRight(r *RedBlack) error {
+	if r.Value < redBlack.Value {
+		return fmt.Errorf("address (*%p) cannot hold pointer (*%p). argument struct must contain value greater than %f", &redBlack, &r, redBlack.Value)
 	}
 	return nil
 }
