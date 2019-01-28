@@ -1,6 +1,9 @@
 package node
 
-import "log"
+import (
+	"fmt"
+	"log"
+)
 
 const (
 	BLACK = "BLACK"
@@ -39,6 +42,8 @@ type redBlack interface {
 	IsRed() bool
 	IsRight() bool
 	IsRoot() bool
+	MaxValue() float64
+	MinValue() float64
 	Remove(value float64) *RedBlack
 	RemoveLeft() *RedBlack
 	RemoveParent() *RedBlack
@@ -141,6 +146,18 @@ func (redBlack *RedBlack) EmptySide() bool {
 	return redBlack.Side == ""
 }
 
+func (redBlack *RedBlack) HasLeft() bool {
+	return redBlack.Left != nil
+}
+
+func (redBlack *RedBlack) HasParent() bool {
+	return redBlack.Parent != nil
+}
+
+func (redBlack *RedBlack) HasRight() bool {
+	return redBlack.Right != nil
+}
+
 func (redBlack *RedBlack) Insert(value float64) *RedBlack {
 	return redBlack
 }
@@ -177,7 +194,157 @@ func (redBlack *RedBlack) IsRoot() bool {
 	return redBlack.Side == ROOT
 }
 
+func (redBlack *RedBlack) MaxValue() float64 {
+
+	r := redBlack
+
+	for r != nil {
+		r = r.Right
+	}
+	return r.Value
+}
+
+func (redBlack *RedBlack) MinValue() float64 {
+
+	r := redBlack
+
+	for r != nil {
+		r = r.Left
+	}
+	return r.Value
+}
+
 func (redBlack *RedBlack) Remove(value float64) *RedBlack {
+	return redBlack
+}
+
+func (redBlack *RedBlack) RemoveLeft() *RedBlack {
+
+	redBlack.Left = nil
+
+	return redBlack
+}
+
+func (redBlack *RedBlack) RemoveParent() *RedBlack {
+
+	redBlack.Parent = nil
+
+	return redBlack
+}
+
+func (redBlack *RedBlack) RemoveRight() *RedBlack {
+
+	redBlack.Right = nil
+
+	return redBlack
+}
+
+func (redBlack *RedBlack) ToFloatSlice() []float64 {
+
+	floats := make([]float64, 0)
+
+	if redBlack.HasLeft() {
+		floats = append(floats, redBlack.Left.ToFloatSlice()...)
+	}
+	floats = append(floats, redBlack.Value)
+	if redBlack.HasRight() {
+		floats = append(floats, redBlack.Right.ToFloatSlice()...)
+	}
+	return floats
+}
+
+func (redBlack *RedBlack) ToRedBlackSlice() []*RedBlack {
+
+	nodes := make([]*RedBlack, 0)
+
+	if redBlack.HasLeft() {
+		nodes = append(nodes, redBlack.Left.ToRedBlackSlice()...)
+	}
+	nodes = append(nodes, redBlack)
+	if redBlack.HasRight() {
+		nodes = append(nodes, redBlack.Right.ToRedBlackSlice()...)
+	}
+	return nodes
+}
+
+func (redBlack *RedBlack) UnsafelyAssignColor(color string) *RedBlack {
+	redBlack.Color = color
+	return redBlack
+}
+
+func (redBlack *RedBlack) UnsafelyAssignLeft(r *RedBlack) *RedBlack {
+	redBlack.Left = r.UnsafelyAssignSide(LEFT)
+	return redBlack
+}
+
+func (redBlack *RedBlack) UnsafelyAssignParent(r *RedBlack) *RedBlack {
+	redBlack.Parent = r
+	return redBlack
+}
+
+func (redBlack *RedBlack) UnsafelyAssignRight(r *RedBlack) *RedBlack {
+	redBlack.Right = r.UnsafelyAssignSide(RIGHT)
+	return redBlack
+}
+
+func (redBlack *RedBlack) UnsafelyAssignSide(side string) *RedBlack {
+	redBlack.Side = side
+	return redBlack
+}
+
+func (redBlack *RedBlack) ViolatesColor(color string) error {
+
+	_, ok := colors[color]
+
+	if ok == false {
+		return fmt.Errorf("unsupported string value. argument color must be either %s or %s", RED, BLACK)
+	}
+	return nil
+}
+
+func (redBlack *RedBlack) ViolatesLeft(a *RedBlack) error {
+	if a.Value > redBlack.Value {
+		return fmt.Errorf("address (*%p) cannot hold pointer (*%p). argument struct must contain value less than %f", &redBlack, &a, redBlack.Value)
+	}
+	return nil
+}
+
+func (redBlack *RedBlack) ViolatesParent(a *RedBlack) error {
+	if redBlack.Parent == nil {
+		return fmt.Errorf("address (*%p) has no parent pointer", &redBlack)
+	} else if redBlack.Side == LEFT && redBlack.Parent.Value < redBlack.Value {
+		return fmt.Errorf("address (*%p) cannot hold pointer (*%p). argument struct value must exceed %f", &redBlack, &a, redBlack.Parent.Value)
+	} else if redBlack.Side == RIGHT && redBlack.Parent.Value > redBlack.Value {
+		return fmt.Errorf("address (*%p) cannot hold pointer (*%p). argument struct must not exceed %f", &redBlack, &a, redBlack.Parent.Value)
+	}
+	return nil
+}
+
+func (redBlack *RedBlack) ViolatesRight(a *RedBlack) error {
+	if a.Value < redBlack.Value {
+		return fmt.Errorf("address (*%p) cannot hold pointer (*%p). argument struct must contain value greater than %f", &redBlack, &a, redBlack.Value)
+	}
+	return nil
+}
+
+func (redBlack *RedBlack) ViolatesSide(side string) error {
+
+	_, ok := sides[side]
+
+	if ok == false {
+		return fmt.Errorf("unsupported string value. argument side must be either %s or %s", LEFT, RIGHT)
+	}
+	return nil
+}
+
+func (redBlack *RedBlack) Walk() *RedBlack {
+	if redBlack.HasLeft() {
+		redBlack.Left.Walk()
+	}
+	log.Println(redBlack.Value, redBlack.Side)
+	if redBlack.HasRight() {
+		redBlack.Right.Walk()
+	}
 	return redBlack
 }
 

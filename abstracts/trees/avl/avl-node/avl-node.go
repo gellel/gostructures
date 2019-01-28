@@ -50,9 +50,12 @@ type avl interface {
 	IsEqual(value float64) bool
 	IsLess(value float64) bool
 	IsMore(value float64) bool
+	MaxValue() float64
+	MinValue() float64
 	Remove(value float64) *AVL
 	RemoveLeft() *AVL
 	RemoveRight() *AVL
+	Rotate(value float64) *AVL
 	RotateLeft() *AVL
 	RotateRight() *AVL
 	RotateLeftRight() *AVL
@@ -263,19 +266,7 @@ func (avl *AVL) Insert(value float64) *AVL {
 			avl.UnsafelyAssignRight(New(value))
 		}
 	}
-
-	balance := avl.Balance()
-
-	if (balance > 1) && value < avl.Left.Value {
-		return avl.RotateRight()
-	} else if (balance < -1) && value > avl.Right.Value {
-		return avl.RotateLeft()
-	} else if (balance > 1) && value > avl.Left.Value {
-		return avl.RotateLeftRight()
-	} else if (balance < -1) && value < avl.Right.Value {
-		return avl.RotateRightLeft()
-	}
-	return avl
+	return avl.Rotate(value)
 }
 
 // IsChild checks whether the pointer address is mapped to the accessed AVL-Tree-Node's
@@ -314,19 +305,42 @@ func (avl *AVL) IsRight() bool {
 	return avl.Side == RIGHT
 }
 
+// MaxValue finds the largest value from within the accessed AVL-Tree-Node.
+func (avl *AVL) MaxValue() float64 {
+
+	a := avl
+
+	for a != nil {
+		a = a.Right
+	}
+	return a.Value
+}
+
+// MinValue finds the smallest value from within the accessed AVL-Tree-Node.
+func (avl *AVL) MinValue() float64 {
+
+	a := avl
+
+	for a != nil {
+		a = a.Left
+	}
+	return a.Value
+}
+
 // Remove deletes a child-node contained within the accessed AVL-Tree-Node
 // or within the accessed AVL-Tree-Node's current child-nodes.
 func (avl *AVL) Remove(value float64) *AVL {
-	if avl.Parent == nil {
-		return avl
-	} else if avl.IsEqual(value) && avl.IsLeft() {
-		return avl.Parent.RemoveLeft()
-	} else if avl.IsEqual(value) && avl.IsRight() {
-		return avl.Parent.RemoveRight()
-	} else if avl.IsLess(value) && avl.HasLeft() {
+	if avl.IsLess(value) && avl.HasLeft() {
 		return avl.Left.Remove(value)
-	} else if avl.IsMore(value) && avl.HasRight() {
+	}
+	if avl.IsMore(value) && avl.HasRight() {
 		return avl.Right.Remove(value)
+	}
+	if avl.IsEqual(value) && avl.IsLeft() && avl.HasParent() {
+		return avl.Parent.RemoveLeft().Rotate(value)
+	}
+	if avl.IsEqual(value) && avl.IsRight() && avl.HasParent() {
+		return avl.Parent.RemoveRight().Rotate(value)
 	}
 	return avl
 }
@@ -352,6 +366,23 @@ func (avl *AVL) RemoveRight() *AVL {
 
 	avl.Right = nil
 
+	return avl
+}
+
+// Rotate performs the AVL-Tree-Node balancing rotations.
+func (avl *AVL) Rotate(value float64) *AVL {
+
+	balance := avl.Balance()
+
+	if (balance > 1) && value < avl.Left.Value {
+		return avl.RotateRight()
+	} else if (balance < -1) && value > avl.Right.Value {
+		return avl.RotateLeft()
+	} else if (balance > 1) && value > avl.Left.Value {
+		return avl.RotateLeftRight()
+	} else if (balance < -1) && value < avl.Right.Value {
+		return avl.RotateRightLeft()
+	}
 	return avl
 }
 
