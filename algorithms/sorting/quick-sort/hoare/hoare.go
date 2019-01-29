@@ -53,13 +53,14 @@ func partition(a []int, floor int, ceiling int) int {
     // is required. 
     i := floor - 1
     
-    // define base right swap position.
-    // required for determining whether
-    // the value of element at a[j] belongs on
-    // the left side of the pivot. usage
-    // of ceiling + 1 creates a convention 
-    // where decrementing j before swapping
-    // is required. 
+    /* define base right swap position.
+     * required for determining whether
+     * the value of element at a[j] belongs on
+     * the left side of the pivot. usage
+     * of ceiling + 1 creates a convention 
+     * where decrementing j before swapping
+     * is required.
+     */
 	j := ceiling + 1
 
     // set infinite loop
