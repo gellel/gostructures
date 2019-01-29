@@ -68,7 +68,6 @@ type Rb interface {
 	IsRoot() bool
 	MaxValue() float64
 	MinValue() float64
-	PassesCaseOne() bool
 	Remove(value float64) *RedBlack
 	RemoveLeft() *RedBlack
 	RemoveParent() *RedBlack
@@ -108,7 +107,7 @@ func New(value float64) *RedBlack {
 		Value: value}
 }
 
-// AssignBlack sets the accessed Rb as RED.
+// AssignBlack sets the accessed Rb.Color as BLACK.
 func (redBlack *RedBlack) AssignBlack() *RedBlack {
 	return redBlack.AssignColor(BLACK)
 }
@@ -147,7 +146,7 @@ func (redBlack *RedBlack) AssignParent(rb *RedBlack) *RedBlack {
 	return redBlack.UnsafelyAssignParent(rb)
 }
 
-// AssignRed sets the accessed Rb as BLACK.
+// AssignRed sets the accessed Rb.Color as RED.
 func (redBlack *RedBlack) AssignRed() *RedBlack {
 	return redBlack.AssignColor(RED)
 }
@@ -266,6 +265,11 @@ func (redBlack *RedBlack) HasSide() bool {
 
 // Insert creates and adds new Rb to the accessed Rb (or its descendants) when the value is not already contained in the Rb.
 func (redBlack *RedBlack) Insert(value float64) *RedBlack {
+
+	rb := New(value).AssignRed()
+
+	fmt.Println(rb)
+
 	return redBlack
 }
 
@@ -329,14 +333,6 @@ func (redBlack *RedBlack) MinValue() float64 {
 		r = r.Left
 	}
 	return r.Value
-}
-
-func (redBlack *RedBlack) PassesCaseOne() bool {
-	return redBlack.IsRoot() && redBlack.IsBlack() && redBlack.EmptyAncestors()
-}
-
-func (redBlack *RedBlack) PassesCaseTwo() bool {
-	return redBlack.IsRoot() && redBlack.IsBlack()
 }
 
 // Remove deletes the accessed Rb or one of its descendants if Rb.Value matches the argument Value.
