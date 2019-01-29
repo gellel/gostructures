@@ -19,13 +19,16 @@ var (
 		RED:   true}
 	sides = map[string]bool{
 		LEFT:  true,
-		RIGHT: true}
+        RIGHT: true,
+        ROOT:  true}
 )
 
-type redBlack interface {
+type Rb interface {
+    AssignBlack() *RedBlack
 	AssignColor(color string) *RedBlack
 	AssignLeft(r *RedBlack) *RedBlack
-	AssignParent(r *RedBlack) *RedBlack
+    AssignParent(r *RedBlack) *RedBlack
+    AssignRed() *RedBlack
 	AssignRight(r *RedBlack) *RedBlack
 	AssignSide(side string) *RedBlack
 	EmptyColor() bool
@@ -71,6 +74,10 @@ type RedBlack struct {
 	Value  float64
 }
 
+func (redBlack *RedBlack) AssignBlack() *RedBlack {
+    return redBlack.AssignColor(BLACK)
+}
+
 func (redBlack *RedBlack) AssignColor(color string) *RedBlack {
 
 	err := redBlack.ViolatesColor(color)
@@ -82,37 +89,41 @@ func (redBlack *RedBlack) AssignColor(color string) *RedBlack {
 	return redBlack.UnsafelyAssignColor(color)
 }
 
-func (redBlack *RedBlack) AssignLeft(r *RedBlack) *RedBlack {
+func (redBlack *RedBlack) AssignLeft(rb *RedBlack) *RedBlack {
 
-	err := redBlack.ViolatesLeft(r)
+	err := redBlack.ViolatesLeft(rb)
 
 	if err != nil {
 		log.Panicln(err)
 	}
 
-	return redBlack.UnsafelyAssignLeft(r)
+	return redBlack.UnsafelyAssignLeft(rb)
 }
 
-func (redBlack *RedBlack) AssignParent(r *RedBlack) *RedBlack {
+func (redBlack *RedBlack) AssignParent(rb *RedBlack) *RedBlack {
 
-	err := redBlack.ViolatesParent(r)
+	err := redBlack.ViolatesParent(rb)
 
 	if err != nil {
 		log.Panicln(err)
 	}
 
-	return redBlack.UnsafelyAssignParent(r)
+	return redBlack.UnsafelyAssignParent(rb)
 }
 
-func (redBlack *RedBlack) AssignRight(r *RedBlack) *RedBlack {
+func (redBlack *RedBlack) AssignRed() *RedBlack {
+    return redBlack.AssignColor(RED)
+}
 
-	err := redBlack.ViolatesRight(r)
+func (redBlack *RedBlack) AssignRight(rb *RedBlack) *RedBlack {
+
+	err := redBlack.ViolatesRight(rb)
 
 	if err != nil {
 		log.Panicln(err)
 	}
 
-	return redBlack.UnsafelyAssignRight(r)
+	return redBlack.UnsafelyAssignRight(rb)
 }
 
 func (redBlack *RedBlack) AssignSide(side string) *RedBlack {
@@ -272,18 +283,18 @@ func (redBlack *RedBlack) UnsafelyAssignColor(color string) *RedBlack {
 	return redBlack
 }
 
-func (redBlack *RedBlack) UnsafelyAssignLeft(r *RedBlack) *RedBlack {
-	redBlack.Left = r.UnsafelyAssignSide(LEFT)
+func (redBlack *RedBlack) UnsafelyAssignLeft(rb *RedBlack) *RedBlack {
+	redBlack.Left = rb.UnsafelyAssignSide(LEFT)
 	return redBlack
 }
 
-func (redBlack *RedBlack) UnsafelyAssignParent(r *RedBlack) *RedBlack {
-	redBlack.Parent = r
+func (redBlack *RedBlack) UnsafelyAssignParent(rb *RedBlack) *RedBlack {
+	redBlack.Parent = rb
 	return redBlack
 }
 
-func (redBlack *RedBlack) UnsafelyAssignRight(r *RedBlack) *RedBlack {
-	redBlack.Right = r.UnsafelyAssignSide(RIGHT)
+func (redBlack *RedBlack) UnsafelyAssignRight(rb *RedBlack) *RedBlack {
+	redBlack.Right = rb.UnsafelyAssignSide(RIGHT)
 	return redBlack
 }
 
@@ -302,27 +313,27 @@ func (redBlack *RedBlack) ViolatesColor(color string) error {
 	return nil
 }
 
-func (redBlack *RedBlack) ViolatesLeft(r *RedBlack) error {
-	if r.Value > redBlack.Value {
-		return fmt.Errorf("address (*%p) cannot hold pointer (*%p). argument struct must contain value less than %f", &redBlack, &r, redBlack.Value)
+func (redBlack *RedBlack) ViolatesLeft(rb *RedBlack) error {
+	if rb.Value > redBlack.Value {
+		return fmt.Errorf("address (*%p) cannot hold pointer (*%p). argument struct must contain value less than %f", &redBlack, &rb, redBlack.Value)
 	}
 	return nil
 }
 
-func (redBlack *RedBlack) ViolatesParent(r *RedBlack) error {
+func (redBlack *RedBlack) ViolatesParent(rb *RedBlack) error {
 	if redBlack.Parent == nil {
 		return fmt.Errorf("address (*%p) has no parent pointer", &redBlack)
 	} else if redBlack.Side == LEFT && redBlack.Parent.Value < redBlack.Value {
-		return fmt.Errorf("address (*%p) cannot hold pointer (*%p). argument struct value must exceed %f", &redBlack, &r, redBlack.Parent.Value)
+		return fmt.Errorf("address (*%p) cannot hold pointer (*%p). argument struct value must exceed %f", &redBlack, &rb, redBlack.Parent.Value)
 	} else if redBlack.Side == RIGHT && redBlack.Parent.Value > redBlack.Value {
-		return fmt.Errorf("address (*%p) cannot hold pointer (*%p). argument struct must not exceed %f", &redBlack, &r, redBlack.Parent.Value)
+		return fmt.Errorf("address (*%p) cannot hold pointer (*%p). argument struct must not exceed %f", &redBlack, &rb, redBlack.Parent.Value)
 	}
 	return nil
 }
 
-func (redBlack *RedBlack) ViolatesRight(r *RedBlack) error {
-	if r.Value < redBlack.Value {
-		return fmt.Errorf("address (*%p) cannot hold pointer (*%p). argument struct must contain value greater than %f", &redBlack, &r, redBlack.Value)
+func (redBlack *RedBlack) ViolatesRight(rb *RedBlack) error {
+	if rb.Value < redBlack.Value {
+		return fmt.Errorf("address (*%p) cannot hold pointer (*%p). argument struct must contain value greater than %f", &redBlack, &rb, redBlack.Value)
 	}
 	return nil
 }
@@ -332,7 +343,7 @@ func (redBlack *RedBlack) ViolatesSide(side string) error {
 	_, ok := sides[side]
 
 	if ok == false {
-		return fmt.Errorf("unsupported string value. argument side must be either %s or %s", LEFT, RIGHT)
+		return fmt.Errorf("unsupported string value. argument side must be either %s, %s or %s", LEFT, RIGHT, ROOT)
 	}
 	return nil
 }
@@ -348,4 +359,4 @@ func (redBlack *RedBlack) Walk() *RedBlack {
 	return redBlack
 }
 
-var _ redBlack = (*RedBlack)(nil)
+var _ Rb = (*RedBlack)(nil)
