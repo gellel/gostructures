@@ -1,107 +1,90 @@
-// Package hoarse provides QuickSort 
-// using the original Hoare partitioning scheme.
-// This implementation chooses a pivot that is the
-// last element in a Slice or Array. 
+// Package hoare exports Quicksort function using the partition
+// scheme designed by British computer scientist Tony Hoare.
+// Quicksort using this implementation offers average case
+// Omega(n log(n)) but degrades to O(n2) for a sorted slice.
 package hoare
 
 // QuickSort algorithm using Hoare partition scheme.
 func QuickSort(a []int) []int {
-	return quicksort(a, 0, len(a)-1)
+    return quicksort(a, 0, len(a)-1)
 }
 
-// QuickSort algorithm using Hoare partition scheme.
-// Uses floor: 0 and ceiling: n-1 to divide
-// and organise the unsorted Slice or Array.
+// QuickSort algorithm using Tony Hoare partition scheme.
+// Uses floor as N(0) and ceiling N(-1) to divide
+// and organise the unsorted slice.
 func quicksort(a []int, floor int, ceiling int) []int {
-	// checks whether the recursive floor position
-    // has been shifted n times to match the ceiling.
-    // a sorted Slice or Array would have a floor equal to
-    // ceiling, or simply N.
-	if floor < ceiling {
-        // perform core Quicksort algorithm.
-		p := partition(a, floor, ceiling)
-        // organise unsorted Slice or Array
-        // that is on the left side of the
-        // generated pivot. 
-        // use unmodified pivot as
-        // the ceiling.
+    if floor < ceiling {
+        p := partition(a, floor, ceiling)
         quicksort(a, floor, p)
-        // organise unsorted Slice or Array
-        // that is on the right side of the
-        // generated pivot. 
-        // shifts floor higher.
-		quicksort(a, p + 1, ceiling)
+        quicksort(a, p + 1, ceiling)
     }
-    // Slice or Array is organised.
-	return a
+    return a
 }
 
-// Partition using Hoare partition scheme.
-// Uses floor sum as the partition pivot.
+// Partition using Tony Hoare partition scheme.
 func partition(a []int, floor int, ceiling int) int {
-    // define pivot to operate as condition
-    // for assigning items that are misplaced.
-    // uses sum of pivot to be ordering field.
+    /* define pivot to operate as condition
+     * for assigning items that are misplaced.
+     * uses sum of pivot to be ordering field. 
+     */
     p := a[floor]
 
-    // define base left swap position.
-    // required for determining whether
-    // the value of element at a[i] belongs on
-    // the right side of the pivot. usage
-    // of floor - 1 creates a convention 
-    // where incrementing i before swapping
-    // is required. 
-    i := floor - 1
-    
-    /* define base right swap position.
-     * required for determining whether
-     * the value of element at a[j] belongs on
-     * the left side of the pivot. usage
-     * of ceiling + 1 creates a convention 
-     * where decrementing j before swapping
-     * is required.
+    /* define left swap index position. this is required
+     * for determining whether the value of element at a(i)
+     * belongs on the right side of the created pivot (p).
+     * setting floor as floor-1 creates a convention where
+     * incrementing i before swapping index positions is
+     * required to prevent an underflow.
      */
-	j := ceiling + 1
+    i := (floor - 1)
 
-    // set infinite loop
-	for {
-        // continue scanning across
-        // a[n] until iteration j finds
-        // value of a[j] is smaller or
-        // equal to the defined pivot. 
-		for {
-			j = j - 1
-			if a[j] <= p {
-				break
-			}
+    /* define right swap index position. this is required
+     * for determining whether the value of element at a(j)
+     * belongs on the left side of the created pivot (p).
+     * setting ceiling as (ceiling + 1) creates a convention where
+     * incrementing i before swapping index positions is
+     * required to prevent an underflow.
+     */
+    j := (ceiling + 1)
+
+    /* continiously perform shifting operation
+     * until all elements in the slice have been
+     * sequentially sorted.
+     */
+    for {
+        /* while the element at position a(j) does not
+         * exceed the pivot, continue iterating through
+         * the sequence up to the partition limit.
+         */
+        for {
+            j = (j - 1)
+            if a[j] <= p {
+                break
+            }
         }
-        // continue scanning across
-        // a[n] until iteration i finds
-        // value of a[i] is larger or
-        // equal to the defined pivot.
-		for {
-			i = i + 1
-			if a[i] >= p {
-				break
-			}
-		}
-		if i >= j {
-			break
+        /* while the element at position a(i) is smaller
+         * than the current the pivot, continue iterating through
+         * the sequence up to the partition limit.
+         */
+        for {
+            i = (i + 1)
+            if a[i] >= p {
+                break
+            }
         }
-        // once i and j have reached an
-        // inversion swap the values of
-        // a[i] and a[j] as a[i] will
-        // contain a value that is larger
-        // than a[j].
-		swap(a, i, j)
+        /* after an inversion of i and j has occurred the 
+         * sequence has been exhausted of operations. 
+         */
+        if i >= j {
+            break
+        }
+        /* swap the current elements at a(i) and a(j) */
+        swap(a, i, j)
     }
-    // j index becomes
-    // new recursive pivot.
-	return j
+    return j
 }
 
-// Swap reassigns elements within
-// a Slice or Array.
+// Swap reassigns elements within a Slice or Array.
 func swap(a []int, i int, j int) {
-	a[i], a[j] = a[j], a[i]
+    a[i], a[j] = a[j], a[i]
 }
