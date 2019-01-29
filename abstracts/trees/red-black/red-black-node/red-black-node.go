@@ -31,11 +31,18 @@ type Rb interface {
     AssignRed() *RedBlack
 	AssignRight(r *RedBlack) *RedBlack
 	AssignSide(side string) *RedBlack
-	EmptyColor() bool
+    EmptyColor() bool
+    EmptyGrandParent() bool
 	EmptyLeft() bool
 	EmptyParent() bool
 	EmptyRight() bool
-	EmptySide() bool
+    EmptySide() bool
+    HasColor() bool
+    HasGrandParent() bool
+    HasLeft() bool
+    HasParent() bool
+    HasRight() bool
+    HasSide() bool
 	Insert(value float64) *RedBlack
 	IsBlack() bool
 	IsEqual(value float64) bool
@@ -66,18 +73,21 @@ type Rb interface {
 }
 
 type RedBlack struct {
-	Color  string
-	Left   *RedBlack
-	Parent *RedBlack
-	Right  *RedBlack
-	Side   string
-	Value  float64
+    Color       string
+    GrandParent *RedBlack
+	Left        *RedBlack
+	Parent      *RedBlack
+	Right       *RedBlack
+	Side        string
+	Value       float64
 }
 
+// AssignBlack sets the accessed Rb as RED.
 func (redBlack *RedBlack) AssignBlack() *RedBlack {
     return redBlack.AssignColor(BLACK)
 }
 
+// AssignColor safely assigns a supported color to the accessed Rb. Enforces that the argument color is RED or BLACK.
 func (redBlack *RedBlack) AssignColor(color string) *RedBlack {
 
 	err := redBlack.ViolatesColor(color)
@@ -89,6 +99,7 @@ func (redBlack *RedBlack) AssignColor(color string) *RedBlack {
 	return redBlack.UnsafelyAssignColor(color)
 }
 
+// AssignLeft safely assigns a Left to the accessed Rb. Enforces that the argument Rb is of a lesser value.
 func (redBlack *RedBlack) AssignLeft(rb *RedBlack) *RedBlack {
 
 	err := redBlack.ViolatesLeft(rb)
@@ -100,6 +111,8 @@ func (redBlack *RedBlack) AssignLeft(rb *RedBlack) *RedBlack {
 	return redBlack.UnsafelyAssignLeft(rb)
 }
 
+// AssignParent safely assigns a Parent to the accessed Rb. Enforces that the argument Rb is greater than accessed Rb when Rb is a Left child.
+// When Rb is a Right child AssignParent enforces that the argument Rb is less than the accessed Rb.
 func (redBlack *RedBlack) AssignParent(rb *RedBlack) *RedBlack {
 
 	err := redBlack.ViolatesParent(rb)
@@ -111,10 +124,12 @@ func (redBlack *RedBlack) AssignParent(rb *RedBlack) *RedBlack {
 	return redBlack.UnsafelyAssignParent(rb)
 }
 
+// AssignRed sets the accessed Rb as BLACK.
 func (redBlack *RedBlack) AssignRed() *RedBlack {
     return redBlack.AssignColor(RED)
 }
 
+// AssignRight safely assigns a Right to the accessed Rb. Enforces that the argument Rb is of a greater value.
 func (redBlack *RedBlack) AssignRight(rb *RedBlack) *RedBlack {
 
 	err := redBlack.ViolatesRight(rb)
@@ -126,6 +141,7 @@ func (redBlack *RedBlack) AssignRight(rb *RedBlack) *RedBlack {
 	return redBlack.UnsafelyAssignRight(rb)
 }
 
+// AssignSide safely assigns a Side to the accessed Rb. Enforces that the argument Side is either LEFT, RIGHT or ROOT.
 func (redBlack *RedBlack) AssignSide(side string) *RedBlack {
 
 	err := redBlack.ViolatesSide(side)
@@ -137,74 +153,107 @@ func (redBlack *RedBlack) AssignSide(side string) *RedBlack {
 	return redBlack.UnsafelyAssignSide(side)
 }
 
+// EmptyColor checks that the assigned Color to the accessed Rb is empty.
 func (redBlack *RedBlack) EmptyColor() bool {
 	return redBlack.Color == ""
 }
 
+// EmptyGrandParent checks that the assigned GrandParent to the accessed Rb is empty.
+func (redBlack *RedBlack) EmptyGrandParent() bool {
+    return redBlack.GrandParent == nil
+}
+
+// EmptyColor checks that the assigned Left to the accessed Rb is empty.
 func (redBlack *RedBlack) EmptyLeft() bool {
 	return redBlack.Left == nil
 }
 
+// EmptyParent checks that the assigned Parent to the accessed Rb is empty.
 func (redBlack *RedBlack) EmptyParent() bool {
 	return redBlack.Parent == nil
 }
 
+// EmptyRight checks that the assigned Right to the accessed Rb is empty.
 func (redBlack *RedBlack) EmptyRight() bool {
 	return redBlack.Right == nil
 }
 
+// EmptySide checks that the assigned Side to the accessed Rb is empty.
 func (redBlack *RedBlack) EmptySide() bool {
 	return redBlack.Side == ""
 }
 
+// HasColor checks that the assigned Color to the accessed Rb is not Nil.
+func (redBlack *RedBlack) HasColor() bool {
+    return redBlack.Color != ""
+}
+
+// HasGrandParent checks that the assigned GrandParent to the accessed Rb is not Nil.
+func (redBlack *RedBlack) HasGrandParent() bool {
+	return redBlack.GrandParent != nil
+}
+
+// HasLeft checks that the assigned Left to the accessed Rb is not Nil.
 func (redBlack *RedBlack) HasLeft() bool {
 	return redBlack.Left != nil
 }
 
+// HasParent checks that the assigned Parent to the accessed Rb is not Nil.
 func (redBlack *RedBlack) HasParent() bool {
 	return redBlack.Parent != nil
 }
 
+// HasRight checks that the assigned Right to the accessed Rb is not Nil.
 func (redBlack *RedBlack) HasRight() bool {
 	return redBlack.Right != nil
 }
 
+// Insert creates and adds new Rb to the accessed Rb (or its descendants) when the value is not already contained in the Rb.
 func (redBlack *RedBlack) Insert(value float64) *RedBlack {
 	return redBlack
 }
 
+// IsBlack checks that the accessed Rb is colored BLACK.
 func (redBlack *RedBlack) IsBlack() bool {
 	return redBlack.Color == BLACK
 }
 
+// IsEqual checks that the Rb.Value is greater than the Value of the accessed Rb.
 func (redBlack *RedBlack) IsEqual(value float64) bool {
 	return value == redBlack.Value
 }
 
+// IsLess checks that the Rb.Value is less than the Value of the accessed Rb.
 func (redBlack *RedBlack) IsLess(value float64) bool {
 	return value < redBlack.Value
 }
 
+// IsLeft checks that the accessed Rb is a Left child of its assigned Parent.
 func (redBlack *RedBlack) IsLeft() bool {
 	return redBlack.Side == LEFT
 }
 
+// IsMore checks that the Rb.Value is greater than the Value of the accessed Rb.
 func (redBlack *RedBlack) IsMore(value float64) bool {
 	return value > redBlack.Value
 }
 
+// IsRed checks that the accessed Rb is colored RED.
 func (redBlack *RedBlack) IsRed() bool {
 	return redBlack.Color == RED
 }
 
+// IsRight checks that the accessed Rb is a Right child of its assigned Parent.
 func (redBlack *RedBlack) IsRight() bool {
 	return redBlack.Side == RIGHT
 }
 
+// IsRoot checks that the accessed Rb is the Root of all Rb ancestors.
 func (redBlack *RedBlack) IsRoot() bool {
 	return redBlack.Side == ROOT
 }
 
+// MaxValue finds the largest Value stored in the descendants of the accessed Rb.
 func (redBlack *RedBlack) MaxValue() float64 {
 
 	r := redBlack
@@ -215,6 +264,7 @@ func (redBlack *RedBlack) MaxValue() float64 {
 	return r.Value
 }
 
+// MinValue finds the smallest Value stored in the descendants of the accessed Rb.
 func (redBlack *RedBlack) MinValue() float64 {
 
 	r := redBlack
@@ -225,10 +275,20 @@ func (redBlack *RedBlack) MinValue() float64 {
 	return r.Value
 }
 
+// Remove deletes the accessed Rb or one of its descendants if Rb.Value matches the argument Value. 
 func (redBlack *RedBlack) Remove(value float64) *RedBlack {
 	return redBlack
 }
 
+// RemoveGrandParent removes the reference to the GrandParent of the accessed Rb.
+func (redBlack *RedBlack) RemoveGrandParent() *RedBlack {
+
+    redBlack.GrandParent = nil
+
+    return redBlack
+}
+
+// RemoveLeft removes the reference to the Left child of the accessed Rb.
 func (redBlack *RedBlack) RemoveLeft() *RedBlack {
 
 	redBlack.Left = nil
@@ -236,6 +296,7 @@ func (redBlack *RedBlack) RemoveLeft() *RedBlack {
 	return redBlack
 }
 
+// RemoveParent removes the reference to the Parent of the accessed Rb.
 func (redBlack *RedBlack) RemoveParent() *RedBlack {
 
 	redBlack.Parent = nil
@@ -243,6 +304,7 @@ func (redBlack *RedBlack) RemoveParent() *RedBlack {
 	return redBlack
 }
 
+// RemoveRight removes the reference to the Right child of the accessed Rb.
 func (redBlack *RedBlack) RemoveRight() *RedBlack {
 
 	redBlack.Right = nil
@@ -250,6 +312,7 @@ func (redBlack *RedBlack) RemoveRight() *RedBlack {
 	return redBlack
 }
 
+// ToFloatSlice creates a slice of all Rb.Value's stored at the accessed Rb.
 func (redBlack *RedBlack) ToFloatSlice() []float64 {
 
 	floats := make([]float64, 0)
@@ -264,6 +327,7 @@ func (redBlack *RedBlack) ToFloatSlice() []float64 {
 	return floats
 }
 
+// ToRedBlackSlice creates a slice of all Rb's stored at the accessed Rb.
 func (redBlack *RedBlack) ToRedBlackSlice() []*RedBlack {
 
 	nodes := make([]*RedBlack, 0)
@@ -278,31 +342,44 @@ func (redBlack *RedBlack) ToRedBlackSlice() []*RedBlack {
 	return nodes
 }
 
+// UnsafelyAssignColor assigns a Color to the accessed Rb without performing validity checks.
 func (redBlack *RedBlack) UnsafelyAssignColor(color string) *RedBlack {
 	redBlack.Color = color
 	return redBlack
 }
 
+
+// UnsafelyAssignGrandParent assigns a GrandParent to the accessed Rb without performing validity checks.
+func (redBlack *RedBlack) UnsafelyAssignGrandParent(rb *RedBlack) *RedBlack {
+	redBlack.GrandParent = rb
+	return redBlack
+}
+
+// UnsafelyAssignLeft assigns a Left child to the accessed Rb without performing validity checks.
 func (redBlack *RedBlack) UnsafelyAssignLeft(rb *RedBlack) *RedBlack {
 	redBlack.Left = rb.UnsafelyAssignSide(LEFT)
 	return redBlack
 }
 
+// UnsafelyAssignParent assigns a Parent to the accessed Rb without performing validity checks.
 func (redBlack *RedBlack) UnsafelyAssignParent(rb *RedBlack) *RedBlack {
 	redBlack.Parent = rb
 	return redBlack
 }
 
+// UnsafelyAssignRight assigns a Right child to the accessed Rb without performing validity checks.
 func (redBlack *RedBlack) UnsafelyAssignRight(rb *RedBlack) *RedBlack {
 	redBlack.Right = rb.UnsafelyAssignSide(RIGHT)
 	return redBlack
 }
 
+// UnsafelyAssignColor assigns a Side to the accessed Rb without performing validity checks.
 func (redBlack *RedBlack) UnsafelyAssignSide(side string) *RedBlack {
 	redBlack.Side = side
 	return redBlack
 }
 
+// ViolatesColor checks that the argument Color is a supported Rb Color.
 func (redBlack *RedBlack) ViolatesColor(color string) error {
 
 	_, ok := colors[color]
@@ -313,6 +390,7 @@ func (redBlack *RedBlack) ViolatesColor(color string) error {
 	return nil
 }
 
+// ViolatesLeft checks that the argument Rb is a valid candidate for a Left child of the accessed Rb.
 func (redBlack *RedBlack) ViolatesLeft(rb *RedBlack) error {
 	if rb.Value > redBlack.Value {
 		return fmt.Errorf("address (*%p) cannot hold pointer (*%p). argument struct must contain value less than %f", &redBlack, &rb, redBlack.Value)
@@ -320,6 +398,7 @@ func (redBlack *RedBlack) ViolatesLeft(rb *RedBlack) error {
 	return nil
 }
 
+// ViolatesParent checks that the argument Rb is a valid candidate for the Parent of the accessed Rb.
 func (redBlack *RedBlack) ViolatesParent(rb *RedBlack) error {
 	if redBlack.Parent == nil {
 		return fmt.Errorf("address (*%p) has no parent pointer", &redBlack)
@@ -331,6 +410,7 @@ func (redBlack *RedBlack) ViolatesParent(rb *RedBlack) error {
 	return nil
 }
 
+// ViolatesRight checks that the argument Rb is a valid candidate for a Right child of the accessed Rb.
 func (redBlack *RedBlack) ViolatesRight(rb *RedBlack) error {
 	if rb.Value < redBlack.Value {
 		return fmt.Errorf("address (*%p) cannot hold pointer (*%p). argument struct must contain value greater than %f", &redBlack, &rb, redBlack.Value)
@@ -338,6 +418,7 @@ func (redBlack *RedBlack) ViolatesRight(rb *RedBlack) error {
 	return nil
 }
 
+// ViolatesSide checks that the argument Side is a supported Rb Side.
 func (redBlack *RedBlack) ViolatesSide(side string) error {
 
 	_, ok := sides[side]
@@ -348,6 +429,7 @@ func (redBlack *RedBlack) ViolatesSide(side string) error {
 	return nil
 }
 
+// Walk visits all of the descendants of the accessed Rb in an ordered fashion, logging the Rb.Value at each interval once all sequential options are exhausted.
 func (redBlack *RedBlack) Walk() *RedBlack {
 	if redBlack.HasLeft() {
 		redBlack.Left.Walk()
