@@ -32,7 +32,7 @@ func partition(a []int, floor int, ceiling int) int {
     /* define left swap index position. this is required
      * for determining whether the value of element at a(i)
      * belongs on the right side of the created pivot (p).
-     * setting floor as floor-1 creates a convention where
+     * setting floor as (floor-1) creates a convention where
      * incrementing i before swapping index positions is
      * required to prevent an underflow.
      */
@@ -81,10 +81,11 @@ func partition(a []int, floor int, ceiling int) int {
         /* swap the current elements at a(i) and a(j) */
         swap(a, i, j)
     }
+    /* j becomes the new partition index. */
     return j
 }
 
-// Swap reassigns elements within a Slice or Array.
+// Swap reassigns elements within a slice.
 func swap(a []int, i int, j int) {
     a[i], a[j] = a[j], a[i]
 }
