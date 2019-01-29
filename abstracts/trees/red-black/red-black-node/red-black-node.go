@@ -39,12 +39,18 @@ type Rb interface {
 	AssignRed() *RedBlack
 	AssignRight(rb *RedBlack) *RedBlack
 	AssignSide(side string) *RedBlack
+	EmptyAdjacent() bool
+	EmptyAncestors() bool
+	EmptyChildren() bool
 	EmptyColor() bool
 	EmptyGrandParent() bool
 	EmptyLeft() bool
 	EmptyParent() bool
 	EmptyRight() bool
 	EmptySide() bool
+	HasAdjacent() bool
+	HasAncestors() bool
+	HasChildren() bool
 	HasColor() bool
 	HasGrandParent() bool
 	HasLeft() bool
@@ -62,6 +68,7 @@ type Rb interface {
 	IsRoot() bool
 	MaxValue() float64
 	MinValue() float64
+	PassesCaseOne() bool
 	Remove(value float64) *RedBlack
 	RemoveLeft() *RedBlack
 	RemoveParent() *RedBlack
@@ -167,62 +174,92 @@ func (redBlack *RedBlack) AssignSide(side string) *RedBlack {
 	return redBlack.UnsafelyAssignSide(side)
 }
 
-// EmptyColor checks that the assigned Color to the accessed Rb is empty.
+// EmptyColor checks that the assigned Rb.Color to the accessed Rb is empty.
 func (redBlack *RedBlack) EmptyColor() bool {
 	return redBlack.Color == ""
 }
 
-// EmptyGrandParent checks that the assigned GrandParent to the accessed Rb is empty.
+// EmptyAdjacent checks that the accessed Rb has no relationships (Rb.Parent, Rb.GrandParent, Rb.Left, Rb.Right)
+func (redBlack *RedBlack) EmptyAdjacent() bool {
+	return redBlack.EmptyChildren() && redBlack.EmptyAncestors()
+}
+
+// EmptyAncestors checks that the accessed Rb has no Parent or GrandParent.
+func (redBlack *RedBlack) EmptyAncestors() bool {
+	return redBlack.EmptyParent() && redBlack.EmptyGrandParent()
+}
+
+// EmptyChildren checks that the accessed Rb has no Children.
+func (redBlack *RedBlack) EmptyChildren() bool {
+	return redBlack.EmptyLeft() && redBlack.EmptyRight()
+}
+
+// EmptyGrandParent checks that the assigned Rb.GrandParent to the accessed Rb is empty.
 func (redBlack *RedBlack) EmptyGrandParent() bool {
 	return redBlack.GrandParent == nil
 }
 
-// EmptyLeft checks that the assigned Left to the accessed Rb is empty.
+// EmptyLeft checks that the assigned Rb.Left to the accessed Rb is empty.
 func (redBlack *RedBlack) EmptyLeft() bool {
 	return redBlack.Left == nil
 }
 
-// EmptyParent checks that the assigned Parent to the accessed Rb is empty.
+// EmptyParent checks that the assigned Rb.Parent to the accessed Rb is empty.
 func (redBlack *RedBlack) EmptyParent() bool {
 	return redBlack.Parent == nil
 }
 
-// EmptyRight checks that the assigned Right to the accessed Rb is empty.
+// EmptyRight checks that the assigned Rb.Right to the accessed Rb is empty.
 func (redBlack *RedBlack) EmptyRight() bool {
 	return redBlack.Right == nil
 }
 
-// EmptySide checks that the assigned Side to the accessed Rb is empty.
+// EmptySide checks that the assigned Rb.Side to the accessed Rb is empty.
 func (redBlack *RedBlack) EmptySide() bool {
 	return redBlack.Side == ""
 }
 
-// HasColor checks that the assigned Color to the accessed Rb is not Nil.
+// HasAdjacent checks that the accessed Rb contains relationships (Rb.Parent, Rb.GrandParent, Rb.Left, Rb.Right).
+func (redBlack *RedBlack) HasAdjacent() bool {
+	return redBlack.HasChildren() && redBlack.HasAncestors()
+}
+
+// HasAncestors checks that the assigned Rb.Parent and Rb.GrandParent to the accessed Rb is not Nil.
+func (redBlack *RedBlack) HasAncestors() bool {
+	return redBlack.HasParent() && redBlack.HasGrandParent()
+}
+
+// HasChildren checks that the assigned Rb.Left and assigned Rb.Right to the accessed Rb is not Nil.
+func (redBlack *RedBlack) HasChildren() bool {
+	return redBlack.HasLeft() && redBlack.HasRight()
+}
+
+// HasColor checks that the assigned Rb.Color to the accessed Rb is not Nil.
 func (redBlack *RedBlack) HasColor() bool {
 	return redBlack.Color != ""
 }
 
-// HasGrandParent checks that the assigned GrandParent to the accessed Rb is not Nil.
+// HasGrandParent checks that the assigned Rb.GrandParent to the accessed Rb is not Nil.
 func (redBlack *RedBlack) HasGrandParent() bool {
 	return redBlack.GrandParent != nil
 }
 
-// HasLeft checks that the assigned Left to the accessed Rb is not Nil.
+// HasLeft checks that the assigned Rb.Left to the accessed Rb is not Nil.
 func (redBlack *RedBlack) HasLeft() bool {
 	return redBlack.Left != nil
 }
 
-// HasParent checks that the assigned Parent to the accessed Rb is not Nil.
+// HasParent checks that the assigned Rb.Parent to the accessed Rb is not Nil.
 func (redBlack *RedBlack) HasParent() bool {
 	return redBlack.Parent != nil
 }
 
-// HasRight checks that the assigned Right to the accessed Rb is not Nil.
+// HasRight checks that the assigned Rb.Right to the accessed Rb is not Nil.
 func (redBlack *RedBlack) HasRight() bool {
 	return redBlack.Right != nil
 }
 
-// HasSide checks that the assigned Side to the accessed Rb is not Nil.
+// HasSide checks that the assigned Rb.Side to the accessed Rb is not Nil.
 func (redBlack *RedBlack) HasSide() bool {
 	return redBlack.Side != ""
 }
@@ -247,7 +284,7 @@ func (redBlack *RedBlack) IsLess(value float64) bool {
 	return value < redBlack.Value
 }
 
-// IsLeft checks that the accessed Rb is a Left child of its assigned Parent.
+// IsLeft checks that the accessed Rb is a Left child of its assigned Rb.Parent.
 func (redBlack *RedBlack) IsLeft() bool {
 	return redBlack.Side == LEFT
 }
@@ -262,7 +299,7 @@ func (redBlack *RedBlack) IsRed() bool {
 	return redBlack.Color == RED
 }
 
-// IsRight checks that the accessed Rb is a Right child of its assigned Parent.
+// IsRight checks that the accessed Rb is a Right child of its assigned Rb.Parent.
 func (redBlack *RedBlack) IsRight() bool {
 	return redBlack.Side == RIGHT
 }
@@ -292,6 +329,14 @@ func (redBlack *RedBlack) MinValue() float64 {
 		r = r.Left
 	}
 	return r.Value
+}
+
+func (redBlack *RedBlack) PassesCaseOne() bool {
+	return redBlack.IsRoot() && redBlack.IsBlack() && redBlack.EmptyAncestors()
+}
+
+func (redBlack *RedBlack) PassesCaseTwo() bool {
+	return redBlack.IsRoot() && redBlack.IsBlack()
 }
 
 // Remove deletes the accessed Rb or one of its descendants if Rb.Value matches the argument Value.
