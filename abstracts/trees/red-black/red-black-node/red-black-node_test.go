@@ -16,10 +16,10 @@ func Test(t *testing.T) {
 
 	a.Insert(2.0)
 
+	a.Insert(0.05)
+
 	a.Insert(3.0)
 
-	fmt.Println(a.Find(2.0))
-
-	fmt.Println(a.Find(3.0))
+	fmt.Println(a.Find(3.0).Uncle)
 
 }

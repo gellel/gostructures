@@ -74,6 +74,7 @@ type Rb interface {
 	RemoveLeft() *RedBlack
 	RemoveParent() *RedBlack
 	RemoveRight() *RedBlack
+	Rotate() *RedBlack
 	ToRedBlackSlice() []*RedBlack
 	ToFloatSlice() []float64
 	UnsafelyAssignColor(color string) *RedBlack
@@ -98,6 +99,7 @@ type RedBlack struct {
 	Parent      *RedBlack
 	Right       *RedBlack
 	Side        string
+	Uncle       *RedBlack
 	Value       float64
 }
 
@@ -281,9 +283,9 @@ func (redBlack *RedBlack) HasSide() bool {
 // Insert creates and adds new Rb to the accessed Rb (or its descendants) when the value is not already contained in the Rb.
 func (redBlack *RedBlack) Insert(value float64) *RedBlack {
 
-	redBlack.InsertBinary(New(value).AssignRed())
+	rb := redBlack.InsertBinary(New(value).AssignRed())
 
-	//fmt.Println(rb)
+	rb.Rotate()
 
 	return redBlack
 }
@@ -406,6 +408,18 @@ func (redBlack *RedBlack) RemoveRight() *RedBlack {
 	return redBlack
 }
 
+func (redBlack *RedBlack) Rotate() *RedBlack {
+
+	if redBlack.IsRoot() {
+		return redBlack
+	}
+	if redBlack.Parent.IsBlack() {
+		return redBlack
+	}
+
+	return redBlack
+}
+
 // ToFloatSlice creates a slice of all Rb.Value's stored at the accessed Rb.
 func (redBlack *RedBlack) ToFloatSlice() []float64 {
 
@@ -449,15 +463,21 @@ func (redBlack *RedBlack) UnsafelyAssignGrandParent(rb *RedBlack) *RedBlack {
 
 	redBlack.GrandParent = rb
 
+	if rb.HasChildren() {
+		redBlack.UnsafelyAssignUncle(rb)
+	}
+
 	return redBlack
 }
 
 // UnsafelyAssignLeft assigns a Left child to the accessed Rb without performing validity checks.
 func (redBlack *RedBlack) UnsafelyAssignLeft(rb *RedBlack) *RedBlack {
 
+	rb.UnsafelyAssignSide(LEFT)
+
 	rb.UnsafelyAssignParent(redBlack)
 
-	redBlack.Left = rb.UnsafelyAssignSide(LEFT)
+	redBlack.Left = rb
 
 	return redBlack
 }
@@ -476,9 +496,11 @@ func (redBlack *RedBlack) UnsafelyAssignParent(rb *RedBlack) *RedBlack {
 // UnsafelyAssignRight assigns a Right child to the accessed Rb without performing validity checks.
 func (redBlack *RedBlack) UnsafelyAssignRight(rb *RedBlack) *RedBlack {
 
+	rb.UnsafelyAssignSide(RIGHT)
+
 	rb.UnsafelyAssignParent(redBlack)
 
-	redBlack.Right = rb.UnsafelyAssignSide(RIGHT)
+	redBlack.Right = rb
 
 	return redBlack
 }
@@ -488,6 +510,17 @@ func (redBlack *RedBlack) UnsafelyAssignSide(side string) *RedBlack {
 
 	redBlack.Side = side
 
+	return redBlack
+}
+
+// UnsafelyAssignUncle assigns a Uncle to the accessed Rb without performing validity checks.
+func (redBlack *RedBlack) UnsafelyAssignUncle(rb *RedBlack) *RedBlack {
+
+	if redBlack.IsLeft() {
+		redBlack.Uncle = rb.Right
+	} else if redBlack.IsRight() {
+		redBlack.Uncle = rb.Left
+	}
 	return redBlack
 }
 
