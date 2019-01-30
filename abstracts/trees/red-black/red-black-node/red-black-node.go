@@ -48,6 +48,7 @@ type Rb interface {
 	EmptyParent() bool
 	EmptyRight() bool
 	EmptySide() bool
+	EmptyUncle() bool
 	Find(value float64) *RedBlack
 	HasAdjacent() bool
 	HasAncestors() bool
@@ -58,6 +59,7 @@ type Rb interface {
 	HasParent() bool
 	HasRight() bool
 	HasSide() bool
+	HasUncle() bool
 	Insert(value float64) *RedBlack
 	InsertBinary(rb *RedBlack) *RedBlack
 	IsBlack() bool
@@ -222,6 +224,11 @@ func (redBlack *RedBlack) EmptySide() bool {
 	return redBlack.Side == ""
 }
 
+// EmptyUncle checks that the assigned Rb.Uncle to the accessed Rb is empty.
+func (redBlack *RedBlack) EmptyUncle() bool {
+	return redBlack.Uncle == nil
+}
+
 // Find searches for a Rb that holds the argument value.
 func (redBlack *RedBlack) Find(value float64) *RedBlack {
 
@@ -278,6 +285,11 @@ func (redBlack *RedBlack) HasRight() bool {
 // HasSide checks that the assigned Rb.Side to the accessed Rb is not Nil.
 func (redBlack *RedBlack) HasSide() bool {
 	return redBlack.Side != ""
+}
+
+// HasUncle checks that the assigned Rb.Uncle to the accessed Rb is not Nil.
+func (redBlack *RedBlack) HasUncle() bool {
+	return redBlack.Uncle != nil
 }
 
 // Insert creates and adds new Rb to the accessed Rb (or its descendants) when the value is not already contained in the Rb.
@@ -416,6 +428,9 @@ func (redBlack *RedBlack) Rotate() *RedBlack {
 	if redBlack.Parent.IsBlack() {
 		return redBlack
 	}
+	if redBlack.HasUncle() && redBlack.Uncle.IsRed() {
+
+	}
 
 	return redBlack
 }
@@ -466,7 +481,6 @@ func (redBlack *RedBlack) UnsafelyAssignGrandParent(rb *RedBlack) *RedBlack {
 	if rb.HasChildren() {
 		redBlack.UnsafelyAssignUncle(rb)
 	}
-
 	return redBlack
 }
 
