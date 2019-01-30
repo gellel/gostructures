@@ -48,6 +48,7 @@ type Rb interface {
 	EmptyParent() bool
 	EmptyRight() bool
 	EmptySide() bool
+	Find(value float64) *RedBlack
 	HasAdjacent() bool
 	HasAncestors() bool
 	HasChildren() bool
@@ -58,6 +59,7 @@ type Rb interface {
 	HasRight() bool
 	HasSide() bool
 	Insert(value float64) *RedBlack
+	InsertBinary(rb *RedBlack) *RedBlack
 	IsBlack() bool
 	IsEqual(value float64) bool
 	IsLess(value float64) bool
@@ -218,6 +220,19 @@ func (redBlack *RedBlack) EmptySide() bool {
 	return redBlack.Side == ""
 }
 
+// Find searches for a Rb that holds the argument value.
+func (redBlack *RedBlack) Find(value float64) *RedBlack {
+
+	if redBlack.IsEqual(value) {
+		return redBlack
+	} else if redBlack.IsLess(value) && redBlack.HasLeft() {
+		return redBlack.Left.Find(value)
+	} else if redBlack.IsMore(value) && redBlack.HasRight() {
+		return redBlack.Right.Find(value)
+	}
+	return nil
+}
+
 // HasAdjacent checks that the accessed Rb contains relationships (Rb.Parent, Rb.GrandParent, Rb.Left, Rb.Right).
 func (redBlack *RedBlack) HasAdjacent() bool {
 	return redBlack.HasChildren() && redBlack.HasAncestors()
@@ -266,11 +281,30 @@ func (redBlack *RedBlack) HasSide() bool {
 // Insert creates and adds new Rb to the accessed Rb (or its descendants) when the value is not already contained in the Rb.
 func (redBlack *RedBlack) Insert(value float64) *RedBlack {
 
-	rb := New(value).AssignRed()
+	redBlack.InsertBinary(New(value).AssignRed())
 
-	fmt.Println(rb)
+	//fmt.Println(rb)
 
 	return redBlack
+}
+
+// InsertBinary assigns a new Rb to the accessed Rb (or its descendants) after a performing a Binary Search and returns the assigned Rb.
+func (redBlack *RedBlack) InsertBinary(rb *RedBlack) *RedBlack {
+
+	if redBlack.IsLess(rb.Value) {
+		if redBlack.EmptyLeft() {
+			redBlack.UnsafelyAssignLeft(rb)
+		} else {
+			redBlack.Left.InsertBinary(rb)
+		}
+	} else if redBlack.IsMore(rb.Value) {
+		if redBlack.EmptyRight() {
+			redBlack.UnsafelyAssignRight(rb)
+		} else {
+			redBlack.Right.InsertBinary(rb)
+		}
+	}
+	return rb
 }
 
 // IsBlack checks that the accessed Rb is colored BLACK.
@@ -433,7 +467,7 @@ func (redBlack *RedBlack) UnsafelyAssignParent(rb *RedBlack) *RedBlack {
 
 	redBlack.Parent = rb
 
-	if rb.HasGrandParent() {
+	if rb.HasParent() {
 		redBlack.UnsafelyAssignGrandParent(rb.Parent)
 	}
 	return redBlack

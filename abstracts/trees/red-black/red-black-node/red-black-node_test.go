@@ -10,8 +10,16 @@ import (
 
 func Test(t *testing.T) {
 
-	a := node.New(rand.Float64())
+	rand.Float64()
 
-	fmt.Println(a)
+	a := node.New(1.0)
+
+	a.Insert(2.0)
+
+	a.Insert(3.0)
+
+	fmt.Println(a.Find(2.0))
+
+	fmt.Println(a.Find(3.0))
 
 }
