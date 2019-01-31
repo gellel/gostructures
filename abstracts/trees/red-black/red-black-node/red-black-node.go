@@ -425,12 +425,47 @@ func (redBlack *RedBlack) Rotate() *RedBlack {
 	if redBlack.IsRoot() {
 		return redBlack
 	}
-	if redBlack.Parent.IsBlack() {
+	if redBlack.IsRed() && redBlack.Parent.IsBlack() {
 		return redBlack
 	}
 	if redBlack.HasUncle() && redBlack.Uncle.IsRed() {
 
+		redBlack.AssignBlack()
+
+		redBlack.Uncle.AssignRed()
+
+		redBlack.Parent.AssignRed()
+
+		return redBlack.GrandParent.Rotate()
 	}
+	if redBlack.Value == 1.0 {
+		fmt.Println(redBlack.HasUncle())
+	}
+	if redBlack.HasUncle() && redBlack.Uncle.IsBlack() {
+
+	}
+	/*
+		if redBlack.IsRoot() {
+			return redBlack
+		}
+		if redBlack.Parent.IsBlack() {
+			return redBlack
+		}
+		if redBlack.HasUncle() && redBlack.Uncle.IsRed() {
+
+			redBlack.Uncle.AssignBlack()
+
+			redBlack.Parent.AssignBlack()
+
+			if redBlack.GrandParent.IsRoot() {
+				return redBlack
+			}
+
+			redBlack.GrandParent.AssignRed()
+
+			redBlack.GrandParent.Rotate()
+		}
+	*/
 
 	return redBlack
 }
@@ -597,7 +632,7 @@ func (redBlack *RedBlack) Walk() *RedBlack {
 	if redBlack.HasLeft() {
 		redBlack.Left.Walk()
 	}
-	log.Println(redBlack.Value, redBlack.Side)
+	log.Println(redBlack.Value, redBlack.Side, redBlack.Color)
 	if redBlack.HasRight() {
 		redBlack.Right.Walk()
 	}
