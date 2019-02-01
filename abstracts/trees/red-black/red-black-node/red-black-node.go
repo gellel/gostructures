@@ -121,6 +121,37 @@ func New(value float64) *RedBlack {
 
 // About displays plain details about accessed Rb.
 func (redBlack *RedBlack) About() *RedBlack {
+
+    uncle := -0.0
+
+    grandparent := -0.0
+
+    parent := -0.0
+
+    left := -0.0
+
+    right := -0.0
+
+    if redBlack.HasUncle() {
+        uncle = redBlack.Uncle.Value
+    }
+    if redBlack.HasGrandParent() {
+        grandparent = redBlack.GrandParent.Value
+    }
+    if redBlack.HasParent() {
+        parent = redBlack.Parent.Value
+    }
+    if redBlack.HasLeft() {
+        left = redBlack.Left.Value
+    }
+    if redBlack.HasRight() {
+        right = redBlack.Right.Value
+    }
+
+    s := fmt.Sprintf("Left: %f. This: %f. Right: %f. Parent: %f. GrandParent: %f. Uncle: %f", left, redBlack.Value, right, parent, grandparent, uncle)
+
+    fmt.Println(s)
+
     return redBlack
 }
 
@@ -396,6 +427,8 @@ func (redBlack *RedBlack) MinValue() float64 {
 
 func (redBlack *RedBlack) Relate() *RedBlack {
 
+    fmt.Println(redBlack.Value)
+
     if redBlack.HasLeft() {
         redBlack.AssignLeft(redBlack.Left.Relate())
     }
@@ -532,7 +565,11 @@ func (redBlack *RedBlack) RotateLeft() *RedBlack {
 
     root.AssignLeft(left)
 
-    root.AssignRight(root.Right.Left.Relate()) // then update relationships as these will be wrong 
+    x := root.Right.Left
+
+    root.AssignRight(x) // then update relationships as these will be wrong 
+    
+    x.Relate()
 
     return redBlack
 }
@@ -577,6 +614,7 @@ func (redBlack *RedBlack) UnsafelyAssignColor(color string) *RedBlack {
 
 // UnsafelyAssignGrandParent assigns a GrandParent to the accessed Rb without performing validity checks.
 func (redBlack *RedBlack) UnsafelyAssignGrandParent(rb *RedBlack) *RedBlack {
+
 
 	redBlack.GrandParent = rb
 
@@ -636,11 +674,19 @@ func (redBlack *RedBlack) UnsafelyAssignSide(side string) *RedBlack {
 // UnsafelyAssignUncle assigns a Uncle to the accessed Rb without performing validity checks.
 func (redBlack *RedBlack) UnsafelyAssignUncle(rb *RedBlack) *RedBlack {
 
-	if redBlack.IsLeft() {
-		redBlack.Uncle = rb.Right
-	} else if redBlack.IsRight() {
-		redBlack.Uncle = rb.Left
-	}
+    if redBlack.IsLeft() {
+        if redBlack.Parent.Value == rb.Right.Value {
+            redBlack.Uncle = rb.Left
+        } else {
+            redBlack.Uncle = rb.Right
+        }
+    } else if redBlack.Right() {
+        if redBlack.Parent.Value == rb.Left.Value {
+            redBlack.Uncle = rb.Right
+        } else {
+            redBlack.Uncle = rb.Left
+        }
+    }
 	return redBlack
 }
 
