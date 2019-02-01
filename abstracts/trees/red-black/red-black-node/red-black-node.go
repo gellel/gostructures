@@ -75,10 +75,14 @@ type Rb interface {
 	Remove(value float64) *RedBlack
 	RemoveLeft() *RedBlack
 	RemoveParent() *RedBlack
-	RemoveRight() *RedBlack
-	Rotate() *RedBlack
+    RemoveRight() *RedBlack
+    RemoveUncle() *RedBlack
+    Rotate() *RedBlack
+    RotateLeft() *RedBlack
+    //RotateRight() *RedBlack
 	ToRedBlackSlice() []*RedBlack
-	ToFloatSlice() []float64
+    ToFloatSlice() []float64
+    UpdateRelationships() *RedBlack
 	UnsafelyAssignColor(color string) *RedBlack
 	UnsafelyAssignGrandParent(rb *RedBlack) *RedBlack
 	UnsafelyAssignLeft(rb *RedBlack) *RedBlack
@@ -388,6 +392,18 @@ func (redBlack *RedBlack) Remove(value float64) *RedBlack {
 	return redBlack
 }
 
+// RemoveAncestors removes the references to the accessed Rb's Parent, GrandParent and Uncle.
+func (redBlack *RedBlack) RemoveAncestors() *RedBlack {
+
+    redBlack.Parent = nil
+
+    redBlack.GrandParent = nil
+
+    redBlack.Uncle = nil
+    
+    return redBlack
+}
+
 // RemoveGrandParent removes the reference to the GrandParent of the accessed Rb.
 func (redBlack *RedBlack) RemoveGrandParent() *RedBlack {
 
@@ -420,9 +436,17 @@ func (redBlack *RedBlack) RemoveRight() *RedBlack {
 	return redBlack
 }
 
+// RemoveUncle removes the reference to the Uncle of the accessed Rb.
+func (redBlack *RedBlack) RemoveUncle() *RedBlack {
+
+	redBlack.Uncle = nil
+
+	return redBlack
+}
+
 func (redBlack *RedBlack) Rotate() *RedBlack {
 
-	if redBlack.IsRoot() {
+	if redBlack.IsRoot() && redBlack.IsBlack() {
 		return redBlack
 	}
 	if redBlack.IsRed() && redBlack.Parent.IsBlack() {
@@ -438,9 +462,7 @@ func (redBlack *RedBlack) Rotate() *RedBlack {
 
 		return redBlack.GrandParent.Rotate()
 	}
-	if redBlack.Value == 1.0 {
-		fmt.Println(redBlack.HasUncle())
-	}
+
 	if redBlack.HasUncle() && redBlack.Uncle.IsBlack() {
 
 	}
@@ -468,6 +490,33 @@ func (redBlack *RedBlack) Rotate() *RedBlack {
 	*/
 
 	return redBlack
+}
+
+func (redBlack *RedBlack) RotateLeft() *RedBlack {
+
+    root := *redBlack // eg. 5
+
+    left := redBlack.Left // eg. 2
+
+    right := redBlack.Right // eg.10
+
+    if root.HasParent() {
+        right.UnsafelyAssignParent(root.Parent)
+    } else {
+        right.RemoveAncestors()
+    }
+
+    *redBlack = *right // now 10.
+
+    redBlack.AssignLeft(&root) // now 5
+
+    redBlack.AssignRight(redBlack.Right)
+
+    root.AssignLeft(left)
+
+    root.AssignRight(root.Right.Left) // then update relationships as these will be wrong 
+
+    return redBlack
 }
 
 // ToFloatSlice creates a slice of all Rb.Value's stored at the accessed Rb.
@@ -515,7 +564,9 @@ func (redBlack *RedBlack) UnsafelyAssignGrandParent(rb *RedBlack) *RedBlack {
 
 	if rb.HasChildren() {
 		redBlack.UnsafelyAssignUncle(rb)
-	}
+	} else {
+        redBlack.RemoveUncle()
+    }
 	return redBlack
 }
 
@@ -538,7 +589,9 @@ func (redBlack *RedBlack) UnsafelyAssignParent(rb *RedBlack) *RedBlack {
 
 	if rb.HasParent() {
 		redBlack.UnsafelyAssignGrandParent(rb.Parent)
-	}
+	} else {
+        redBlack.RemoveGrandParent().RemoveUncle()
+    }
 	return redBlack
 }
 
