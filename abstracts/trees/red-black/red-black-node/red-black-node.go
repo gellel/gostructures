@@ -32,6 +32,7 @@ var (
 
 // Rb declares the interface for a RedBlack-Tree-Node.
 type Rb interface {
+    About() *RedBlack
 	AssignBlack() *RedBlack
 	AssignColor(color string) *RedBlack
 	AssignLeft(rb *RedBlack) *RedBlack
@@ -49,7 +50,7 @@ type Rb interface {
 	EmptyRight() bool
 	EmptySide() bool
 	EmptyUncle() bool
-	Find(value float64) *RedBlack
+    Find(value float64) *RedBlack
 	HasAdjacent() bool
 	HasAncestors() bool
 	HasChildren() bool
@@ -71,8 +72,10 @@ type Rb interface {
 	IsRight() bool
 	IsRoot() bool
 	MaxValue() float64
-	MinValue() float64
-	Remove(value float64) *RedBlack
+    MinValue() float64
+    Relate() *RedBlack
+    Remove(value float64) *RedBlack
+    RemoveAncestors() *RedBlack
 	RemoveLeft() *RedBlack
 	RemoveParent() *RedBlack
     RemoveRight() *RedBlack
@@ -82,7 +85,6 @@ type Rb interface {
     //RotateRight() *RedBlack
 	ToRedBlackSlice() []*RedBlack
     ToFloatSlice() []float64
-    UpdateRelationships() *RedBlack
 	UnsafelyAssignColor(color string) *RedBlack
 	UnsafelyAssignGrandParent(rb *RedBlack) *RedBlack
 	UnsafelyAssignLeft(rb *RedBlack) *RedBlack
@@ -115,6 +117,11 @@ func New(value float64) *RedBlack {
 		Color: BLACK,
 		Side:  ROOT,
 		Value: value}
+}
+
+// About displays plain details about accessed Rb.
+func (redBlack *RedBlack) About() *RedBlack {
+    return redBlack
 }
 
 // AssignBlack sets the accessed Rb.Color as BLACK.
@@ -387,6 +394,17 @@ func (redBlack *RedBlack) MinValue() float64 {
 	return r.Value
 }
 
+func (redBlack *RedBlack) Relate() *RedBlack {
+
+    if redBlack.HasLeft() {
+        redBlack.AssignLeft(redBlack.Left.Relate())
+    }
+    if redBlack.HasRight() {
+        redBlack.AssignRight(redBlack.Right.Relate())
+    }
+    return redBlack
+}
+
 // Remove deletes the accessed Rb or one of its descendants if Rb.Value matches the argument Value.
 func (redBlack *RedBlack) Remove(value float64) *RedBlack {
 	return redBlack
@@ -514,7 +532,7 @@ func (redBlack *RedBlack) RotateLeft() *RedBlack {
 
     root.AssignLeft(left)
 
-    root.AssignRight(root.Right.Left) // then update relationships as these will be wrong 
+    root.AssignRight(root.Right.Left.Relate()) // then update relationships as these will be wrong 
 
     return redBlack
 }
