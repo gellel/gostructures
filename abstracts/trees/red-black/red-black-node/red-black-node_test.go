@@ -1,7 +1,6 @@
 package node_test
 
 import (
-	"fmt"
 	"math/rand"
 	"testing"
 
@@ -14,20 +13,14 @@ func Test(t *testing.T) {
 
 	a := node.New(5.0)
 
-	a.Insert(6.0)
+	a.InsertBinary(node.New(2.0))
+	a.InsertBinary(node.New(10.0))
+	a.InsertBinary(node.New(12.0))
+	a.InsertBinary(node.New(8.0))
+	a.InsertBinary(node.New(6.0))
+	a.InsertBinary(node.New(9.0))
 
-	a.Insert(4.0)
+	a.Walk().RotateLeft()
 
-	a.Insert(3.0)
-
-	a.Walk()
-
-	a.Insert(2.0)
-
-	a.Insert(1.0)
-
-	fmt.Println("-")
-
-	a.Walk()
-
+	a.Find(2.0).About()
 }

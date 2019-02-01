@@ -82,7 +82,7 @@ type Rb interface {
 	RemoveUncle() *RedBlack
 	Rotate() *RedBlack
 	RotateLeft() *RedBlack
-	//RotateRight() *RedBlack
+	RotateRight() *RedBlack
 	ToRedBlackSlice() []*RedBlack
 	ToFloatSlice() []float64
 	UnsafelyAssignColor(color string) *RedBlack
@@ -148,7 +148,9 @@ func (redBlack *RedBlack) About() *RedBlack {
 		right = redBlack.Right.Value
 	}
 
-	s := fmt.Sprintf("Left: %f. This: %f. Right: %f. Parent: %f. GrandParent: %f. Uncle: %f", left, redBlack.Value, right, parent, grandparent, uncle)
+	message := "(Color: %s, Side: %s) Left: %f. This: %f. Right: %f. Parent: %f. GrandParent: %f. Uncle: %f"
+
+	s := fmt.Sprintf(message, redBlack.Side, redBlack.Color, left, redBlack.Value, right, parent, grandparent, uncle)
 
 	fmt.Println(s)
 
@@ -552,12 +554,14 @@ func (redBlack *RedBlack) RotateLeft() *RedBlack {
 	right := redBlack.Right // eg.10
 
 	if root.HasParent() {
-		right.UnsafelyAssignParent(root.Parent)
+		right.AssignParent(root.Parent)
 	} else {
 		right.RemoveAncestors()
 	}
 
 	*redBlack = *right // now 10.
+
+	redBlack.AssignSide(root.Side)
 
 	redBlack.AssignLeft(&root) // now 5
 
@@ -570,6 +574,11 @@ func (redBlack *RedBlack) RotateLeft() *RedBlack {
 	root.AssignRight(x) // then update relationships as these will be wrong
 
 	x.Relate()
+
+	return redBlack
+}
+
+func (redBlack *RedBlack) RotateRight() *RedBlack {
 
 	return redBlack
 }
@@ -679,7 +688,7 @@ func (redBlack *RedBlack) UnsafelyAssignUncle(rb *RedBlack) *RedBlack {
 		} else {
 			redBlack.Uncle = rb.Right
 		}
-	} else if redBlack.Right() {
+	} else if redBlack.IsRight() {
 		if redBlack.Parent.Value == rb.Left.Value {
 			redBlack.Uncle = rb.Right
 		} else {
