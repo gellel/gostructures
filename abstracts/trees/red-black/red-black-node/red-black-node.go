@@ -51,6 +51,7 @@ type Rb interface {
 	EmptySide() bool
 	EmptyUncle() bool
 	Find(value float64) *RedBlack
+	FindRelatives() *RedBlack
 	HasAdjacent() bool
 	HasAncestors() bool
 	HasChildren() bool
@@ -132,6 +133,8 @@ func (redBlack *RedBlack) About() *RedBlack {
 
 	right := -0.0
 
+	redBlack.FindRelatives()
+
 	if redBlack.HasUncle() {
 		uncle = redBlack.Uncle.Value
 	}
@@ -150,7 +153,7 @@ func (redBlack *RedBlack) About() *RedBlack {
 
 	message := "(Color: %s, Side: %s) Left: %f. This: %f. Right: %f. Parent: %f. GrandParent: %f. Uncle: %f"
 
-	s := fmt.Sprintf(message, redBlack.Side, redBlack.Color, left, redBlack.Value, right, parent, grandparent, uncle)
+	s := fmt.Sprintf(message, redBlack.Color, redBlack.Side, left, redBlack.Value, right, parent, grandparent, uncle)
 
 	fmt.Println(s)
 
@@ -284,6 +287,15 @@ func (redBlack *RedBlack) Find(value float64) *RedBlack {
 		return redBlack.Right.Find(value)
 	}
 	return nil
+}
+
+// FindRelatives searches and assigns a relatives to the accessed Rb if they exist.
+func (redBlack *RedBlack) FindRelatives() *RedBlack {
+
+	if redBlack.HasParent() {
+		redBlack.AssignParent(redBlack.Parent)
+	}
+	return redBlack
 }
 
 // HasAdjacent checks that the accessed Rb contains relationships (Rb.Parent, Rb.GrandParent, Rb.Left, Rb.Right).
@@ -579,6 +591,32 @@ func (redBlack *RedBlack) RotateLeft() *RedBlack {
 }
 
 func (redBlack *RedBlack) RotateRight() *RedBlack {
+
+	root := *redBlack // 10
+
+	left := redBlack.Left // 5
+
+	right := redBlack.Right // 12
+
+	if root.HasParent() {
+		left.AssignParent(root.Parent)
+	} else {
+		left.RemoveAncestors()
+	}
+
+	*redBlack = *left // now 5
+
+	redBlack.AssignSide(root.Side)
+
+	redBlack.AssignRight(&root) // now 10
+
+	redBlack.AssignLeft(redBlack.Left) // update relationships
+
+	root.AssignRight(right) // now 12
+
+	x := root.Left.Right
+
+	root.AssignLeft(x)
 
 	return redBlack
 }
