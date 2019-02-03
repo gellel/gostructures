@@ -84,6 +84,9 @@ type Rb interface {
 	Rotate() *RedBlack
 	RotateLeft() *RedBlack
 	RotateRight() *RedBlack
+	SafelyAssignLeft(i interface{}) *RedBlack
+	SafelyAssignParent(i interface{}) *RedBlack
+	SafelyAssignRight(i interface{}) *RedBlack
 	ToRedBlackSlice() []*RedBlack
 	ToFloatSlice() []float64
 	UnsafelyAssignColor(color string) *RedBlack
@@ -441,12 +444,12 @@ func (redBlack *RedBlack) MinValue() float64 {
 
 // Relate iterates and sets the relationships of the accessed Rb descendents.
 func (redBlack *RedBlack) Relate() *RedBlack {
-
+	fmt.Println(redBlack.Value)
 	if redBlack.HasLeft() {
-		redBlack.AssignLeft(redBlack.Left.Relate())
+		redBlack.AssignLeft(redBlack.Left).Left.Relate()
 	}
 	if redBlack.HasRight() {
-		redBlack.AssignRight(redBlack.Right.Relate())
+		redBlack.AssignRight(redBlack.Right).Right.Relate()
 	}
 	return redBlack
 }
@@ -513,45 +516,9 @@ func (redBlack *RedBlack) Rotate() *RedBlack {
 	if redBlack.IsRoot() && redBlack.IsBlack() {
 		return redBlack
 	}
-	if redBlack.IsRed() && redBlack.Parent.IsBlack() {
-		return redBlack
+	if redBlack.IsRed() && redBlack.Parent.IsRed() {
+		redBlack.GrandParent.RotateRight()
 	}
-	if redBlack.HasUncle() && redBlack.Uncle.IsRed() {
-
-		redBlack.AssignBlack()
-
-		redBlack.Uncle.AssignRed()
-
-		redBlack.Parent.AssignRed()
-
-		return redBlack.GrandParent.Rotate()
-	}
-
-	if redBlack.HasUncle() && redBlack.Uncle.IsBlack() {
-
-	}
-	/*
-		if redBlack.IsRoot() {
-			return redBlack
-		}
-		if redBlack.Parent.IsBlack() {
-			return redBlack
-		}
-		if redBlack.HasUncle() && redBlack.Uncle.IsRed() {
-
-			redBlack.Uncle.AssignBlack()
-
-			redBlack.Parent.AssignBlack()
-
-			if redBlack.GrandParent.IsRoot() {
-				return redBlack
-			}
-
-			redBlack.GrandParent.AssignRed()
-
-			redBlack.GrandParent.Rotate()
-		}
-	*/
 
 	return redBlack
 }
@@ -565,11 +532,7 @@ func (redBlack *RedBlack) RotateLeft() *RedBlack {
 
 	right := redBlack.Right // eg.10
 
-	if root.HasParent() {
-		right.AssignParent(root.Parent)
-	} else {
-		right.RemoveAncestors()
-	}
+	right.SafelyAssignParent(&redBlack.Parent)
 
 	*redBlack = *right // now 10.
 
@@ -581,11 +544,11 @@ func (redBlack *RedBlack) RotateLeft() *RedBlack {
 
 	root.AssignLeft(left)
 
-	x := root.Right.Left
+	root.SafelyAssignRight(root.Right.Left) // then update relationships as these will be wrong
 
-	root.AssignRight(x) // then update relationships as these will be wrong
-
-	x.Relate()
+	if root.HasRight() {
+		root.Right.Relate()
+	}
 
 	return redBlack
 }
@@ -599,11 +562,7 @@ func (redBlack *RedBlack) RotateRight() *RedBlack {
 
 	right := redBlack.Right // 12
 
-	if root.HasParent() {
-		left.AssignParent(root.Parent)
-	} else {
-		left.RemoveAncestors()
-	}
+	left.SafelyAssignParent(&root.Parent)
 
 	*redBlack = *left // now 5
 
@@ -613,13 +572,51 @@ func (redBlack *RedBlack) RotateRight() *RedBlack {
 
 	redBlack.AssignLeft(redBlack.Left) // update relationships
 
-	root.AssignRight(right) // now 12
+	root.SafelyAssignRight(right) // now 12
 
-	x := root.Left.Right
+	root.SafelyAssignLeft(root.Left.Right)
 
-	root.AssignLeft(x)
+	if root.HasLeft() {
+		root.Left.Relate()
+	}
 
 	return redBlack
+}
+
+// SafelyAssignLeft attempts to assign argument Rb to Rb.Left.
+func (redBlack *RedBlack) SafelyAssignLeft(i interface{}) *RedBlack {
+	switch i.(type) {
+	case *RedBlack:
+		property := i.(*RedBlack)
+		if property != nil {
+			return redBlack.AssignLeft(property)
+		}
+	}
+	return redBlack.RemoveLeft()
+}
+
+// SafelyAssignParent attempts to assign argument Rb to Rb.Parent.
+func (redBlack *RedBlack) SafelyAssignParent(i interface{}) *RedBlack {
+	switch i.(type) {
+	case *RedBlack:
+		property := i.(*RedBlack)
+		if property != nil {
+			return redBlack.AssignParent(property)
+		}
+	}
+	return redBlack.RemoveAncestors()
+}
+
+// SafelyAssignRight attempts to assign argument Rb to Rb.Right.
+func (redBlack *RedBlack) SafelyAssignRight(i interface{}) *RedBlack {
+	switch i.(type) {
+	case *RedBlack:
+		property := i.(*RedBlack)
+		if property != nil {
+			return redBlack.AssignRight(property)
+		}
+	}
+	return redBlack.RemoveRight()
 }
 
 // ToFloatSlice creates a slice of all Rb.Value's stored at the accessed Rb.
