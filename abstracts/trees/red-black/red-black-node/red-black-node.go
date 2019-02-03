@@ -590,6 +590,7 @@ func (redBlack *RedBlack) RotateLeft() *RedBlack {
 	return redBlack
 }
 
+// RotateRight changes the accessed Rb address. Moves Rb.Left address as Rb address. Changes Rb.Right address to accessed Rb address.
 func (redBlack *RedBlack) RotateRight() *RedBlack {
 
 	root := *redBlack // 10
