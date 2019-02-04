@@ -50,4 +50,18 @@ func Test(t *testing.T) {
 	c.RotateRight()
 
 	c.About()
+
+	fmt.Println("-----")
+
+	d := node.New(1.0)
+
+	d.InsertBinary(node.New(2.0))
+	d.InsertBinary(node.New(3.0))
+
+	d.Walk()
+
+	d.RotateLeft()
+
+	d.About()
+
 }

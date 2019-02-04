@@ -517,7 +517,14 @@ func (redBlack *RedBlack) Rotate() *RedBlack {
 		return redBlack
 	}
 	if redBlack.IsRed() && redBlack.Parent.IsRed() {
-		redBlack.GrandParent.RotateRight()
+
+		rb := redBlack.GrandParent.RotateRight()
+
+		rb.AssignBlack()
+
+		rb.Left.AssignRed()
+
+		rb.Right.AssignRed()
 	}
 
 	return redBlack
@@ -542,7 +549,7 @@ func (redBlack *RedBlack) RotateLeft() *RedBlack {
 
 	redBlack.AssignRight(redBlack.Right)
 
-	root.AssignLeft(left)
+	root.SafelyAssignLeft(left)
 
 	root.SafelyAssignRight(root.Right.Left) // then update relationships as these will be wrong
 
