@@ -93,7 +93,8 @@ type Rb interface {
 	RotateRight() *RedBlack
 	SafelyAssignLeft(i interface{}) *RedBlack
 	SafelyAssignParent(i interface{}) *RedBlack
-	SafelyAssignRight(i interface{}) *RedBlack
+    SafelyAssignRight(i interface{}) *RedBlack
+    SwapColors(rb *RedBlack) *RedBlack
 	ToRedBlackSlice() []*RedBlack
 	ToFloatSlice() []float64
 	UnsafelyAssignColor(color string) *RedBlack
@@ -596,7 +597,9 @@ func (redBlack *RedBlack) RotateLeft() *RedBlack {
 
 	root.SafelyAssignLeft(left)
 
-	root.SafelyAssignRight(root.Right.Left) // then update relationships as these will be wrong
+    root.SafelyAssignRight(root.Right.Left) // then update relationships as these will be wrong
+    
+    root.SwapColors(redBlack)
 
 	if root.HasRight() {
 		root.Right.Relate()
@@ -625,7 +628,9 @@ func (redBlack *RedBlack) RotateRight() *RedBlack {
 
 	root.SafelyAssignRight(right) // now 12
 
-	root.SafelyAssignLeft(root.Left.Right)
+    root.SafelyAssignLeft(root.Left.Right)
+    
+    root.SwapColors(redBlack)
 
 	if root.HasLeft() {
 		root.Left.Relate()
@@ -667,6 +672,20 @@ func (redBlack *RedBlack) SafelyAssignRight(i interface{}) *RedBlack {
 		}
 	}
 	return redBlack.RemoveRight()
+}
+
+// SwapColors exchanges Rb.Color with accessed Rb.
+func (redBlack *RedBlack) SwapColors(rb *RedBlack) *RedBlack {
+
+    a := redBlack.Color 
+
+    b := rb.Color 
+
+    rb.AssignColor(a)
+
+    redBlack.AssignColor(b)
+    
+    return redBlack
 }
 
 // ToFloatSlice creates a slice of all Rb.Value's stored at the accessed Rb.

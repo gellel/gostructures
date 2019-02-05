@@ -1,4 +1,4 @@
-// Package binary exports a AVL-Search-Tree.
+// Package avl exports a AVL-Search-Tree.
 // A AVL-Search-Tree is abstract data structure that
 // manages the insertion of floating point values so that they
 // can be accessed and arranged in guaranteed O(log(n)) time.
