@@ -1,3 +1,9 @@
+// Package node exports a RedBlack-Tree-Node for a RedBlack-Search-Tree.
+// RedBlack-Tree-Node implements most of the core functionality that the
+// RedBlack-Search-Tree provides but at a RedBlack-Tree-Node level. Package
+// also exports a function "New" that simplifies instantiating
+// RedBlack-Tree-Node pointers. Leaf-Node's are float64's for min-max
+// comparison.
 package node
 
 import (
@@ -517,22 +523,55 @@ func (redBlack *RedBlack) RemoveUncle() *RedBlack {
 	return redBlack
 }
 
+// Rotate reorganises Rb to be a balanced connection of Rb's.
 func (redBlack *RedBlack) Rotate() *RedBlack {
 
-	if redBlack.IsRoot() && redBlack.IsBlack() {
+    if (redBlack.IsBlack() && redBlack.IsRoot()) {
 		return redBlack
 	}
-	if redBlack.IsRed() && redBlack.Parent.IsRed() {
-
-		rb := redBlack.GrandParent.RotateRight()
-
-		rb.AssignBlack()
-
-		rb.Left.AssignRed()
-
-		rb.Right.AssignRed()
+	if (redBlack.Parent.IsBlack()) {
+		return redBlack
 	}
+	if (redBlack.HasUncle() && redBlack.Uncle.IsRed()) {
 
+		redBlack.Uncle.AssignBlack()
+
+		redBlack.Parent.AssignBlack()
+
+		if redBlack.GrandParent.IsRoot() {
+			return redBlack
+		}
+		redBlack.GrandParent.AssignRed()
+    
+		return redBlack.GrandParent.Rotate()
+	}
+	if (redBlack.EmptyUncle() || redBlack.Uncle.IsBlack()) {
+	
+		if redBlack.HasGrandParent() {
+		
+			var rb *RedBlack
+		
+			if redBlack.Parent.IsLeft() {
+				if redBlack.IsLeft() {
+					rb = redBlack.GrandParent.RotateRight()
+				} else {
+					rb = redBlack.Parent.RotateLeft().Parent.RotateRight()
+				}
+			} else {
+				if redBlack.IsRight() {
+					rb = redBlack.GrandParent.RotateLeft()
+				} else {
+					rb = redBlack.Parent.RotateRight().Parent.RotateLeft()
+				}
+			}
+			if rb != nil {
+                if rb.EmptyParent() && rb.IsRoot() {
+                    rb.AssignBlack()
+                }
+                rb.Rotate()
+            }   
+		}
+    }
 	return redBlack
 }
 
@@ -562,7 +601,6 @@ func (redBlack *RedBlack) RotateLeft() *RedBlack {
 	if root.HasRight() {
 		root.Right.Relate()
 	}
-
 	return redBlack
 }
 
@@ -592,7 +630,6 @@ func (redBlack *RedBlack) RotateRight() *RedBlack {
 	if root.HasLeft() {
 		root.Left.Relate()
 	}
-
 	return redBlack
 }
 
