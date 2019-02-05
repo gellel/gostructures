@@ -64,7 +64,8 @@ type Rb interface {
 	HasUncle() bool
 	Insert(value float64) *RedBlack
 	InsertBinary(rb *RedBlack) *RedBlack
-	IsBlack() bool
+    IsBlack() bool
+    IsEdge() bool
 	IsEqual(value float64) bool
 	IsLess(value float64) bool
 	IsLeft() bool
@@ -385,6 +386,11 @@ func (redBlack *RedBlack) IsBlack() bool {
 	return redBlack.Color == BLACK
 }
 
+// IsEdge checks that the accessed Rb is not ROOT.
+func (redBlack *RedBlack) IsEdge() bool {
+    return redBlack.Side != ROOT
+}
+
 // IsEqual checks that the Rb.Value is greater than the Value of the accessed Rb.
 func (redBlack *RedBlack) IsEqual(value float64) bool {
 	return value == redBlack.Value
@@ -539,7 +545,7 @@ func (redBlack *RedBlack) RotateLeft() *RedBlack {
 
 	right := redBlack.Right // eg.10
 
-	right.SafelyAssignParent(&redBlack.Parent)
+	right.SafelyAssignParent(redBlack.Parent)
 
 	*redBlack = *right // now 10.
 
@@ -547,7 +553,7 @@ func (redBlack *RedBlack) RotateLeft() *RedBlack {
 
 	redBlack.AssignLeft(&root) // now 5
 
-	redBlack.AssignRight(redBlack.Right)
+	redBlack.SafelyAssignRight(redBlack.Right)
 
 	root.SafelyAssignLeft(left)
 
@@ -569,7 +575,7 @@ func (redBlack *RedBlack) RotateRight() *RedBlack {
 
 	right := redBlack.Right // 12
 
-	left.SafelyAssignParent(&root.Parent)
+	left.SafelyAssignParent(root.Parent)
 
 	*redBlack = *left // now 5
 
@@ -577,7 +583,7 @@ func (redBlack *RedBlack) RotateRight() *RedBlack {
 
 	redBlack.AssignRight(&root) // now 10
 
-	redBlack.AssignLeft(redBlack.Left) // update relationships
+	redBlack.SafelyAssignLeft(redBlack.Left) // update relationships
 
 	root.SafelyAssignRight(right) // now 12
 
