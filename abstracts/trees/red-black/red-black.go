@@ -12,7 +12,7 @@
 package redblack
 
 import (
-	node "github.com/gellel/gostructures/abstracts/trees/RedBlack/RedBlack-node"
+	node "github.com/gellel/gostructures/abstracts/trees/red-black/red-black-node"
 )
 
 // RedBlack declares the implementation for a RedBlack-Search-Tree.
@@ -40,19 +40,9 @@ func New(value float64) *RedBlack {
 	return &RedBlack{Root: node.New(value).AssignSide(node.ROOT)}
 }
 
-// Balance computes the weighting of the RedBlack-Search-Tree.
-func (redBlack *RedBlack) Balance() int {
-	return redBlack.Root.Balance()
-}
-
 // Find checks whether the RedBlack-Search-Tree contains the argument value.
 func (redBlack *RedBlack) Find(value float64) *node.RedBlack {
 	return redBlack.Root.Find(value)
-}
-
-// Height computes the current depth of RedBlack-Search-Tree.
-func (redBlack *RedBlack) Height() int {
-	return redBlack.Root.Height()
 }
 
 // Insert creates and assigns a new RedBlack-Tree-Node to the accessed RedBlack-Search-Tree.
@@ -60,18 +50,16 @@ func (redBlack *RedBlack) Height() int {
 // is stored on the accessed RedBlack-Tree-Node's left position. Alternatively, when
 // a larger value is provided, it is stored than the right position. Equal sums are
 // discarded and no new RedBlack-Tree-Node is created. When an insertion is performed,
-// accessed RedBlack-Tree-Node checks that the it is evenly distributed. When bias left,
-// the child nodes at the left position are shuffled one over so that they are weighted right
-// evenly. The alternative case moves nodes from the right to the left.
+// accessed RedBlack-Tree-Node checks that the tree does not violate red black conditions.
 func (redBlack *RedBlack) Insert(value float64) *RedBlack {
 	redBlack.Root.Insert(value)
-	return RedBlack
+	return redBlack
 }
 
 // Remove deletes a RedBlack-Tree-Node contained within the RedBlack-Search-Tree.
 func (redBlack *RedBlack) Remove(value float64) *RedBlack {
 	redBlack.Root.Remove(value)
-	return RedBlack
+	return redBlack
 }
 
 // ToRedBlackSlice creates an ordered slice of the assigned RedBlack-Tree-Node's child-nodes.
@@ -87,7 +75,7 @@ func (redBlack *RedBlack) ToFloatSlice() []float64 {
 // Walk accesses all assigned child-nodes contained within the RedBlack-Search-Tree.
 func (redBlack *RedBlack) Walk() *RedBlack {
 	redBlack.Root.Walk()
-	return RedBlack
+	return redBlack
 }
 
-var _ RedBlack = (*RedBlack)(nil)
+var _ rb = (*RedBlack)(nil)

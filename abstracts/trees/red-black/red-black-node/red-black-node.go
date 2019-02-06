@@ -395,7 +395,7 @@ func (redBlack *RedBlack) IsBlack() bool {
 
 // IsEdge checks that the accessed Rb is not ROOT.
 func (redBlack *RedBlack) IsEdge() bool {
-    return redBlack.Side != ROOT
+	return redBlack.Side != ROOT
 }
 
 // IsEqual checks that the Rb.Value is greater than the Value of the accessed Rb.
@@ -457,7 +457,6 @@ func (redBlack *RedBlack) MinValue() float64 {
 
 // Relate iterates and sets the relationships of the accessed Rb descendents.
 func (redBlack *RedBlack) Relate() *RedBlack {
-	fmt.Println(redBlack.Value)
 	if redBlack.HasLeft() {
 		redBlack.AssignLeft(redBlack.Left).Left.Relate()
 	}
@@ -469,6 +468,25 @@ func (redBlack *RedBlack) Relate() *RedBlack {
 
 // Remove deletes the accessed Rb or one of its descendants if Rb.Value matches the argument Value.
 func (redBlack *RedBlack) Remove(value float64) *RedBlack {
+	if redBlack.IsEqual(value) {
+		if redBlack.HasParent() {
+			if redBlack.IsLeft() {
+				return redBlack.Parent.RemoveLeft().Rotate()
+			} else if redBlack.IsRight() {
+				return redBlack.Parent.RemoveRight().Rotate()
+			}
+		}
+	}
+	if redBlack.IsLess(value) {
+		if redBlack.HasLeft() {
+			return redBlack.Left.Remove(value)
+		}
+	}
+	if redBlack.IsLess(value) {
+		if redBlack.HasRight() {
+			return redBlack.Right.Remove(value)
+		}
+	}
 	return redBlack
 }
 
@@ -527,13 +545,13 @@ func (redBlack *RedBlack) RemoveUncle() *RedBlack {
 // Rotate reorganises Rb to be a balanced connection of Rb's.
 func (redBlack *RedBlack) Rotate() *RedBlack {
 
-    if (redBlack.IsBlack() && redBlack.IsRoot()) {
+	if redBlack.IsBlack() && redBlack.IsRoot() {
 		return redBlack
 	}
-	if (redBlack.Parent.IsBlack()) {
+	if redBlack.Parent.IsBlack() {
 		return redBlack
 	}
-	if (redBlack.HasUncle() && redBlack.Uncle.IsRed()) {
+	if redBlack.HasUncle() && redBlack.Uncle.IsRed() {
 
 		redBlack.Uncle.AssignBlack()
 
@@ -543,15 +561,15 @@ func (redBlack *RedBlack) Rotate() *RedBlack {
 			return redBlack
 		}
 		redBlack.GrandParent.AssignRed()
-    
+
 		return redBlack.GrandParent.Rotate()
 	}
-	if (redBlack.EmptyUncle() || redBlack.Uncle.IsBlack()) {
-	
+	if redBlack.EmptyUncle() || redBlack.Uncle.IsBlack() {
+
 		if redBlack.HasGrandParent() {
-		
+
 			var rb *RedBlack
-		
+
 			if redBlack.Parent.IsLeft() {
 				if redBlack.IsLeft() {
 					rb = redBlack.GrandParent.RotateRight()
@@ -566,10 +584,10 @@ func (redBlack *RedBlack) Rotate() *RedBlack {
 				}
 			}
 			if rb != nil {
-                		if rb.EmptyParent() && rb.IsRoot() {
-                    			rb.AssignBlack()
-                		}
-                		rb.Rotate()
+				if rb.EmptyParent() && rb.IsRoot() {
+					rb.AssignBlack()
+				}
+				rb.Rotate()
 			}
 		}
 	}
@@ -598,7 +616,7 @@ func (redBlack *RedBlack) RotateLeft() *RedBlack {
 	root.SafelyAssignLeft(left)
 
 	root.SafelyAssignRight(root.Right.Left) // then update relationships as these will be wrong
-    
+
 	root.SwapColors(redBlack)
 
 	if root.HasRight() {
@@ -629,7 +647,7 @@ func (redBlack *RedBlack) RotateRight() *RedBlack {
 	root.SafelyAssignRight(right) // now 12
 
 	root.SafelyAssignLeft(root.Left.Right)
-    
+
 	root.SwapColors(redBlack)
 
 	if root.HasLeft() {
@@ -677,14 +695,14 @@ func (redBlack *RedBlack) SafelyAssignRight(i interface{}) *RedBlack {
 // SwapColors exchanges Rb.Color with accessed Rb.
 func (redBlack *RedBlack) SwapColors(rb *RedBlack) *RedBlack {
 
-	a := redBlack.Color 
+	a := redBlack.Color
 
-	b := rb.Color 
+	b := rb.Color
 
 	rb.AssignColor(a)
 
 	redBlack.AssignColor(b)
-    
+
 	return redBlack
 }
 
