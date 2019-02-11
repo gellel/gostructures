@@ -2,169 +2,127 @@ package max
 
 import "fmt"
 
-type f64 interface {
-	Arrange(i int) *F64
-	Contains(f float64) bool
-	Empty() *F64
-	Heapify(f []float64) *F64
-	IndexOf(f float64) int
-	IsEmpty() bool
-	Insert(f float64) *F64
-	IsLeaf(i int) bool
-	IsPopulated() bool
-	LeftOf(i int) int
-	Len() int
-	Merge(f *F64) *F64
-	ParentOf(i int) int
-	Peek() float64
-	PeekAt(i int) float64
-	Pop() float64
-	RightOf(i int) int
-	Search(f float64) float64
-	SumOf() float64
-	Swap(a int, b int) *F64
-	ViolatesLength(i int) error
+type heap interface {
+	Access(p int) uint
+	Bounds(p int) bool
+	Empty() *Heap
+	Fill(a []uint) *Heap
+	Filter(a []uint) []uint
+	Left(p int) int
+	Length() int
+	Merge(h *Heap) *Heap
+	Parent(p int) int
+	Peek(p int) uint
+	PeekFirst() uint
+	PeekLast() uint
+	Swap(i int, j int) *Heap
+	Violates(value uint) error
 }
 
-type F64 []float64
+// Heap declares the Max-Heap data structure.
+type Heap []uint
 
+// Access reaches into Heap and attempts to read value at argument position, without checking whether the position is in Heap bounds.
+func (heap *Heap) Access(p int) uint {
+	return (*heap)[p]
+}
 
-func (f64 *F64) Arrange(i int) *F64 {
-	if f64.IsLeaf(i) {
-		return f64
-	}
+// Bounds returns a boolean checking whether the argument position does not overflow or underflow the current Heap length.
+func (heap *Heap) Bounds(p int) bool {
+	return (p > -1) && (p < heap.Length())
+}
 
-	left := f64.LeftOf(i)
+// Empty removes all elements held by the Heap.
+func (heap *Heap) Empty() *Heap {
 
-	right := f64.RightOf(i)
+	*heap = (*heap)[:0]
 
-	if f64.PeekAt(i) < f64.PeekAt(left) || f64.PeekAt(i) > f64.PeekAt(right) {
-		if f64.PeekAt(left) > f64.PeekAt(right) {
-			f64.Swap(i, left).Arrange(left)
-		} else {
-			f64.Swap(i, right).Arrange(right)
+	return heap
+}
+
+// Fill moves elements from an argument slice into the Heap, resetting the Heap in the process.
+func (heap *Heap) Fill(a []uint) *Heap {
+
+	*heap = (*heap)[:0]
+
+	*heap = append((*heap), heap.Filter(a)...)
+
+	return heap
+}
+
+// Filter empties zeroes from argument slice.
+func (heap *Heap) Filter(a []uint) []uint {
+
+	b := make([]uint, 0)
+
+	for _, n := range a {
+		if n != 0 {
+			b = append(b, n)
 		}
 	}
-	return f64
+	return b
 }
 
-func (f64 *F64) Contains(n float64) bool {
-	return false
+// Left calculates the left position in a binary search, relative to argument position.
+func (heap *Heap) Left(p int) int {
+	return p * 2
 }
 
-func (f64 *F64) Empty() *F64 {
-
-	*f64 = (*f64)[:0]
-
-	return f64
+// Length returns the number of elements stored in the current Heap.
+func (heap *Heap) Length() int {
+	return len((*heap))
 }
 
-func (f64 *F64) IndexOf(f float64) int {
-	if f64.Len() > 0 {
-		return 0
+// Parent calculates the sum of argument position that would be its relative parent.
+func (heap *Heap) Parent(p int) int {
+	return (p / 2)
+}
+
+// Peek attempts to access the unsigned integer stored at the argument index and returns 0 when Heap fails the lookup.
+func (heap *Heap) Peek(p int) uint {
+	if heap.Bounds(p) {
+		return heap.Access(p)
 	}
-	return -1
+	return 0
 }
 
-func (f64 *F64) IsEmpty() bool {
-	return f64.Len() == 0
+// PeekFirst attempts to access the unsigned integer stored at the beginning of the Heap; the heap-max.
+func (heap *Heap) PeekFirst() uint {
+	return heap.Peek(0)
 }
 
-func (f64 *F64) Insert(f float64) *F64 {
+// PeekLast attempts to access the unsigned integer stored at the end of the Heap; the heap-max-min.
+func (heap *Heap) PeekLast() uint {
+	return heap.Peek(heap.Length() - 1)
+}
 
-	*f64 = *append((*f64), f)
+// Merge concatenates accessed Heap with argument Heap.
+func (heap *Heap) Merge(h *Heap) *Heap {
 
-	for n := f64[:f64.Len()]; n > f64.ParentOf(n) {
-		
-		f64.Swap(n, f64.ParentOf(n))
+	*heap = append((*heap), (*h)...)
 
-		n = f64.ParentOf(n)
+	return heap
+}
+
+// Right calculates right left position in a binary search, relative to argument position.
+func (heap *Heap) Right(p int) int {
+	return ((p * 2) + 1)
+}
+
+// Swap shuffles the references of i and j, putting i in j's position and j in i's.
+func (heap *Heap) Swap(i int, j int) *Heap {
+	if heap.Bounds(i) && heap.Bounds(j) {
+		(*heap)[i], (*heap)[j] = heap.Peek(i), heap.Peek(j)
 	}
-	return f64
+	return heap
 }
 
-func (f64 *F64) IsLeaf(i int) bool {
-	return ((i >= (f64.Len() / 2)) && (i <= f64.Len()))
-}
-
-func (f64 *F64) IsPopulated() bool {
-	return (f64.Len() > 0)
-}
-
-func (f64 *F64) Heapify(f []float64) *F64 {
-	return f64
-}
-
-func (f64 *F64) LeftOf(i int) int {
-	return (i * 2)
-}
-
-func (f64 *F64) Len() int {
-	return len(*f64)
-}
-
-func (f64 *F64) Merge(f *F64) *F64 {
-
-	*f64 = *append((*f64), (*f)...)
-
-	return f64
-}
-
-func (f64 *F64) ParentOf(i int) int {
-	return (i / 2)
-}
-
-func (f64 *F64) Peek() float64 {
-	return f64.PeekAt(0)
-}
-
-func (f64 *F64) PeekAt(i int) float64 {
-	return (*f64)[i]
-}
-
-func (f64 *F64) Pop() float64 {
-	return 0.0
-}
-
-func (f64 *F64) RightOf(i int) int {
-	return ((i * 2) + i)
-}
-
-func (f64 *F64) Search(n float64) float64 {
-	return -1.0
-}
-
-func (f64 *F64) SumOf() float64 {
-	return 0.0
-}
-
-func (f64 *F64) Swap(a int, b int) *F64 {
-	
-	err := f64.ViolatesLength(a)
-
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	err = f64.ViolatesLength(b)
-
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	(*f64)[a], (*f64)[b] = (*f64)[b], (*f64)[a]
-
-	return f64
-}
-
-func (f64 *F64) ViolatesLength(i int) error {
-
-	message := "(*%p) cannot reach argument position. argument index out of heap bounds. current range is 0-%d"
-
-	if ((i < 0) || (i > f64.Len())) {
-		return fmt.Errorf(message, &f64, f64.Len())
+// Violates checks the argument value and generates an error when the value does not satisfy the accepted Heap values.
+func (heap *Heap) Violates(value uint) error {
+	if value == 0 {
+		return fmt.Errorf("(*%p) cannot hold unsigned int of zero. Heap reserves value to determine absence in Heap set", &heap)
 	}
 	return nil
 }
 
-var _ f64 = (*F64)(nil)
+var _ heap = (*Heap)(nil)
