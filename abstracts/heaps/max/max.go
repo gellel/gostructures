@@ -2,13 +2,16 @@ package max
 
 import "fmt"
 
+// Heap declares the implementation for a Max-Heap
 type heap interface {
 	Access(p int) uint
 	Append(value uint) *Heap
+	Arrange(p int) int
 	Bounds(p int) bool
 	Empty() *Heap
 	Fill(a []uint) *Heap
 	Filter(a []uint) []uint
+	Insert(value uint) *Heap
 	IsEmpty() bool
 	IsLeaf(p int) bool
 	IsNotEmpty() bool
@@ -27,6 +30,11 @@ type heap interface {
 // Heap declares the Max-Heap data structure.
 type Heap []uint
 
+// New instantiates a new Max-Heap. 
+func New() *Heap {
+	return &Heap{}
+}
+
 // Access reaches into Heap and attempts to read value at argument position, without checking whether the position is in Heap bounds.
 func (heap *Heap) Access(p int) uint {
 	return (*heap)[p]
@@ -38,6 +46,14 @@ func (heap *Heap) Append(value uint) *Heap {
 	*heap = append((*heap), value)
 
 	return heap
+}
+
+// Arrange orders the Heap into a max Heap.
+func (heap *Heap) Arrange(p int) int {
+	for heap.Peek(p) > heap.Peek(heap.Parent(p)) {
+		p = heap.Swap(p, heap.Parent(p)).Parent(p)
+	}
+	return p
 }
 
 // Bounds returns a boolean checking whether the argument position does not overflow or underflow the current Heap length.
@@ -76,6 +92,14 @@ func (heap *Heap) Filter(a []uint) []uint {
 	return b
 }
 
+// Insert pushes a new unsigned integer into the Heap, but returns the Heap itself and not the position.
+func (heap *Heap) Insert(value uint) *Heap {
+
+	heap.Push(value)
+
+	return heap
+}
+
 // IsEmpty checks the size of the Heap, determining whether it is empty or populated.
 func (heap *Heap) IsEmpty() bool {
 	return (heap.Length() == 0)
@@ -99,6 +123,16 @@ func (heap *Heap) Left(p int) int {
 // Length returns the number of elements stored in the current Heap.
 func (heap *Heap) Length() int {
 	return len((*heap))
+}
+
+// Merge concatenates accessed Heap with argument Heap and then orders the combined Heaps.
+func (heap *Heap) Merge(h *Heap) *Heap {
+
+	*heap = append((*heap), (*h)...)
+
+	heap.Arrange(heap.Length() - 1)
+
+	return heap
 }
 
 // Parent calculates the sum of argument position that would be its relative parent.
@@ -128,16 +162,8 @@ func (heap *Heap) PeekLast() uint {
 func (heap *Heap) Push(value uint) int {
 
 	heap.Append(value)
-
-	return heap.Length() - 1
-}
-
-// Merge concatenates accessed Heap with argument Heap.
-func (heap *Heap) Merge(h *Heap) *Heap {
-
-	*heap = append((*heap), (*h)...)
-
-	return heap
+	
+	return heap.Arrange(heap.Length() - 1)
 }
 
 // Right calculates right left position in a binary search, relative to argument position.
@@ -148,7 +174,7 @@ func (heap *Heap) Right(p int) int {
 // Swap shuffles the references of i and j, putting i in j's position and j in i's.
 func (heap *Heap) Swap(i int, j int) *Heap {
 	if heap.Bounds(i) && heap.Bounds(j) {
-		(*heap)[i], (*heap)[j] = heap.Peek(i), heap.Peek(j)
+		(*heap)[i], (*heap)[j] = heap.Peek(j), heap.Peek(i)
 	}
 	return heap
 }
