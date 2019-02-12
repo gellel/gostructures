@@ -11,15 +11,11 @@ func Test(t *testing.T) {
 
 	heap := max.Heap{}
 
-	fmt.Println(heap.Length())
+	heap.Push(1)
 
-	fmt.Println(heap.Bounds(1))
+	heap.Push(3)
 
-	fmt.Println(heap.Violates(0))
+	heap.Push(2)
 
-	fmt.Println(heap.PeekLast())
-
-	u := make([]uint, 1)
-
-	fmt.Println(heap.Fill(u))
+	fmt.Println(heap.Search(3), heap.Search(1), heap.Search(2), heap)
 }

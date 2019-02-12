@@ -1,7 +1,7 @@
 // Package max exports a Max-Heap. Heap is programmed to only support use
 // of unsigned integers, and filters out any zero value arguments. Use of
 // zero and negative integer is used for core functionality, such as being
-// able to determine whether a value is absent in the Heap. 
+// able to determine whether a value is absent in the Heap.
 package max
 
 import "fmt"
@@ -10,11 +10,14 @@ import "fmt"
 type heap interface {
 	Access(p int) uint
 	Append(value uint) *Heap
-	Arrange(p int) int
 	Bounds(p int) bool
+	BubbleUp(p int) int
 	Empty() *Heap
 	Fill(a []uint) *Heap
 	Filter(a []uint) []uint
+	HasLeft(p int) bool
+	HasParent(p int) bool
+	HasRight(p int) bool
 	Insert(value uint) *Heap
 	IsEmpty() bool
 	IsLeaf(p int) bool
@@ -29,8 +32,6 @@ type heap interface {
 	Pop() uint
 	Push(value uint) int
 	Search(value uint) int
-	ShiftDown(a int, b int) *Heap
-	ShiftUp(b int, a int) *Heap
 	Swap(i int, j int) *Heap
 	Violates(value uint) error
 }
@@ -38,7 +39,7 @@ type heap interface {
 // Heap declares the Max-Heap data structure.
 type Heap []uint
 
-// New instantiates a new Max-Heap. 
+// New instantiates a new Max-Heap.
 func New() *Heap {
 	return &Heap{}
 }
@@ -56,17 +57,17 @@ func (heap *Heap) Append(value uint) *Heap {
 	return heap
 }
 
-// Arrange orders the Heap into a max Heap.
-func (heap *Heap) Arrange(p int) int {
-	for heap.Peek(p) > heap.Peek(heap.Parent(p)) {
-		p = heap.Swap(p, heap.Parent(p)).Parent(p)
-	}
-	return p
-}
-
 // Bounds returns a boolean checking whether the argument position does not overflow or underflow the current Heap length.
 func (heap *Heap) Bounds(p int) bool {
 	return (p > -1) && (p < heap.Length())
+}
+
+// BubbleUp orders the Heap into a max Heap.
+func (heap *Heap) BubbleUp(p int) int {
+	for heap.Peek(p) > heap.Peek(heap.Parent(p)) {
+		heap.Swap(p, heap.Parent(p)).Parent(p)
+	}
+	return p
 }
 
 // Empty removes all elements held by the Heap.
@@ -98,6 +99,21 @@ func (heap *Heap) Filter(a []uint) []uint {
 		}
 	}
 	return b
+}
+
+// HasLeft returns a boolean checking whether the computed left is in the bounds of the Heap.
+func (heap *Heap) HasLeft(p int) bool {
+	return heap.Bounds(heap.Left(p))
+}
+
+// HasParent returns a boolean checking whether the computed parent is in the bounds of the Heap.
+func (heap *Heap) HasParent(p int) bool {
+	return heap.Bounds(heap.Parent(p))
+}
+
+// HasRight returns a boolean checking whether the computed right is in the bounds of the Heap.
+func (heap *Heap) HasRight(p int) bool {
+	return heap.Bounds(heap.Right(p))
 }
 
 // Insert pushes a new unsigned integer into the Heap, but returns the Heap itself and not the position.
@@ -138,14 +154,14 @@ func (heap *Heap) Merge(h *Heap) *Heap {
 
 	*heap = append((*heap), (*h)...)
 
-	heap.Arrange(heap.Length() - 1)
+	heap.BubbleUp(heap.Length() - 1)
 
 	return heap
 }
 
 // Parent calculates the sum of argument position that would be its relative parent.
 func (heap *Heap) Parent(p int) int {
-	return (p / 2)
+	return ((p - 1) / 2)
 }
 
 // Peek attempts to access the unsigned integer stored at the argument index and returns 0 when Heap fails the lookup.
@@ -166,7 +182,7 @@ func (heap *Heap) PeekLast() uint {
 	return heap.Peek(heap.Length() - 1)
 }
 
-// Pop unsets the max of the Max-Heap and arranges the Heap before returning value. Returns zero if Heap is empty.
+// Pop unsets the max of the Max-Heap and BubbleUps the Heap before returning value. Returns zero if Heap is empty.
 func (heap *Heap) Pop() uint {
 
 	if heap.IsEmpty() {
@@ -184,8 +200,8 @@ func (heap *Heap) Pop() uint {
 func (heap *Heap) Push(value uint) int {
 
 	heap.Append(value)
-	
-	return heap.Arrange(heap.Length() - 1)
+
+	return heap.BubbleUp(heap.Length() - 1)
 }
 
 // Right calculates right left position in a binary search, relative to argument position.
@@ -207,16 +223,6 @@ func (heap *Heap) Search(value uint) int {
 		}
 	}
 	return -1
-}
-
-// ShiftDown moves position a to b.
-func (heap *Heap) ShiftDown(a int, b int) *Heap {
-	return heap.Swap(a, b)
-}
-
-// ShiftUp moves position b to a.
-func (heap *Heap) ShiftUp(b int, a int) *Heap {
-	return heap.Swap(b, a)
 }
 
 // Swap shuffles the references of i and j, putting i in j's position and j in i's.
