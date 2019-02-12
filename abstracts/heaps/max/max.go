@@ -1,3 +1,7 @@
+// Package max exports a Max-Heap. Heap is programmed to only support use
+// of unsigned integers, and filters out any zero value arguments. Use of
+// zero and negative integer is used for core functionality, such as being
+// able to determine whether a value is absent in the Heap. 
 package max
 
 import "fmt"
@@ -22,7 +26,11 @@ type heap interface {
 	Peek(p int) uint
 	PeekFirst() uint
 	PeekLast() uint
+	Pop() uint
 	Push(value uint) int
+	Search(value uint) int
+	ShiftDown(a int, b int) *Heap
+	ShiftUp(b int, a int) *Heap
 	Swap(i int, j int) *Heap
 	Violates(value uint) error
 }
@@ -117,7 +125,7 @@ func (heap *Heap) IsNotEmpty() bool {
 
 // Left calculates the left position in a binary search, relative to argument position.
 func (heap *Heap) Left(p int) int {
-	return p * 2
+	return ((p * 2) + 1)
 }
 
 // Length returns the number of elements stored in the current Heap.
@@ -158,6 +166,20 @@ func (heap *Heap) PeekLast() uint {
 	return heap.Peek(heap.Length() - 1)
 }
 
+// Pop unsets the max of the Max-Heap and arranges the Heap before returning value. Returns zero if Heap is empty.
+func (heap *Heap) Pop() uint {
+
+	if heap.IsEmpty() {
+		return 0
+	}
+
+	k := (*heap)[0]
+
+	*heap = (*heap)[1:]
+
+	return k
+}
+
 // Push adds a new unsigned integer into the Heap, then bubbles the value to the correct position before returning its index.
 func (heap *Heap) Push(value uint) int {
 
@@ -168,7 +190,33 @@ func (heap *Heap) Push(value uint) int {
 
 // Right calculates right left position in a binary search, relative to argument position.
 func (heap *Heap) Right(p int) int {
-	return ((p * 2) + 1)
+	return ((p * 2) + 2)
+}
+
+// Search binary searches across the Heap to find an unsigned integer that matches the argument value in the Heap.
+func (heap *Heap) Search(value uint) int {
+	k := 0
+	for heap.Bounds(k) {
+		v := heap.Peek(k)
+		if v == value {
+			return k
+		} else if v < value {
+			k = heap.Left(k)
+		} else {
+			k = heap.Right(k)
+		}
+	}
+	return -1
+}
+
+// ShiftDown moves position a to b.
+func (heap *Heap) ShiftDown(a int, b int) *Heap {
+	return heap.Swap(a, b)
+}
+
+// ShiftUp moves position b to a.
+func (heap *Heap) ShiftUp(b int, a int) *Heap {
+	return heap.Swap(b, a)
 }
 
 // Swap shuffles the references of i and j, putting i in j's position and j in i's.
