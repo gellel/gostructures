@@ -11,6 +11,7 @@ type heap interface {
 	Access(p int) uint
 	Append(value uint) *Heap
 	Bounds(p int) bool
+	BubbleDown(p int) int
 	BubbleUp(p int) int
 	Empty() *Heap
 	Fill(a []uint) *Heap
@@ -40,8 +41,8 @@ type heap interface {
 type Heap []uint
 
 // New instantiates a new Max-Heap.
-func New() *Heap {
-	return &Heap{}
+func New(a []uint) *Heap {
+	return (&Heap{}).Fill(a)
 }
 
 // Access reaches into Heap and attempts to read value at argument position, without checking whether the position is in Heap bounds.
@@ -62,10 +63,31 @@ func (heap *Heap) Bounds(p int) bool {
 	return (p > -1) && (p < heap.Length())
 }
 
+// BubbleDown shifts the first element of the Heap to position x should p be less than ((2 * p) + 1) or ((2 * p) + 2)
+func (heap *Heap) BubbleDown(p int) int {
+	l := heap.Left(p)
+	r := heap.Right(p)
+	x := 0
+	if heap.Bounds(l) && heap.Peek(l) > heap.Peek(p) {
+		x = l
+	} else {
+		x = p
+	}
+	if heap.Bounds(heap.Right(p)) && heap.Peek(heap.Right(p)) > heap.Peek(x) {
+		x = r
+	}
+	if x != p {
+		heap.Swap(p, x).BubbleDown(x)
+	}
+	return x
+}
+
 // BubbleUp orders the Heap into a max Heap.
 func (heap *Heap) BubbleUp(p int) int {
-	for heap.Peek(p) > heap.Peek(heap.Parent(p)) {
-		heap.Swap(p, heap.Parent(p)).Parent(p)
+	if heap.Bounds(p) {
+		if heap.Peek(p) > heap.Peek(heap.Parent(p)) {
+			heap.Swap(p, heap.Parent(p)).BubbleUp(heap.Parent(p))
+		}
 	}
 	return p
 }
@@ -78,13 +100,14 @@ func (heap *Heap) Empty() *Heap {
 	return heap
 }
 
-// Fill moves elements from an argument slice into the Heap, resetting the Heap in the process.
+// Fill moves elements from an argument slice into the Heap, setting the Heap in the process.
 func (heap *Heap) Fill(a []uint) *Heap {
+	
+	*heap = append((*heap)[:0], heap.Filter(a)...)
 
-	*heap = (*heap)[:0]
-
-	*heap = append((*heap), heap.Filter(a)...)
-
+	for i := heap.Length(); i > -1; i-- {
+		heap.BubbleDown(i)
+	}
 	return heap
 }
 
@@ -192,6 +215,8 @@ func (heap *Heap) Pop() uint {
 	k := (*heap)[0]
 
 	*heap = (*heap)[1:]
+	
+	heap.BubbleDown(0)
 
 	return k
 }
@@ -209,17 +234,11 @@ func (heap *Heap) Right(p int) int {
 	return ((p * 2) + 2)
 }
 
-// Search binary searches across the Heap to find an unsigned integer that matches the argument value in the Heap.
+// Search searches across the Heap to find an unsigned integer that matches the argument value in the Heap.
 func (heap *Heap) Search(value uint) int {
-	k := 0
-	for heap.Bounds(k) {
-		v := heap.Peek(k)
-		if v == value {
-			return k
-		} else if v < value {
-			k = heap.Left(k)
-		} else {
-			k = heap.Right(k)
+	for i := 0; i < heap.Length(); i++ {
+		if heap.Peek(i) == value {
+			return i
 		}
 	}
 	return -1
