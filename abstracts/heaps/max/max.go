@@ -30,6 +30,8 @@ type heap interface {
 	Peek(p int) uint
 	PeekFirst() uint
 	PeekLast() uint
+	PeekLeft(p int) uint
+	PeekRight(p int) uint
 	Pop() uint
 	Push(value uint) int
 	Search(value uint) int
@@ -100,12 +102,12 @@ func (heap *Heap) Empty() *Heap {
 	return heap
 }
 
-// Fill moves elements from an argument slice into the Heap, setting the Heap in the process.
+// Fill moves elements from an argument slice into the Heap, then organises Heap into a binary tree, setting the Heap in the process.
 func (heap *Heap) Fill(a []uint) *Heap {
 	
 	*heap = append((*heap)[:0], heap.Filter(a)...)
 
-	for i := heap.Length(); i > -1; i-- {
+	for i := (heap.Length() - 1) / 2; i > -1; i-- {
 		heap.BubbleDown(i)
 	}
 	return heap
@@ -203,6 +205,16 @@ func (heap *Heap) PeekFirst() uint {
 // PeekLast attempts to access the unsigned integer stored at the end of the Heap; the heap-max-min.
 func (heap *Heap) PeekLast() uint {
 	return heap.Peek(heap.Length() - 1)
+}
+
+// PeekLeft attempts to access the unsigned integer stored at the left of the argument position in the Heap.
+func (heap *Heap) PeekLeft(p int) uint {
+	return heap.Peek(heap.Left(p))
+}
+
+// PeekRight attempts to access the unsigned integer stored at the right of the argument position in the Heap.
+func (heap *Heap) PeekRight(p int) uint {
+	return heap.Peek(heap.Right(p))
 }
 
 // Pop unsets the max of the Max-Heap and BubbleUps the Heap before returning value. Returns zero if Heap is empty.
