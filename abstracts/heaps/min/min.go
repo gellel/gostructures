@@ -16,12 +16,12 @@ type heap interface {
 	LeftOf(p int) int
 	Length() int
 	Merge(h *Heap) *Heap
-    ParentOf(p int) int
-    Peek(p int) uint
-    PeekFirst() uint
-    PeekLast() uint
-    PeekLeftOf(p int) uint
-    PeekParentOf(p int) uint
+	ParentOf(p int) int
+	Peek(p int) uint
+	PeekFirst() uint
+	PeekLast() uint
+	PeekLeftOf(p int) uint
+	PeekParentOf(p int) uint
 	PeekRightOf(p int) uint
 	Push(p uint) int
 	Pop() uint
