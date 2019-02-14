@@ -50,7 +50,19 @@ func (heap *Heap) BoundsRightOf(p int) bool {
 }
 
 func (heap *Heap) BubbleDown(p int) *Heap {
+	x := p
 	if heap.BoundsLeftOf(p) && heap.PeekLeftOf(p) > heap.Peek(p) {
-		
+		x = heap.LeftOf(p)
 	}
+	if heap.BoundsRightOf(p) && heap.PeekRightOf(p) > heap.Peek(x) {
+		x = heap.RightOf(p)
+	}
+	if x != p {
+		heap.Swap(p, x).BubbleDown(x)
+	}
+	return heap
+}
+
+func (heap *Heap) BubbleUp(p int) *Heap {
+	
 }
