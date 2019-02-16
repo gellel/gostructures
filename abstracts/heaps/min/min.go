@@ -2,6 +2,9 @@ package min
 
 type heap interface {
 	Access(p int) uint
+	AccessLeftOf(p int) uint
+	AccessParentOf(p int) uint
+	AccessRightOf(p int) uint
 	Append(value uint) *Heap
 	Bounds(p int) bool
 	BoundsLeftOf(p int) bool
@@ -32,8 +35,22 @@ type heap interface {
 	Swap(a int, b int) *Heap
 }
 
+type Heap []uint
+
 func (heap *Heap) Access(p int) uint {
 	return (*heap)[p]
+}
+
+func (heap *Heap) AccessLeftOf(p int) uint {
+	return heap.Access(heap.LeftOf(p))
+}
+
+func (heap *Heap) AccessParentOf(p int) uint {
+	return heap.Access(heap.ParentOf(p))
+}
+
+func (heap *Heap) AccessRightOf(p int) uint {
+	return heap.Access(heap.RightOf(p))
 }
 
 func (heap *Heap) Append(value uint) *Heap {
@@ -61,10 +78,10 @@ func (heap *Heap) BoundsRightOf(p int) bool {
 
 func (heap *Heap) BubbleDown(p int) *Heap {
 	x := p
-	if heap.BoundsLeftOf(p) && heap.PeekLeftOf(p) > heap.Peek(p) {
+	if heap.BoundsLeftOf(p) && heap.AccessLeftOf(p) > heap.Access(p) {
 		x = heap.LeftOf(p)
 	}
-	if heap.BoundsRightOf(p) && heap.PeekRightOf(p) > heap.Peek(x) {
+	if heap.BoundsRightOf(p) && heap.AccessRightOf(p) > heap.Access(x) {
 		x = heap.RightOf(p)
 	}
 	if x != p {
@@ -74,7 +91,7 @@ func (heap *Heap) BubbleDown(p int) *Heap {
 }
 
 func (heap *Heap) BubbleUp(p int) *Heap {
-	if heap.BoundsParentOf(p) && heap.PeekParentOf(p) > heap.Peek(p) {
+	if heap.BoundsParentOf(p) && heap.AccessParentOf(p) > heap.Access(p) {
 		heap.Swap(heap.ParentOf(p), p).BubbleUp(heap.ParentOf(p))
 	}
 	return heap
@@ -117,8 +134,12 @@ func (heap *Heap) LeftOf(p int) int {
 	return ((p * 2) + 1)
 }
 
+func (heap *Heap) Length() int {
+	return len((*heap))
+}
+
 func (heap *Heap) Merge(h *Heap) *Heap {
-	
+
 	*heap = append((*heap), (*h)...)
 
 	return heap.BubbleUp(heap.Length() - 1)
@@ -133,4 +154,46 @@ func (heap *Heap) Peek(p int) uint {
 		return heap.Access(p)
 	}
 	return 0
+}
+
+func (heap *Heap) PeekFirst() uint {
+	if heap.IsNotEmpty() {
+		return heap.Access(0)
+	}
+	return 0
+}
+
+func (heap *Heap) PeekLast() uint {
+	if heap.IsNotEmpty() {
+		return heap.Access(heap.Length() - 1)
+	}
+	return 0
+}
+
+func (heap *Heap) PeekLeftOf(p int) uint {
+	if heap.BoundsLeftOf(p) {
+		return heap.Access(heap.LeftOf(p))
+	}
+	return 0
+}
+
+func (heap *Heap) PeekParentOf(p int) uint {
+	if heap.BoundsParentOf(p) {
+		return heap.Access(heap.ParentOf(p))
+	}
+	return 0
+}
+
+func (heap *Heap) PeekRightOf(p int) uint {
+	if heap.BoundsRightOf(p) {
+		return heap.Access(heap.RightOf(p))
+	}
+	return 0
+}
+
+func (heap *Heap) Push(value uint) int {
+
+	heap.Append(value)
+
+	return (heap.Length() - 1)
 }
