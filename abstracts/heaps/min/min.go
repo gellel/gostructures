@@ -1,9 +1,11 @@
 package min
 
 type heap interface {
+	Access(p int) uint
 	Append(value uint) *Heap
 	Bounds(p int) bool
 	BoundsLeftOf(p int) bool
+	BoundsParentOf(p int) bool
 	BoundsRightOf(p int) bool
 	BubbleDown(p int) *Heap
 	BubbleUp(p int) *Heap
@@ -30,6 +32,10 @@ type heap interface {
 	Swap(a int, b int) *Heap
 }
 
+func (heap *Heap) Access(p int) uint {
+	return (*heap)[p]
+}
+
 func (heap *Heap) Append(value uint) *Heap {
 	if value != 0 {
 		*heap = append((*heap), value)
@@ -43,6 +49,10 @@ func (heap *Heap) Bounds(p int) bool {
 
 func (heap *Heap) BoundsLeftOf(p int) bool {
 	return heap.Bounds(heap.LeftOf(p))
+}
+
+func (heap *Heap) BoundsParentOf(p int) bool {
+	return heap.Bounds(heap.ParentOf(p))
 }
 
 func (heap *Heap) BoundsRightOf(p int) bool {
@@ -64,5 +74,63 @@ func (heap *Heap) BubbleDown(p int) *Heap {
 }
 
 func (heap *Heap) BubbleUp(p int) *Heap {
+	if heap.BoundsParentOf(p) && heap.PeekParentOf(p) > heap.Peek(p) {
+		heap.Swap(heap.ParentOf(p), p).BubbleUp(heap.ParentOf(p))
+	}
+	return heap
+}
+
+func (heap *Heap) Empty() *Heap {
+	*heap = (*heap)[:0]
+	return heap
+}
+
+func (heap *Heap) Fill(a []uint) *Heap {
+
+	*heap = append((*heap)[:0], heap.Filter(a)...)
+
+	for i := (heap.Length() - 1) / 2; i > -1; i-- {
+		heap.BubbleDown(i)
+	}
+	return heap
+}
+
+func (heap *Heap) Filter(a []uint) []uint {
+	b := make([]uint, 0)
+	for _, n := range a {
+		if n != 0 {
+			b = append(b, n)
+		}
+	}
+	return b
+}
+
+func (heap *Heap) IsEmpty() bool {
+	return len((*heap)) == 0
+}
+
+func (heap *Heap) IsNotEmpty() bool {
+	return len((*heap)) != 0
+}
+
+func (heap *Heap) LeftOf(p int) int {
+	return ((p * 2) + 1)
+}
+
+func (heap *Heap) Merge(h *Heap) *Heap {
 	
+	*heap = append((*heap), (*h)...)
+
+	return heap.BubbleUp(heap.Length() - 1)
+}
+
+func (heap *Heap) ParentOf(p int) int {
+	return ((p - 1) / 2)
+}
+
+func (heap *Heap) Peek(p int) uint {
+	if heap.Bounds(p) {
+		return heap.Access(p)
+	}
+	return 0
 }
