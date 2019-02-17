@@ -15,7 +15,7 @@ type heap interface {
 	Empty() *Heap
 	Fill(a []uint) *Heap
 	Filter(a []uint) []uint
-	Insert(value int) *Heap
+	Insert(value uint) *Heap
 	IsEmpty() bool
 	IsNotEmpty() bool
 	LeftOf(p int) int
@@ -33,7 +33,6 @@ type heap interface {
 	RightOf(p int) int
 	Search(value uint) int
 	Swap(a int, b int) *Heap
-	ToArray() []uint
 	ToSlice() []uint
 }
 
@@ -80,10 +79,10 @@ func (heap *Heap) BoundsRightOf(p int) bool {
 
 func (heap *Heap) BubbleDown(p int) int {
 	x := p
-	if heap.BoundsLeftOf(p) && heap.AccessLeftOf(p) > heap.Access(p) {
+	if heap.BoundsLeftOf(p) && heap.AccessLeftOf(p) < heap.Access(p) {
 		x = heap.LeftOf(p)
 	}
-	if heap.BoundsRightOf(p) && heap.AccessRightOf(p) > heap.Access(x) {
+	if heap.BoundsRightOf(p) && heap.AccessRightOf(p) < heap.Access(x) {
 		x = heap.RightOf(p)
 	}
 	if x != p {
@@ -122,6 +121,13 @@ func (heap *Heap) Filter(a []uint) []uint {
 		}
 	}
 	return b
+}
+
+func (heap *Heap) Insert(value uint) *Heap {
+
+	heap.Push(value)
+
+	return heap
 }
 
 func (heap *Heap) IsEmpty() bool {
@@ -233,3 +239,13 @@ func (heap *Heap) Swap(a int, b int) *Heap {
 	(*heap)[a], (*heap)[b] = (*heap)[b], (*heap)[a]
 	return heap
 }
+
+func (heap *Heap) ToSlice() []uint {
+	a := make([]uint, 0)
+	for i := 0; i < heap.Length(); i++ {
+		a = append(a, heap.Access(i))
+	}
+	return a
+}
+
+var _ heap = (*Heap)(nil)

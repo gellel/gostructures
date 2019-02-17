@@ -2,6 +2,7 @@ package min_test
 
 import (
 	"fmt"
+	"math/rand"
 	"testing"
 
 	"github.com/gellel/gostructures/abstracts/heaps/min"
@@ -11,11 +12,15 @@ func Test(t *testing.T) {
 
 	heap := min.Heap{}
 
-	heap.Push(1)
+	max := 10
 
-	heap.Push(3)
+	for i := 0; i != max; i++ {
+		heap.Push(uint(rand.Intn(max-1) + 1))
+	}
 
-	heap.Push(2)
+	fmt.Println("min.Heap:", heap)
 
-	fmt.Println(heap.Search(3), heap.Search(1), heap.Search(2), heap)
+	for heap.IsNotEmpty() {
+		fmt.Println("value:", heap.Pop(), "n:", heap.Length())
+	}
 }
