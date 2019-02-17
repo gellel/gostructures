@@ -10,8 +10,8 @@ type heap interface {
 	BoundsLeftOf(p int) bool
 	BoundsParentOf(p int) bool
 	BoundsRightOf(p int) bool
-	BubbleDown(p int) *Heap
-	BubbleUp(p int) *Heap
+	BubbleDown(p int) int
+	BubbleUp(p int) int
 	Empty() *Heap
 	Fill(a []uint) *Heap
 	Filter(a []uint) []uint
@@ -33,6 +33,8 @@ type heap interface {
 	RightOf(p int) int
 	Search(value uint) int
 	Swap(a int, b int) *Heap
+	ToArray() []uint
+	ToSlice() []uint
 }
 
 type Heap []uint
@@ -76,7 +78,7 @@ func (heap *Heap) BoundsRightOf(p int) bool {
 	return heap.Bounds(heap.RightOf(p))
 }
 
-func (heap *Heap) BubbleDown(p int) *Heap {
+func (heap *Heap) BubbleDown(p int) int {
 	x := p
 	if heap.BoundsLeftOf(p) && heap.AccessLeftOf(p) > heap.Access(p) {
 		x = heap.LeftOf(p)
@@ -87,14 +89,14 @@ func (heap *Heap) BubbleDown(p int) *Heap {
 	if x != p {
 		heap.Swap(p, x).BubbleDown(x)
 	}
-	return heap
+	return x
 }
 
-func (heap *Heap) BubbleUp(p int) *Heap {
+func (heap *Heap) BubbleUp(p int) int {
 	if heap.BoundsParentOf(p) && heap.AccessParentOf(p) > heap.Access(p) {
 		heap.Swap(heap.ParentOf(p), p).BubbleUp(heap.ParentOf(p))
 	}
-	return heap
+	return p
 }
 
 func (heap *Heap) Empty() *Heap {
@@ -142,7 +144,9 @@ func (heap *Heap) Merge(h *Heap) *Heap {
 
 	*heap = append((*heap), (*h)...)
 
-	return heap.BubbleUp(heap.Length() - 1)
+	heap.BubbleUp(heap.Length() - 1)
+
+	return heap
 }
 
 func (heap *Heap) ParentOf(p int) int {
@@ -195,5 +199,37 @@ func (heap *Heap) Push(value uint) int {
 
 	heap.Append(value)
 
-	return (heap.Length() - 1)
+	return heap.BubbleUp(heap.Length() - 1)
+}
+
+func (heap *Heap) Pop() uint {
+	if heap.IsEmpty() {
+		return 0
+	}
+
+	k := heap.Access(0)
+
+	*heap = (*heap)[1:]
+
+	heap.BubbleDown(0)
+
+	return k
+}
+
+func (heap *Heap) RightOf(p int) int {
+	return ((p * 2) + 2)
+}
+
+func (heap *Heap) Search(value uint) int {
+	for i := 0; i < heap.Length(); i++ {
+		if heap.Access(i) == value {
+			return i
+		}
+	}
+	return -1
+}
+
+func (heap *Heap) Swap(a int, b int) *Heap {
+	(*heap)[a], (*heap)[b] = (*heap)[b], (*heap)[a]
+	return heap
 }
