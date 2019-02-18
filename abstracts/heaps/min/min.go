@@ -92,6 +92,7 @@ func (heap *Heap) BoundsRightOf(p int) bool {
 	return heap.Bounds(heap.RightOf(p))
 }
 
+// BubbleDown shuffles the element stored in the Heap at H[p] when the current element at H[Left] or H[Right] violates the Heap condition.
 func (heap *Heap) BubbleDown(p int) int {
 	x := p
 	if heap.BoundsLeftOf(p) && heap.AccessLeftOf(p) < heap.Access(p) {
@@ -106,6 +107,7 @@ func (heap *Heap) BubbleDown(p int) int {
 	return x
 }
 
+// BubbleUp shuffles the element stored in the Heap at H[P] when the current element at H[Parent] violates the Heap condition.
 func (heap *Heap) BubbleUp(p int) int {
 	if heap.BoundsParentOf(p) && heap.AccessParentOf(p) > heap.Access(p) {
 		heap.Swap(heap.ParentOf(p), p).BubbleUp(heap.ParentOf(p))
@@ -113,11 +115,13 @@ func (heap *Heap) BubbleUp(p int) int {
 	return p
 }
 
+// Empty removes all entries from the Heap.
 func (heap *Heap) Empty() *Heap {
 	*heap = (*heap)[:0]
 	return heap
 }
 
+// Fill populates the the Heap with a Slice of unsigned integers and then sorts the Heap's children to satisfy the Heap condition.
 func (heap *Heap) Fill(a []uint) *Heap {
 
 	*heap = append((*heap)[:0], heap.Filter(a)...)
@@ -128,6 +132,7 @@ func (heap *Heap) Fill(a []uint) *Heap {
 	return heap
 }
 
+// Filter empties zero-values from the argument unsigned integer Slice.
 func (heap *Heap) Filter(a []uint) []uint {
 	b := make([]uint, 0)
 	for _, n := range a {
@@ -138,6 +143,7 @@ func (heap *Heap) Filter(a []uint) []uint {
 	return b
 }
 
+// Insert pushes a non-zero unsigned integer into the Heap.
 func (heap *Heap) Insert(value uint) *Heap {
 
 	heap.Push(value)
@@ -145,22 +151,27 @@ func (heap *Heap) Insert(value uint) *Heap {
 	return heap
 }
 
+// IsEmpty checks whether the Heap is absent of elements.
 func (heap *Heap) IsEmpty() bool {
 	return len((*heap)) == 0
 }
 
+// IsNotEmpty checks whether the Heap contains at least on element.
 func (heap *Heap) IsNotEmpty() bool {
 	return len((*heap)) != 0
 }
 
+// LeftOf computes the position where the value left-of the argument position is stored in the Heap.
 func (heap *Heap) LeftOf(p int) int {
 	return ((p * 2) + 1)
 }
 
+// Length computes and returns the current number of elements contained within the Heap. Size represents the non-zero-index value of the Heap.
 func (heap *Heap) Length() int {
 	return len((*heap))
 }
 
+// Merge joins two Heaps into a single Heap.
 func (heap *Heap) Merge(h *Heap) *Heap {
 
 	*heap = append((*heap), (*h)...)
@@ -170,10 +181,12 @@ func (heap *Heap) Merge(h *Heap) *Heap {
 	return heap
 }
 
+// ParentOf computes the position where the value parent of the argument position is stored in the Heap.
 func (heap *Heap) ParentOf(p int) int {
 	return ((p - 1) / 2)
 }
 
+// Peek safely accesses an element stored in the Heap when the argument position is in the bounds of the Heap. If argument position cannot be accessed, a zero-value will be returned.
 func (heap *Heap) Peek(p int) uint {
 	if heap.Bounds(p) {
 		return heap.Access(p)
@@ -181,6 +194,7 @@ func (heap *Heap) Peek(p int) uint {
 	return 0
 }
 
+// PeekFirst safely accesses the element stored at the beginning of the Heap when the Heap is not empty. Otherwise, returns a zero-value.
 func (heap *Heap) PeekFirst() uint {
 	if heap.IsNotEmpty() {
 		return heap.Access(0)
@@ -188,6 +202,7 @@ func (heap *Heap) PeekFirst() uint {
 	return 0
 }
 
+// PeekLast safely accesses the element stored at the end of the Heap when the Heap is not empty. Otherwise, returns a zero-value.
 func (heap *Heap) PeekLast() uint {
 	if heap.IsNotEmpty() {
 		return heap.Access(heap.Length() - 1)
@@ -195,6 +210,7 @@ func (heap *Heap) PeekLast() uint {
 	return 0
 }
 
+// PeekLeftOf safely access the element stored left-of the argument position when the argument left-of is in the Heap bounds. Otherwise returns zero.
 func (heap *Heap) PeekLeftOf(p int) uint {
 	if heap.BoundsLeftOf(p) {
 		return heap.Access(heap.LeftOf(p))
@@ -202,6 +218,7 @@ func (heap *Heap) PeekLeftOf(p int) uint {
 	return 0
 }
 
+// PeekParentOf safely access the element stored at the parent of the argument position when the parent position is in the Heap bounds. Otherwise returns zero.
 func (heap *Heap) PeekParentOf(p int) uint {
 	if heap.BoundsParentOf(p) {
 		return heap.Access(heap.ParentOf(p))
@@ -209,6 +226,7 @@ func (heap *Heap) PeekParentOf(p int) uint {
 	return 0
 }
 
+// PeekRightOf safely access the element stored right-of the argument position when the argument right-of is in the Heap bounds. Otherwise returns zero.
 func (heap *Heap) PeekRightOf(p int) uint {
 	if heap.BoundsRightOf(p) {
 		return heap.Access(heap.RightOf(p))
