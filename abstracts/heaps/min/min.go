@@ -234,6 +234,7 @@ func (heap *Heap) PeekRightOf(p int) uint {
 	return 0
 }
 
+// Push adds a new, non-zero unsigned integer in the Heap and shifts the new unsigned integer into its required position if it violates the Heap condition.
 func (heap *Heap) Push(value uint) int {
 
 	heap.Append(value)
@@ -241,6 +242,7 @@ func (heap *Heap) Push(value uint) int {
 	return heap.BubbleUp(heap.Length() - 1)
 }
 
+// Pop removes the first element from the Heap and shuffles the potential element at H[0] to its required position if it violates the Heap condition. If the Heap is emtpy, it returns zero.
 func (heap *Heap) Pop() uint {
 	if heap.IsEmpty() {
 		return 0
@@ -255,10 +257,12 @@ func (heap *Heap) Pop() uint {
 	return k
 }
 
+// RightOf computes the position right-of the argument position.
 func (heap *Heap) RightOf(p int) int {
 	return ((p * 2) + 2)
 }
 
+// Search iterates across the entries of the Heap and attempts to find the index where the argument unsigned integer is stored.
 func (heap *Heap) Search(value uint) int {
 	for i := 0; i < heap.Length(); i++ {
 		if heap.Access(i) == value {
@@ -268,11 +272,13 @@ func (heap *Heap) Search(value uint) int {
 	return -1
 }
 
+// Swap moves the element stored at Heap[A] to Heap[B] and Heap[B] to Heap[A].
 func (heap *Heap) Swap(a int, b int) *Heap {
 	(*heap)[a], (*heap)[b] = (*heap)[b], (*heap)[a]
 	return heap
 }
 
+// ToSlice prodcues a new Slice of unsigned integers built from the values stored in the Heap.
 func (heap *Heap) ToSlice() []uint {
 	a := make([]uint, 0)
 	for i := 0; i < heap.Length(); i++ {
