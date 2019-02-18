@@ -1,5 +1,10 @@
+// Package min exports a Min-Heap. Heap is programmed to only support use
+// of unsigned integers, and filters out any zero value arguments. Use of
+// zero and negative integer is used for core functionality, such as being
+// able to determine whether a value is absent in the Heap.
 package min
 
+// Heap declares the implementation for a Min-Heap
 type heap interface {
 	Access(p int) uint
 	AccessLeftOf(p int) uint
@@ -36,24 +41,30 @@ type heap interface {
 	ToSlice() []uint
 }
 
+// Heap declares the Min-Heap data structure.
 type Heap []uint
 
+// Access accesses and returns the stored element in the Heap at position P.
 func (heap *Heap) Access(p int) uint {
 	return (*heap)[p]
 }
 
+// AccessLeftOf accesses and returns the stored element in the Heap at the left-of position P.
 func (heap *Heap) AccessLeftOf(p int) uint {
 	return heap.Access(heap.LeftOf(p))
 }
 
+// AccessParentOf accesses and returns the stored element in the Heap at the parent position of P.
 func (heap *Heap) AccessParentOf(p int) uint {
 	return heap.Access(heap.ParentOf(p))
 }
 
+// AccessRightOf accesses and returns the stored element in the Heap at the right-of position P.
 func (heap *Heap) AccessRightOf(p int) uint {
 	return heap.Access(heap.RightOf(p))
 }
 
+// Append adds a non-zero unsigned integer into the Heap. Does not BubbleUp the added value. Use either Heap.Insert or Heap.Push.
 func (heap *Heap) Append(value uint) *Heap {
 	if value != 0 {
 		*heap = append((*heap), value)
@@ -61,18 +72,22 @@ func (heap *Heap) Append(value uint) *Heap {
 	return heap
 }
 
+// Bounds checks whether the argument position has a corresponding position within the Heap.
 func (heap *Heap) Bounds(p int) bool {
 	return ((p > -1) && p < len((*heap)))
 }
 
+// BoundsLeftOf checks whether the argument position has a corresponding position within the Heap when modified to be the left-of key for the argument key.
 func (heap *Heap) BoundsLeftOf(p int) bool {
 	return heap.Bounds(heap.LeftOf(p))
 }
 
+// BoundsParentOf checks whether the argument position has a corresponding position within the Heap when modified to be the parent key for the argument key.
 func (heap *Heap) BoundsParentOf(p int) bool {
 	return heap.Bounds(heap.ParentOf(p))
 }
 
+// BoundsRightOf checks whether the argument position has a corresponding position within the Heap when modified to be the right-of key for the argument key.
 func (heap *Heap) BoundsRightOf(p int) bool {
 	return heap.Bounds(heap.RightOf(p))
 }
