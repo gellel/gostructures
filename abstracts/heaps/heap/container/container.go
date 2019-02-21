@@ -1,5 +1,7 @@
 package container
 
+import "reflect"
+
 type container interface {
 	Access(p int) interface{}
 	AccessLeftOf(p int) interface{}
@@ -33,12 +35,11 @@ type container interface {
 	Search(value interface{}) int
 	Swap(a int, b int) *Container
 	ToSlice() []interface{}
-	Type()
-	TypeOf(value interface{}) string
+	TypeOf(value interface{}) reflect.Type
 }
 
 type Container []interface{}
-
+2
 func (container *Container) Access(p int) interface{} {
 	return (*container)[p]
 }
@@ -72,12 +73,18 @@ func (container *Container) BoundsRightOf(p int) bool {
 }
 
 func (container *Container) CanMerge(c *Container) bool {
+	return (container.TypeOf(container.Peek()) == c.TypeOf(c.Peek()))
 }
 
 func (container *Container) CannotMerge(c *Container) bool {
+	return !(container.CanMerge(c))
 }
 
 func (container *Container) Contains(value interface{}) bool {
+	if container.Search(value) > -1 {
+		return true
+	}
+	return false
 }
 
 func (container *Container) CutAfter(p int) *Container {
@@ -198,6 +205,10 @@ func (container *Container) ToSlice() []interface{} {
 		a = append(a, container.Access(i))
 	}
 	return a
+}
+
+func (container *Container) TypeOf(value interface{}) reflect.Type {
+	return reflect.TypeOf(value)
 }
 
 var _ container = (*Container)(nil)
