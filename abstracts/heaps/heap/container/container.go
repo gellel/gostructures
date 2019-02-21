@@ -33,7 +33,6 @@ type container interface {
 	Search(value interface{}) int
 	Swap(a int, b int) *Container
 	ToSlice() []interface{}
-	ToTypeOf(value interface{}) []interface{}
 	Type()
 	TypeOf(value interface{}) string
 }
@@ -173,6 +172,32 @@ func (container *Container) Poll() interface{} {
 func (container *Container) Push(value interface{}) int {
 	*container = append((*container), value)
 	return container.Length()
+}
+
+func (container *Container) RightOf(p int) int {
+	return ((p * 2) + 2)
+}
+
+func (container *Container) Search(value interface{}) int {
+	for i := 0; i < container.Length(); i++ {
+		if container.Access(i) == value {
+			return i
+		}
+	}
+	return -1
+}
+
+func (container *Container) Swap(a int, b int) *Container {
+	(*container)[a], (*container)[b] = (*container)[b], (*container)[a]
+	return container
+}
+
+func (container *Container) ToSlice() []interface{} {
+	a := make([]interface{}, 0)
+	for i := 0; i < container.Length(); i++ {
+		a = append(a, container.Access(i))
+	}
+	return a
 }
 
 var _ container = (*Container)(nil)
