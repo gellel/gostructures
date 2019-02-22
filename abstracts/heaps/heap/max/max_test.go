@@ -1,16 +1,16 @@
-package min_test
+package max_test
 
 import (
 	"fmt"
 	"math/rand"
 	"testing"
 
-	"github.com/gellel/gostructures/abstracts/heaps/heap/min"
+	"github.com/gellel/gostructures/abstracts/heaps/heap/max"
 )
 
 func Test(t *testing.T) {
 
-	heap := min.New()
+	heap := max.New()
 
 	max := 10
 
@@ -18,7 +18,7 @@ func Test(t *testing.T) {
 		heap.Push(int(rand.Intn(max-1) + 1))
 	}
 
-	fmt.Println("min.Heap:", heap.Container)
+	fmt.Println("max.Heap:", heap.Container)
 
 	for heap.IsNotEmpty() {
 		fmt.Println("value:", heap.Poll(), "n:", heap.Length())

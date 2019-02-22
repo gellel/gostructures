@@ -178,7 +178,7 @@ func (container *Container) PeekLast() interface{} {
 func (container *Container) Poll() interface{} {
 	if container.IsNotEmpty() {
 		value := container.Access(0)
-		container.CutAfter(0)
+		container.CutAfter(1)
 		return value
 	}
 	return nil
