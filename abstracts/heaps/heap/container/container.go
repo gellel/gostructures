@@ -39,7 +39,11 @@ type container interface {
 }
 
 type Container []interface{}
-2
+
+func New() *Container {
+	return &Container{}
+}
+
 func (container *Container) Access(p int) interface{} {
 	return (*container)[p]
 }
@@ -119,6 +123,10 @@ func (container *Container) Length() int {
 }
 
 func (container *Container) Merge(c *Container) *Container {
+	if container.CanMerge(c) {
+		*container = append((*container), (*c)...)
+	}
+	return container
 }
 
 func (container *Container) ParentOf(p int) int {

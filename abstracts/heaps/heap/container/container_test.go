@@ -9,5 +9,17 @@ import (
 
 func Test(t *testing.T) {
 
-	fmt.Println(container.Container{})
+	a := container.New()
+
+	b := container.New()
+
+	a.Push(1.0)
+
+	b.Push(1)
+
+	fmt.Println(a.TypeOf(a.Peek()))
+
+	fmt.Println(b.TypeOf(b.Peek()))
+
+	fmt.Println(b.CanMerge(a))
 }
