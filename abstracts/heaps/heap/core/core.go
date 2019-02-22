@@ -15,6 +15,9 @@ type heap interface {
 	Poll() interface{}
 	Push(value interface{}) int
 	Search(value interface{}) int
+	ToInteger(value interface{}) int
+	ToFloat32(value interface{}) float32
+	ToFloat64(value interface{}) float64
 	ToSlice() []interface{}
 }
 
@@ -74,6 +77,18 @@ func (heap *Heap) Push(value interface{}) int {
 
 func (heap *Heap) Search(value interface{}) int {
 	return heap.Container.Search(value)
+}
+
+func (heap *Heap) ToInteger(value interface{}) int {
+	return value.(int)
+}
+
+func (heap *Heap) ToFloat32(value interface{}) float32 {
+	return value.(float32)
+}
+
+func (heap *Heap) ToFloat64(value interface{}) float64 {
+	return value.(float64)
 }
 
 func (heap *Heap) ToSlice() []interface{} {
