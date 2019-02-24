@@ -6,8 +6,8 @@ import (
 )
 
 type heap interface {
-	BubbleDown(p int) int
-	BubbleUp(p int) int
+	bubbleDown(p int) int
+	bubbleUp(p int) int
 	Poll() int
 	Push(value interface{}) int
 	ToSlice() []int
@@ -23,7 +23,7 @@ func New() *Heap {
 	return h
 }
 
-func (heap *Heap) BubbleDown(p int) int {
+func (heap *Heap) bubbleDown(p int) int {
 	x := p
 	if heap.Container.BoundsLeftOf(p) && heap.ToInteger(heap.Container.AccessLeftOf(p)) < heap.ToInteger(heap.Container.Access(p)) {
 		x = heap.Container.LeftOf(p)
@@ -33,15 +33,15 @@ func (heap *Heap) BubbleDown(p int) int {
 	}
 	if x != p {
 		heap.Container.Swap(p, x)
-		heap.BubbleDown(x)
+		heap.bubbleDown(x)
 	}
 	return x
 }
 
-func (heap *Heap) BubbleUp(p int) int {
+func (heap *Heap) bubbleUp(p int) int {
 	if heap.Container.BoundsParentOf(p) && heap.ToInteger(heap.Container.AccessParentOf(p)) > heap.ToInteger(heap.Container.Access(p)) {
 		heap.Container.Swap(heap.Container.ParentOf(p), p)
-		heap.BubbleUp(heap.Container.ParentOf(p))
+		heap.bubbleUp(heap.Container.ParentOf(p))
 	}
 	return p
 }
