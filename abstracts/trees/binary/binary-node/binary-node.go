@@ -19,11 +19,14 @@ const (
 	// RIGHT declares constant string that provides a namespace to annotate that
 	// a Binary-node is assigned as a right child of its parent.
 	RIGHT string = "RIGHT"
+	// ROOT declares constant string that provides a namespace to annotate that
+	// a Binary-node is assigned as a root element.
+	ROOT string = "ROOT"
 )
 
 var (
 	// SIDES declares constant map that conatins supported child-node positions.
-	sides = map[string]bool{LEFT: true, RIGHT: true}
+	sides = map[string]bool{LEFT: true, RIGHT: true, ROOT: true}
 )
 
 // Binary declares the implementation for a Binary-Tree-Node
@@ -77,7 +80,7 @@ type Binary struct {
 // function do not require a reference to either a left or right child-node.
 // Additionally, the side reference is not required.
 func New(value float64) *Binary {
-	return &Binary{Value: value}
+	return &Binary{Side: ROOT, Value: value}
 }
 
 // AssignLeft assigns by pointer a left child-node to the accessed Binary-Tree-Node. Method
@@ -244,6 +247,11 @@ func (binary *Binary) IsRight() bool {
 	return binary.Side == RIGHT
 }
 
+// IsRoot checks whether the accessed Binary-Tree-Node is a root Binary-Tree-Node.
+func (binary *Binary) IsRoot() bool {
+	return binary.Side == ROOT
+}
+
 // Remove deletes a child-node contained within the accessed Binary-Tree-Node
 // or within the accessed Binary-Tree-Node's current child-nodes.
 func (binary *Binary) Remove(value float64) *Binary {
@@ -363,7 +371,7 @@ func (binary *Binary) Walk() {
 	if binary.HasLeft() {
 		binary.Left.Walk()
 	}
-	log.Println(binary.Value, binary.Side)
+	fmt.Println(binary.Value, binary.Side)
 	if binary.HasRight() {
 		binary.Right.Walk()
 	}
