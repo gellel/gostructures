@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	binary "github.com/gellel/gostructures/abstracts/trees/binary"
-	"github.com/gellel/gostructures/algorithms/binary-traversal/inorder"
+	"github.com/gellel/gostructures/algorithms/tree-traversal/inorder"
 )
 
 func Test(t *testing.T) {
