@@ -1,24 +1,19 @@
-package inorder_test
+package postorder_test
 
 import (
 	"math/rand"
 	"testing"
 
 	binary "github.com/gellel/gostructures/abstracts/trees/binary"
-	"github.com/gellel/gostructures/algorithms/traversal/inorder"
+	"github.com/gellel/gostructures/algorithms/binary-traversal/postorder"
 )
 
 func Test(t *testing.T) {
 
 	b := binary.New(rand.Float64())
 
-	max := 10
-
-	for i := 0; i < max; i++ {
+	for i := 0; i < 10; i++ {
 		b.Insert(rand.Float64())
 	}
-
-	b.Root.Walk()
-
-	inorder.Traverse(b.Root)
+	postorder.Traverse(b.Root)
 }
