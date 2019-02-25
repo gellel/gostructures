@@ -1,6 +1,7 @@
 package max
 
 import (
+	"github.com/gellel/gostructures/abstracts/heaps/heap/container"
 	"github.com/gellel/gostructures/abstracts/heaps/heap/core"
 	node "github.com/gellel/gostructures/abstracts/priority-queues/max/max-node"
 )
@@ -17,6 +18,12 @@ type heap interface {
 
 type Heap struct {
 	core.Heap
+}
+
+func New() *Heap {
+	h := &Heap{}
+	h.Container = container.New()
+	return h
 }
 
 func (heap *Heap) BubbleDown(p int) int {
@@ -49,11 +56,11 @@ func (heap *Heap) Poll() interface{} {
 }
 
 func (heap *Heap) Push(priority int, value interface{}) int {
-	return heap.BubbleUp(heap.Heap.Push(node.New(priority, value)) - 1)
+	return heap.BubbleUp(heap.Container.Push(node.New(priority, value)) - 1)
 }
 
 func (heap *Heap) PriorityOf(value interface{}) int {
-	return value.(node.Max).Priority
+	return heap.ToNode(value).Priority
 }
 
 func (heap *Heap) ToNode(value interface{}) *node.Max {
@@ -61,5 +68,5 @@ func (heap *Heap) ToNode(value interface{}) *node.Max {
 }
 
 func (heap *Heap) ValueOf(value interface{}) interface{} {
-	return value.(node.Max).Value
+	return heap.ToNode(value).Value
 }
