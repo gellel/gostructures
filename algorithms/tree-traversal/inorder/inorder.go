@@ -6,7 +6,7 @@ import (
 	node "github.com/gellel/gostructures/abstracts/trees/binary/binary-node"
 )
 
-// Traverse navigates a binary tree in its defined order (LEFT, ROOT, RIGHT).
+// Traverse access and prints the Binary-Tree-Node's connected children in sorted order (LEFT, ROOT, RIGHTS).
 func Traverse(n *node.Binary) *node.Binary {
 	if n.Left != nil {
 		Traverse(n.Left)
