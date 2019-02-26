@@ -8,6 +8,7 @@ import (
 	node "github.com/gellel/gostructures/abstracts/trees/binary/binary-node"
 )
 
+// Traverse access and prints the Binary-Tree-Node's connected children in breadth-first order (ROOT,, LEFT, RIGHT).
 func Traverse(n *node.Binary) *node.Binary {
 	q := queue.New()
 	q.Enqueue(n)

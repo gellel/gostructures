@@ -1,11 +1,11 @@
-package preorder_test
+package inorder_test
 
 import (
 	"math/rand"
 	"testing"
 
 	binary "github.com/gellel/gostructures/abstracts/trees/binary"
-	"github.com/gellel/gostructures/algorithms/tree-traversal/preorder"
+	inorder "github.com/gellel/gostructures/algorithms/tree-traversal/in-order"
 )
 
 func Test(t *testing.T) {
@@ -15,5 +15,5 @@ func Test(t *testing.T) {
 	for i := 0; i < 10; i++ {
 		b.Insert(rand.Float64())
 	}
-	preorder.Traverse(b.Root)
+	inorder.Traverse(b.Root)
 }
