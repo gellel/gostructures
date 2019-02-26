@@ -175,6 +175,7 @@ func (single *LinkedList) Shift() *LinkedList {
 		return single.SetHead(single.Head.Next)
 	}
 	single.Head = nil
+	single.Tail = nil
 	return single
 }
 
@@ -184,6 +185,9 @@ func (single *LinkedList) ShiftGet() interface{} {
 		value := single.Head.Value
 		if single.Head.HasNext() {
 			single.SetHead(single.Head.Next)
+		} else {
+			single.Head = nil
+			single.Tail = nil
 		}
 		return value
 	}
