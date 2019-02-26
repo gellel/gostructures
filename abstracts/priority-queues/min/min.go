@@ -1,34 +1,34 @@
-// Package max exports a Max-Priorty Queue. Priority Queue holds
+// Package min exports a Min-Priorty Queue. Priority Queue holds
 // collections of Priority Queue Nodes. Each Node contains an interface
 // allowing data submission of any type and a priority integer.
-package max
+package min
 
 import (
-	max "github.com/gellel/gostructures/abstracts/priority-queues/max/max-heap"
-	node "github.com/gellel/gostructures/abstracts/priority-queues/max/max-node"
+	min "github.com/gellel/gostructures/abstracts/priority-queues/min/min-heap"
+	node "github.com/gellel/gostructures/abstracts/priority-queues/min/min-node"
 )
 
-// Priority declares the implementation for a Max-Priority Queue.
+// Priority declares the implementation for a Min-Priority Queue.
 type priority interface {
 	Dequeue() interface{}
 	Enqueue(priority int, value interface{}) int
 	IsEmpty() bool
 	IsNotEmpty() bool
 	Length() int
-	Peek() *node.Max
+	Peek() *node.Min
 	PeekPriority() int
 	PeekValue() interface{}
 }
 
-// Priority declares the Max-Priority Queue data structure.
+// Priority declares the Min-Priority Queue data structure.
 type Priority struct {
-	heap *max.Heap
+	heap *min.Heap
 }
 
-// New instantiates a new Max-Priority Queue pointer.
+// New instantiates a new Min-Priority Queue pointer.
 func New() *Priority {
 	return &Priority{
-		heap: max.New()}
+		heap: min.New()}
 }
 
 // Dequeue removes the element interface stored within the Queue's internal Heap.
@@ -41,27 +41,27 @@ func (p *Priority) Enqueue(priority int, value interface{}) int {
 	return p.heap.Push(priority, value)
 }
 
-// IsEmpty checks whether the Max-Priority Queue is empty.
+// IsEmpty checks whether the Min-Priority Queue is empty.
 func (p *Priority) IsEmpty() bool {
 	return p.heap.IsEmpty()
 }
 
-// IsNotEmpty checks whether the Max-Priorty Queue contains elements.
+// IsNotEmpty checks whether the Min-Priorty Queue contains elements.
 func (p *Priority) IsNotEmpty() bool {
 	return p.heap.IsNotEmpty()
 }
 
-// Length computes the size of the Max-Priority Queue.
+// Length computes the size of the Min-Priority Queue.
 func (p *Priority) Length() int {
 	return p.heap.Length()
 }
 
-// Peek accesses the first element interface stored in the Max-Priority Queue.
-func (p *Priority) Peek() *node.Max {
+// Peek accesses the first element interface stored in the Min-Priority Queue.
+func (p *Priority) Peek() *node.Min {
 	return p.heap.ToNode(p.heap.Peek())
 }
 
-// PeekPriority access the first element stored in the Max-Priorty Queue and returns its priority.
+// PeekPriority access the first element stored in the Min-Priorty Queue and returns its priority.
 func (p *Priority) PeekPriority() int {
 	n := p.Peek()
 	if n != nil {
@@ -70,7 +70,7 @@ func (p *Priority) PeekPriority() int {
 	return -1
 }
 
-// PeekValue access the first element stored in the Max-Priorty Queue and returns its value.
+// PeekValue access the first element stored in the Min-Priorty Queue and returns its value.
 func (p *Priority) PeekValue() interface{} {
 	n := p.Peek()
 	if n != nil {
