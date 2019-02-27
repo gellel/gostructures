@@ -135,19 +135,28 @@ func (single *LinkedList) Prepend(value interface{}) *LinkedList {
 
 // Remove deletes a Single-Linked-List-Node from the Linked-List by value.
 func (single *LinkedList) Remove(value interface{}) bool {
-	if single.IsEmpty() {
+	var p *node.Single
+	n := single.Head
+	if n != nil && n.Value == value {
+		single.Head = n.Next
+		if single.Head == nil {
+			single.Tail = nil
+		}
+		return true
+	}
+	for n != nil {
+		if n.Value == value {
+			break
+		}
+		n = n.Next
+		p = n
+	}
+	if n == nil {
 		return false
 	}
-	for single.HasHead() && single.Head.HasValue(value) {
-		single.SetHead(single.Head.Next)
-	}
-	n := single.Head
-	for n != nil {
-		if n.HasNext() && n.HasValue(value) {
-			n.Next = n.Next.Next
-		}
-	}
-	return false
+	p.Next = n.Next
+
+	return true
 }
 
 // Set assigns the provided Single-Linked-List-Node to both the Head and Tail of the Linked-List.
