@@ -1,6 +1,7 @@
 package list
 
-type Graph struct {
-}
+import list "github.com/gellel/gostructures/abstracts/graphs/list/list-linked"
+
+type Graph []*list.Linked
 
 func (graph *Graph) AddEdge(source int, destination int) {}
