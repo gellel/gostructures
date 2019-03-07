@@ -1,11 +1,18 @@
-// Package list exports an Adjacency-List Graph. Adjacency-List Graph manages
-// a collection of nodes and edges representing a connected series of data.
-// Graph vertices are stored structs of Linked-Lists, and every vertex stores a collection of
-// its of adjacent vertices.
 package list
 
-import list "github.com/gellel/gostructures/abstracts/graphs/list/list-linked"
+type graph interface {
+	AddEdge(source string, destination string) *Graph
+	AddVertex(source string) *Graph
+	EdgeLength(source string) int
+	HasEdge(source string)
+	IsConnected(source string, destination string) bool
+	IsEdgeEmpty(source string) bool
+	IsEdgeNotEmpty(source string) bool
+	IsVertexEmpty(source string) bool
+	IsVertexNotEmpty(source string) bool
+	RemoveEdge(source string, destination string) *Graph
+	RemoveVertex(source string) *Graph
+	VertexLength(source string) int
+}
 
-type Graph []*list.Linked
-
-func (graph *Graph) AddEdge(source int, destination int) {}
+type Graph map[string][]string
