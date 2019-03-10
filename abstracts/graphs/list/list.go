@@ -1,3 +1,8 @@
+// Package list exports an adjacency list Graph abstract data structure.
+// Adjacency list Graphs are a map based collection of string based keys 
+// and values of string slices. Each key within this struct represents a
+// vertex of the Graph. For each vertex, the list value held by this key
+// is this vertex's connections to other vertex's of the Graph.
 package list
 
 type graph interface {
