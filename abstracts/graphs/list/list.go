@@ -1,10 +1,11 @@
 // Package list exports an adjacency list Graph abstract data structure.
-// Adjacency list Graphs are a map based collection of string based keys 
+// Adjacency list Graphs are a map based collection of string based keys
 // and values of string slices. Each key within this struct represents a
 // vertex of the Graph. For each vertex, the list value held by this key
 // is this vertex's connections to other vertex's of the Graph.
 package list
 
+// Graph declares interfaces for Graph data structure.
 type graph interface {
 	AddEdge(source string, destination string) bool
 	AddVertex(vertex string) bool
@@ -17,8 +18,10 @@ type graph interface {
 	RemoveVertex(vertex string) bool
 }
 
+// Graph declares the pointer for Graph abstract data structure.
 type Graph map[string][]string
 
+// AddEdge assigns the Graph a new connection between one vertex and another.
 func (graph *Graph) AddEdge(source string, destination string) bool {
 	g := *graph
 	if _, ok := g[source]; ok {
@@ -30,6 +33,7 @@ func (graph *Graph) AddEdge(source string, destination string) bool {
 	return false
 }
 
+// AddVertex adds a new key to the Graph that holds its connections.
 func (graph *Graph) AddVertex(vertex string) bool {
 	if _, ok := (*graph)[vertex]; ok == false {
 		(*graph)[vertex] = []string{}
@@ -38,6 +42,7 @@ func (graph *Graph) AddVertex(vertex string) bool {
 	return false
 }
 
+// Connected checks whether two vertices are connected.
 func (graph *Graph) Connected(source string, destination string) bool {
 	g := *graph
 	if _, ok := g[source]; ok {
@@ -52,6 +57,7 @@ func (graph *Graph) Connected(source string, destination string) bool {
 	return false
 }
 
+// GetEdges collects all the edges for the accessed vertex.
 func (graph *Graph) GetEdges(vertex string) []string {
 	if _, ok := (*graph)[vertex]; ok {
 		return (*graph)[vertex]
@@ -59,6 +65,7 @@ func (graph *Graph) GetEdges(vertex string) []string {
 	return nil
 }
 
+// GetVertices collects all verticies from the Graph.
 func (graph *Graph) GetVertices() []string {
 	vertices := []string{}
 	for key := range *graph {
@@ -67,10 +74,12 @@ func (graph *Graph) GetVertices() []string {
 	return vertices
 }
 
+// Length returns the number of vertices held by the Graph.
 func (graph *Graph) Length() int {
 	return len(*graph)
 }
 
+// LengthOf returns the number of edges held by the accessed vertex.
 func (graph *Graph) LengthOf(vertex string) int {
 	if _, ok := (*graph)[vertex]; ok {
 		return len((*graph)[vertex])
@@ -78,6 +87,7 @@ func (graph *Graph) LengthOf(vertex string) int {
 	return -1
 }
 
+// RemoveEdge deletes a connection from one vertex to another. If there are two connections, the destination relationship is not modified.
 func (graph *Graph) RemoveEdge(source string, destination string) bool {
 	g := *graph
 	if _, ok := g[source]; ok {
@@ -93,6 +103,7 @@ func (graph *Graph) RemoveEdge(source string, destination string) bool {
 	return false
 }
 
+// RemoveVertex deletes a vertex from the Graph, but does not remove relationships.
 func (graph *Graph) RemoveVertex(source string) bool {
 	if _, ok := (*graph)[source]; ok {
 		delete((*graph), source)
