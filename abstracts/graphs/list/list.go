@@ -107,6 +107,15 @@ func (graph *Graph) RemoveEdge(source string, destination string) bool {
 func (graph *Graph) RemoveVertex(source string) bool {
 	if _, ok := (*graph)[source]; ok {
 		delete((*graph), source)
+		for k := range *graph {
+			for i := range (*graph)[k] {
+				a := []string{}
+				if (*graph)[k][i] != source {
+					a = append(a, (*graph)[k][i])
+				}
+				(*graph)[k] = a
+			}
+		}
 		return true
 	}
 	return false
