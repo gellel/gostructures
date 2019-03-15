@@ -103,7 +103,7 @@ func (graph *Graph) RemoveEdge(source string, destination string) bool {
 	return false
 }
 
-// RemoveVertex deletes a vertex from the Graph, but does not remove relationships.
+// RemoveVertex deletes a vertex from the Graph.
 func (graph *Graph) RemoveVertex(source string) bool {
 	if _, ok := (*graph)[source]; ok {
 		delete((*graph), source)
