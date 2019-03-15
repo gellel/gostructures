@@ -11,6 +11,8 @@ package matrix
 // Graph declares interfaces for Graph data structure.
 type graph interface {
 	AddEdge(i int, j int) bool
+	Connected(i int, j int) bool
+	HasCoordinates(i int, j int) bool
 	RemoveEdge(i int, j int) bool
 }
 
@@ -19,16 +21,22 @@ type Graph [][]int
 
 // AddEdge assigns the Graph a new connection between one vertex and another.
 func (graph *Graph) AddEdge(i int, j int) bool {
-	if i > -1 && i < len((*graph)) && j > -1 && j < len((*graph)[i]) {
+	if graph.HasCoordinates(i, j) {
 		(*graph)[i][j], (*graph)[j][i] = 1, 1
 		return true
 	}
 	return false
 }
 
+// HasCoordinates checks that matrix has both coordinates.
+func (graph *Graph) HasCoordinates(i int, j int) bool {
+	return i > -1 && i < len((*graph)) && j > -1 && j < len((*graph)[i])
+}
+
+
 // RemoveEdge deletes a connection from one vertex to another.
 func (graph *Graph) RemoveEdge(i int, j int) bool {
-	if i > -1 && i < len((*graph)) && j > -1 && j < len((*graph)[i]) {
+	if graph.HasCoordinates(i, j) {
 		(*graph)[i][j], (*graph)[j][i] = 0, 0
 		return true
 	}
