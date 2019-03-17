@@ -21,6 +21,11 @@ type graph interface {
 // Graph declares the pointer for Graph abstract data structure.
 type Graph map[string][]string
 
+// New instantiates a new adjacency list Graph.
+func New() *Graph {
+	return &Graph{}
+}
+
 // AddEdge assigns the Graph a new connection between one vertex and another.
 func (graph *Graph) AddEdge(source string, destination string) bool {
 	g := *graph

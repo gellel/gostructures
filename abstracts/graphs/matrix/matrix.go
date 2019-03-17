@@ -19,6 +19,15 @@ type graph interface {
 // Graph declares the pointer for Graph abstract data structure.
 type Graph [][]int
 
+// New instantiates a new adjacency list Graph.
+func New(size int) *Graph {
+	g := make(Graph, size)
+	for i := 0; i < size; i = i + 1 {
+		g[i] = make([]int, size)
+	}
+	return &g
+}
+
 // AddEdge assigns the Graph a new connection between one vertex and another.
 func (graph *Graph) AddEdge(i int, j int) bool {
 	if graph.HasCoordinates(i, j) {
@@ -32,7 +41,6 @@ func (graph *Graph) AddEdge(i int, j int) bool {
 func (graph *Graph) HasCoordinates(i int, j int) bool {
 	return i > -1 && i < len((*graph)) && j > -1 && j < len((*graph)[i])
 }
-
 
 // RemoveEdge deletes a connection from one vertex to another.
 func (graph *Graph) RemoveEdge(i int, j int) bool {
