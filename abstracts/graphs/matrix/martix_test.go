@@ -19,4 +19,17 @@ func Test(t *testing.T) {
 
 	fmt.Println(graph)
 
+	fmt.Println(graph.Length())
+
+	for i := 0; i < max; i = i + 1 {
+		key := rand.Intn(graph.LengthOf(i))
+
+		success := graph.AddEdge(i, key)
+
+		fmt.Println("key", key)
+
+		fmt.Println("success", success)
+	}
+
+	fmt.Println(graph)
 }

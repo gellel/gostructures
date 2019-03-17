@@ -13,6 +13,8 @@ type graph interface {
 	AddEdge(i int, j int) bool
 	Connected(i int, j int) bool
 	HasCoordinates(i int, j int) bool
+	Length() int
+	LengthOf(i int) int
 	RemoveEdge(i int, j int) bool
 }
 
@@ -40,6 +42,19 @@ func (graph *Graph) AddEdge(i int, j int) bool {
 // HasCoordinates checks that matrix has both coordinates.
 func (graph *Graph) HasCoordinates(i int, j int) bool {
 	return i > -1 && i < len((*graph)) && j > -1 && j < len((*graph)[i])
+}
+
+// Length returns the number of vertices held by the Graph.
+func (graph *Graph) Length() int {
+	return len(*graph)
+}
+
+// LengthOf returns the number of edges held by the accessed vertex.
+func (graph *Graph) LengthOf(i int) int {
+	if i > -1 && i < len((*graph)) {
+		return len((*graph)[i])
+	}
+	return -1
 }
 
 // RemoveEdge deletes a connection from one vertex to another.
