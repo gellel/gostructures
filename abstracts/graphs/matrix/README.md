@@ -4,12 +4,12 @@ Adjacency matrix is a collection of unordered lists used to represent a finite g
 
 ###### Average time performance.
 
-| Access    | Search    | Insert   | Delete     |
-| :---      | :---      | :---     | :---       |
-| Θ(1)      | Θ(V)      | Θ(1)     | Θ(|V|+|E|) |
+| Access    | Search    | Insert   | Delete |
+| :---      | :---      | :---     | :---   |
+| Θ(1)      | Θ(V)      | Θ(1)     | Θ(V+E) |
 
 ###### Worst-case time performance.
 
-| Access   | Search    | Insert    | Delete     |
-| :---     | :---      | :---      | :---       |
-| O(1)     | O(V)      | O(1)      | O(|V|+|E|) |
+| Access   | Search    | Insert    | Delete |
+| :---     | :---      | :---      | :---   |
+| O(1)     | O(V)      | O(1)      | O(V+E) |
