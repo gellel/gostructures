@@ -1,4 +1,7 @@
-// Package closed exports a closed-address hash table. 
+// Package closed exports a closed-address hash table. Closed addressed hash-tables
+// hold a collection of linked lists. In a more complete interpretation, each linked
+// list would contain an iterator that allows the current index to be observed before
+// performing a transaction. TODO. write new linked-list for closed table.
 package closed
 
 import (
