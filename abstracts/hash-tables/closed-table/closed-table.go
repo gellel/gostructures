@@ -1,3 +1,4 @@
+// Package closed exports a closed-address hash table. 
 package closed
 
 import (
